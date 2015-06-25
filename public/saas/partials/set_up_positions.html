@@ -1,0 +1,14 @@
+<tabset>
+  <tab heading="Roles" select="set_up_position.include.roles = true">
+    <div ng-if="set_up_position.include.roles" ng-include='"/saas/partials/roles.html"'></div>
+  </tab>
+  <tab heading="Locations" select="set_up_position.include.locations = true">
+    <div ng-if="set_up_position.include.locations" ng-include='"/saas/partials/locations.html"'></div>
+  </tab>
+  <tab heading="Positions" select="set_up_position.include.positions = true">
+    <div ng-if="set_up_position.include.positions" ng-include='"/saas/partials/positions.html"'></div>
+  </tab>
+  <tab heading="Import Managers" select="set_up_position.include.import_mgrs = true" ng-show="$root.header_permissions.show_import_mgrs">
+    <div ng-if="set_up_position.include.import_mgrs" ng-include='"/saas/partials/import_mgrs.html"'></div>
+  </tab>
+</tabset>

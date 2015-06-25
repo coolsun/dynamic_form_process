@@ -1,0 +1,75 @@
+<div ng-controller="RsasEmail">
+  <div class="col-lg-12">
+    <div style="width: 100%">
+      <h5>To : </h5>
+      <span ng-repeat="recipient in $parent.rsas_email.recipients">
+        <span class="rsas-element-arrangement" popover="{{recipient.email}}" popover-trigger="mouseenter">
+          <span>{{recipient.name}} </span>
+          <span ng-show="$parent.rsas_email.show_email"> ({{recipient.email}}) </span>
+          <span class="pt glyphicon glyphicon-remove" ng-click="deleteRecipientEmail($index)" ng-if="!recipient.is_constant"></span>
+        </span>
+      </span>
+    </div>
+    <div style="width: 100%">
+      <h5>Cc : </h5>
+      <span ng-repeat="cc in $parent.rsas_email.cc">
+        <span class="rsas-element-arrangement" popover="{{cc.email}}" popover-trigger="mouseenter">
+          <span>{{cc.name}} </span>
+          <span ng-show="$parent.rsas_email.show_email"> ({{cc.email}}) </span>
+          <span class="pt glyphicon glyphicon-remove" ng-click="$parent.rsas_email.cc.splice($index, 1)"></span>
+        </span>
+      </span>
+    </div>
+    <div style="width: 100%">
+      <h5>Bcc : </h5>
+      <span ng-repeat="bcc in $parent.rsas_email.bcc">
+        <span class="rsas-element-arrangement" popover="{{bcc.email}}" popover-trigger="mouseenter">
+          <span>{{bcc.name}} </span>
+          <span ng-show="$parent.rsas_email.show_email"> ({{bcc.email}}) </span>
+          <span class="pt glyphicon glyphicon-remove" ng-click="$parent.rsas_email.bcc.splice($index, 1)"></span>
+        </span>
+      </span>
+    </div>
+    <div style="margin-top: 10px;">
+      <input class="largeCeckBox check_box_align_label" id="show_email" ng-model="$parent.rsas_email.show_email" type="checkbox">
+      <label for="show_email" class="largeCeckBoxLabel" style="padding-right: 20px;">Show Email</label>
+      <input class="largeCeckBox check_box_align_label" id="add_email" ng-model="$parent.rsas_email.add_email" type="checkbox">
+      <label for="add_email" class="largeCeckBoxLabel">Add Email</label>
+    </div>
+    <div class="well" ng-show="$parent.rsas_email.add_email">
+      <table style="border-collapse: separate;border-spacing: 5px 10px;">
+        <tr>
+          <td colspan="2">
+            <input class="largeCeckBox check_box_align_label" id="mail_addtype_to" ng-model="mail_addtype" value="to"  type="radio">
+            <label for="mail_addtype_to" class="largeCeckBoxLabel" style="padding-right: 20px;">To</label>
+            <input class="largeCeckBox check_box_align_label" id="mail_addtype_cc" ng-model="mail_addtype" value="cc" type="radio">
+            <label for="mail_addtype_cc" class="largeCeckBoxLabel" style="padding-right: 20px;">Cc</label>
+            <input class="largeCeckBox check_box_align_label" id="mail_addtype_bcc" ng-model="mail_addtype" value="bcc" type="radio">
+            <label for="mail_addtype_bcc" class="largeCeckBoxLabel" style="padding-right: 20px;">Bcc</label>
+          </td>
+        </tr>
+        <tr>
+          <td>Name:</td>
+          <td><input type="text" ng-model="$parent.rsas_email.add.name"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>*E-Mail:</td>
+          <td><input type="text" ng-model="$parent.rsas_email.add.email" ng-class="{'rsas-error': $parent.rsas_email.add.email_error}"></td>
+          <td><span style="color: red;"> {{$parent.rsas_email.add.email_error_msg}}</span></td>
+        </tr>
+        <tr>
+          <td><a class="pt glyphicon glyphicon-plus" ng-click="addNewEmail()"></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-12">
+    <h5>Subject: </h5>
+    <input type="text" class="form-control" ng-model="$parent.rsas_email.subject">
+  </div>
+  <div class="col-lg-12">
+    <h5>Content: </h5>
+    <textarea id="tinymce" ui-tinymce ng-model="$parent.rsas_email.content" style="height: 300px"></textarea>
+  </div>
+</div>

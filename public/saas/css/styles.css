@@ -1,0 +1,434 @@
+body {
+  margin-bottom: 80px;
+  padding-bottom: 145px;
+
+  background-color: #fbfbf9;
+}
+.page-header {
+  margin-top: 0px;
+}
+.penel-body {
+  padding-top: 0px;
+}
+.featuredImg {
+  margin-bottom: 15px;
+}
+
+/* make sidebar nav vertical */
+
+@media (min-width: 768px) {
+  .sidebar-nav .navbar .navbar-collapse {
+    padding: 0;
+    max-height: none;
+  }
+  .sidebar-nav .navbar ul{
+    float: none;
+    display: block;
+  }
+  .sidebar-nav .navbar li {
+    float: none;
+    display: block;
+  }
+  .sidebar-nav .navbar li a {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+.pt{
+  cursor: pointer;
+}
+.pt:hover{
+  text-decoration:none;
+}
+.arrow{
+  border-top: 12px solid transparent;
+  border-right: 12px solid #8c1515;
+  border-bottom: 12px solid transparent;
+  display: inline-block;
+  float: right;
+  position: absolute;
+}
+button.nobtn {
+  background-color: transparent;
+  border: none;
+}
+button.btn_li {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+/* These are used to for user form page */
+multiselect {
+    display:block;
+}
+multiselect .btn {
+    width: 100%;
+    background-color: #FFF;
+}
+multiselect .btn.error{
+    border: 1px solid #da4f49 !important;
+}
+multiselect .dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+multiselect .dropdown-menu {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2px;
+}
+multiselect .dropdown-menu > li > a {
+    padding: 3px 10px;
+    cursor:pointer;
+}
+.modal-backdrop {
+  z-index: 1000;
+}
+.jarviswidget-color-darken>header {
+  background-color: #cc5555;
+}
+button#edit {
+  background-color: transparent;
+  border: none;
+}
+div#EAIM>button {
+  margin: 5px 0px;
+}
+.rsas-glyphicon-empty:before{
+  content:"\2122";
+  color: transparent !important;
+}
+
+.largeCeckBox {
+  width: 20px;
+  height: 20px;
+}
+
+.largeCeckBoxLabel {
+  line-height: 33px;
+}
+
+.check_box_align_label {
+  vertical-align: middle;
+  position: relative;
+  bottom: 4px;
+}
+
+.hasErrorInput,
+.hasErrorInput > table {
+/*
+  border-color:#b94a48;
+  border-width: 1px 1px 1px 1px;
+  border-style: inset;
+*/
+  border: 2px solid red;
+}
+
+
+.modalBtnRight{
+  float: right;
+}
+.modalBtnLeft{
+  float: left;
+}
+/*
+.navOnlyShowNoClick{
+  color: #999;
+  background-color: auto;
+  cursor: default;
+  padding: 15px 5px;
+  position: relative;
+}
+*/
+.box_hover:hover{
+  background: wheat;
+}
+
+.text-align-left {
+  text-align: left;
+}
+
+.rsas-footer-margin-8-2{
+  margin: 8px 2px;
+}
+
+.rsas-margin-10-0{
+  margin: 10px 0px;
+}
+
+.rsas-element-arrangement{
+  margin: 2px;
+  padding: 0 5px;
+  display: inline-block;
+  font: 14px "Helvetica Neue",Helvetica,Arial,sans-serif;
+  height: 26px;
+  line-height: 25px;
+  border: 1px solid #acacac;
+  border-radius: 3px;
+  background: -webkit-linear-gradient(top,#f0f9ff 0,#cbebff 47%,#a1dbff 100%);
+  background: linear-gradient(to bottom,#f0f9ff 0,#cbebff 47%,#a1dbff 100%);
+}
+
+.rsas-apply-now-time{
+  color: rgb(139, 139, 139);
+}
+
+.rsas-radio-lable-font{
+  font-size: large;
+  padding-top: 0px;
+}
+
+.rsas-step-list-checkbox{
+  margin-top: 0;
+}
+
+.rsas-warning-label{
+  font-size: large;
+  padding-top: 0px;
+  color: #8a0505;
+}
+
+.rsas-table-dropdown-field{
+  width: 40px;
+}
+
+.rsas-table-time-field{
+  width: 100px;
+}
+
+.rsas-table-position-time-slot-time-field{
+  width: 130px;
+}
+
+.rsas-table-position-name-field{
+  width: 220px;
+}
+
+.rsas-table-position-name-field{
+  width: 220px;
+}
+
+.rsas-table-applied-field{
+  width: 60px;
+}
+
+.rsas-table-interview-vacancy-field{
+  width: 65px;
+}
+
+.rsas-table-applicant-select-field{
+  width: 65px;
+}
+
+.rsas-table-manager-my-interview-timeslot-field{
+  float: left;
+  width: 100%;
+}
+
+.rsas-top-right-corner-save-btn{
+ position: absolute;
+ right: 50px;
+}
+
+.rsas-green-btn {
+  color: #fff;
+  background-color: #009b76;
+  border-color: #008263;
+}
+
+.rsas-green-btn:hover,
+.rsas-green-btn:focus,
+.rsas-green-btn:active,
+.rsas-green-btn.active {
+  color: #fff;
+  background-color: #00b489;
+  border-color: #008263;
+}
+
+.rsas-display-none{
+  display: none;
+}
+
+.padding-0{
+  padding: 0;
+}
+
+.padding-0-1{
+  padding: 0px 1px;
+}
+
+.margin-0{
+  margin: 0;
+}
+
+.detail-box{
+  position: absolute;
+  left: 75px;
+}
+
+.rsas-interview-review-div{
+  border-width: 3px;
+  border-style: solid;
+  margin: 10px;
+  padding: 10px;
+}
+
+.rsas_time_slot_has_reserve{ /* use on ng-class at html*/
+  font-weight: bolder;
+}
+
+.rsas-step-disabled{
+  background-color: lightgrey;
+}
+
+.rsas-substep-disabled{
+  background-color: #e9e6df;
+}
+
+input[type=text].rsas-error{
+  border: 2px solid red;
+}
+
+.rsas-div-right{
+  float: right;
+}
+
+.rsas-div-left{
+  float: left;
+}
+
+.rsas-go-to-application-div{
+  top: 50px;
+
+}
+
+button[disabled], .btn[disabled]{
+  background-color: rgb(183, 183, 183);
+  border-color: rgb(183, 183, 183);
+}
+
+.rd-flag-button {
+  border: 0px;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+.rd-flag-button-sm {
+  cursor: default;
+  border: 0px solid black;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.green-bgcolor {
+  background-color: #00ff00;
+}
+.yellow-bgcolor {
+  background-color: #ffff00;
+}
+.orange-bgcolor {
+  background-color: #ffaa00;
+}
+.red-bgcolor {
+  background-color: #ff0000;
+}
+
+.btn-dark-red, .btn-dark-red:active{
+  color: #fff;
+  background-color: #8c1515;
+  border-color: #8c1515;
+}
+.btn-dark-red:hover{
+  color: #fff;
+  background-color: #9c2525;
+  /*border-color: #9c2525;*/
+}
+
+.rsas-text-dark-red{
+  color: #8c1515;
+}
+
+.rsas-home-apply-btn{
+  width: 426px;
+  height: 65px;
+  font-size: 18px;
+  font-family: sans-serif;
+  /*border: 0px;*/
+
+  margin: 0px 0px 100px 0px;
+}
+
+.rsas-navbar-bottom{
+  background-color: #fbf9f9;
+  border-color: #8c1515;
+}
+
+.rsas-font-text-red{
+  color: red;
+}
+
+.rsas-process-step-title-font{
+  font-size: 18px;
+  font-weight: bold;
+}
+.rsas-process-sub-step-title-font{
+  font-size: 13px;
+}
+
+.rsas-process-step-title-li-div{
+  padding: 6px 8px;
+}
+
+.rsas-process-sub-step-title-li-div{
+  padding: 6px 8px;
+}
+
+.rsas-process-sub-step-title-ul-div{
+  margin-bottom: 5px;
+  padding-top: 10px;
+}
+
+.rsas-interview-pop-row{
+  margin: 0 -15px;
+}
+.rsas-interview-pop-row > span {
+  padding: 0 15px;
+  padding-top: 0px;
+}
+.rsas-interview-pop-row > span > input[type='checkbox']{
+  margin: 0px;
+  margin-top: 2px;
+}
+.rsas-interview-pop-row > p{
+  margin-bottom: 0px;
+}
+.report_container{
+  float: left;
+  width: 100%;
+  line-height: 35px;
+  min-height: 50px;
+  margin-bottom: 20px;
+  border: 0px;
+  border-bottom: 1px solid #eee;
+}
+.report_title{
+  float: left;
+  width: 20%;
+  font-weight: bold;
+}
+.report_options{
+  float: left;
+  width: 70%;
+}
+.report_submit{
+  float: left;
+  width: 10%;
+}
+.report_submit > .btn{
+  width: 100%;
+}

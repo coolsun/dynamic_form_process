@@ -1,0 +1,38 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Process/Position</th>
+      <th>Department</th>
+      <th>Contact</th>
+      <th></th>
+    </tr>
+    <tr>
+      <td><input type="text" class="form-control" ng-model="new_help.doings"></td>
+      <td><input type="text" class="form-control" ng-model="new_help.department"></td>
+      <td><input type="text" class="form-control" ng-model="new_help.contact"></td>
+      <td>
+        <button class="btn btn-default" ng-click="add_help_landing()" ng-disabled="new_help.doings == '' || new_help.department == '' || new_help.contact == ''">
+          <i class="glyphicon glyphicon-plus" ng-hide="wait_add"></i>
+          <img src="/saas/img/wait_response.gif" ng-show="wait_add">
+        </button>
+      </td>
+    </tr>
+  </thead>
+  <tbody class="help-landing-list">
+    <tr ng-repeat="one_help in all_help">
+      <td><input type="text" class="form-control" ng-model="one_help.doings"></td>
+      <td><input type="text" class="form-control" ng-model="one_help.department"></td>
+      <td><input type="text" class="form-control" ng-model="one_help.contact"></td>
+      <td>
+        <button class="btn btn-default" ng-click="update_help_landing(one_help)" ng-disabled="one_help.doings == '' || one_help.department == '' || one_help.contact == ''">
+          <i class="glyphicon glyphicon-floppy-disk" ng-hide="one_help.wait_update"></i>
+          <img src="/saas/img/wait_response.gif" ng-show="one_help.wait_update">
+        </button>
+        <button class="btn btn-default" ng-click="delete_help_landing(one_help)">
+          <i class="glyphicon glyphicon-remove" ng-hide="one_help.wait_delete"></i>
+          <img src="/saas/img/wait_response.gif" ng-show="one_help.wait_delete">
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

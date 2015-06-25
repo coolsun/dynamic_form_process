@@ -1,0 +1,5 @@
+<div ng-controller="processSelectBarCrtl">
+  <select class="form-control" ng-model="$root.current_process" ng-options="process.name for process in $root.index.processes" ng-change="changeProcess($root.current_process);">
+    <option value="">Change Process</option>
+  </select>
+</div>

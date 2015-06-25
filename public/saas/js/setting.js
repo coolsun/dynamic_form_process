@@ -1,0 +1,4 @@
+var STANFORD_LOGIN = "https://weblogin.stanford.edu/login?RT=U2%2Fbh1iBeeylwGGATMLxsMG9WSuBgO05Ed%2FYCbx30enoZR6AEYHW%2Fdepvd8kxEW0Krt2ANt%20JE%2FwoZiN5kIUmsnMz8kpB9eJC1AaMAYlanZvpHHNkLC3Oua8FCIu9xYhoRumGh%201mzWp7im2Nvk%2FldsiQrgG5ApARglNBPVSqcrWoW6251Lc2ioun9ZRnKUUOMISP09rz5n%201tA6ogIWsScwvB59P6dniUrAIBQGdAWrOawubduP9tPq03gfkIDpgFbe5705W9o7iuW1ZQkB0cmZFo2Hvl9AnIfob7BcF7cmzXSz;ST=U2%2033mr%20%2Fpblr13vQkLoisAGzVMj2nFq1fbiYJB9zkcVoMkHuoYZR75eurgb5OoRQB9yuoVS9CkqzrCMrBvyz1znTkcs%20v8WgYC%20f%2FQzMZZ1NQCjtX66%2F%2FOH%2FsHbyWxiI5jrZ1WGt8Wibs3yXYLwOhRW7naRj%201zyXImXuKtRBiA3We%20TEnVRIjFyWQWwLeMFvBeOscD0MOVEVb5zg2LJW%20Thuo%3D";
+var JSON_URL = "";
+var NOT_IN_PROCESS_PAGE = ['404','clone', 'global', 'process', 'process_select', 'reports', 'years', 'recommendation_form', 'email_template'];
+var TEST = {};

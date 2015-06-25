@@ -1,0 +1,22 @@
+<div ng-controller="RecommendationForm" class="container">
+  <div ng-hide="forms.length == 0 || show_recommendation_option == false || after_submit" class="well">
+    <h5>Please check YES if you agree to share this recommendation with our student staff interviewers:</h5>
+    <input type="checkbox" ng-model="show_for_std_interviewers"> YES
+  </div>
+
+  <div ng-repeat="form in forms" ng-show="!after_submit">
+    <h3 class="alert alert-warning alert-dismissable">{{form.form_name}}</h3>
+    <form ng-submit="submit($index)">
+      <recommendation></recommendation>
+      <input class="btn btn-info ng-scope pull-right" type="submit" value="Submit" ng-disabled="!permission_to_active" />
+    </form>
+  </div>
+
+  <div class="well text-center col-lg-12" ng-show="after_submit" style="margin-top: 20px">
+    <h5>Thank you for submitting your recommendation!</h5>
+  </div>
+
+  <div class="well text-center col-lg-12" ng-show="message.length != 0">
+    <h5>{{message}}</h5>
+  </div>
+</div>

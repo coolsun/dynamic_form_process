@@ -1,0 +1,83 @@
+<!-- <body ng-app="processApp"> -->
+<div class="container" ng-controller="ProcessSteps">
+  <div class="col-md-12"><h1>{{current_process.name}}</h1></div>
+  <div class="row" ng-show="permission_to_show">
+    <!-- process list -->
+    <div class="col-md-3">
+      <ul class="list-group" ng-model="process_steps" ui-sortable="sortableOptions" style="min-width: 268px;border-right: 5px solid #8c1515;">
+        <li class="list-group-item list-group-item-success rsas-process-step-title-li-div" ng-show="process_step.permission.show" ng-class="{'disabled':!process_step.enabled}" ng-repeat="process_step in process_steps">
+          <span class="process-step-text rsas-process-step-title-font">
+            {{process_step.name}}
+          </span>
+          <span class="pull-right" style="width: 49px;">
+            <span class="pull-right">
+              <button class="pull-right nobtn padding-0" ng-click="changeStep(process_step)">
+                <span class="padding-0-1" ng-class="{'glyphicon glyphicon-pencil' : process_step.permission.active}">
+                  <img ng-show="!process_step.permission.active" src="/saas/img/edit-not-validated-icon.png">
+                </span>
+              </button>
+            </span>
+            <span ng-show="process_step.user_view" class="rsas-step-list-checkbox pull-right">
+              <input ng-show="sort_and_display" type="checkbox" ng-model="process_step.enabled" ng-change="setCurrentStepEnable(process_step)">
+            </span>
+            <span ng-hide="process_step.user_view" class="pull-right padding-0-1">
+              <span class="glyphicon glyphicon-eye-close"></span>
+            </span>
+          </span>
+          <span ng-class="{'arrow':isCurrentStepClassShow('id', process_step.id)}" style="right: -1px"></span>
+          <ul class="list-group rsas-process-sub-step-title-ul-div" ng-model="process_step.procedure_sub_steps" ui-sortable="sortableOptions">
+            <li class="list-group-item rsas-process-sub-step-title-li-div" ng-show="sub_step.permission.show" ng-repeat="sub_step in process_step.procedure_sub_steps" ng-class="{'disabled':!sub_step.enabled,'list-group-item-danger':isCurrentSubStepClassShow('id',sub_step.id), 'list-group-item-info':!isCurrentSubStepClassShow('id',sub_step.id)}">
+              <span style="width: 175px; display: inline-block;">
+                <span class="rsas-process-sub-step-title-font">{{sub_step.name}}</span>
+              </span>
+              <span class="pull-right" style="width: 49px;">
+                <span class="pull-right">
+                  <button class="pull-right nobtn padding-0" ng-click="changeSubStep(process_step, sub_step)">
+                    <span class="padding-0-1" ng-class="{'glyphicon glyphicon-pencil' : sub_step.permission.active}">
+                      <img ng-show="!sub_step.permission.active" src="/saas/img/edit-not-validated-icon.png">
+                    </span>
+                  </button>
+                </span>
+                <span ng-show="sub_step.user_view" class="rsas-footer-margin-8-2 rsas-step-list-checkbox pull-right">
+                  <input ng-if="sort_and_display && sub_step.identify_name != 'fill_in_form'" type="checkbox" ng-model="sub_step.enabled" ng-change="update_sub_step_enabled(sub_step)" ng-disabled="!process_step.enabled">
+                </span>
+                <span ng-hide="sub_step.user_view" class="pull-right padding-0-1">
+                  <span class="glyphicon glyphicon-eye-close"></span>
+                </span>
+                <span ng-show="sub_step.permission.round_related" class="pull-right padding-0-1">
+                  <span class="glyphicon glyphicon-user"></span>
+                </span>
+              </span>
+              <span ng-class="{'arrow':isCurrentSubStepClassShow('id', sub_step.id)}" style="right: -10px"></span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <p><i class="glyphicon glyphicon-user"></i> Invited or selected interviews</p>
+      <p>
+        <span style="display: inline-block; width: 14px; height: 14px; background-color: transparent;">
+          <input type="checkbox" disabled="disabled" checked="checked">
+        </span>
+        Viewable to applicants
+      </p>
+      <p>
+        <span style="display: inline-block; width: 14px; height: 14px; background-color: transparent;">
+          <input type="checkbox" disabled="disabled">
+        </span>
+        Not viewable to applicants
+      </p>
+      <p><i class="glyphicon glyphicon-eye-close"></i> Not viewable to applicants</p>
+      <p><i class="glyphicon glyphicon-pencil"></i> Editable</p>
+      <p><img src="/saas/img/edit-not-validated-icon.png" style="width: 14px; height: 14px;"> Not editable</p>
+    </div>
+    <div class="col-md-9" style="padding-bottom: 20px;">
+      <div ng-if="current_step.name" ng-show="current_step.permission.show" ng-include='"/saas/partials/process_step_setting.html"'></div>
+      <div ng-if="isCurrentSubStep() && $root.isRunNowProcess">
+        <div ng-repeat="SubStepURL in processSubStepURL">
+          <div ng-include="SubStepURL">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

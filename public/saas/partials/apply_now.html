@@ -1,0 +1,73 @@
+<div class="container" ng-controller="ApplyNow">
+  <div class="col-md-12"><h1>{{$root.current_process.name}}</h1></div>
+  <div>
+    <div class="col-md-3">
+      <div style="border-right: 5px solid #8c1515;padding-right: 0px; margin-bottom: 20px;">
+        <ul class="list-group" style="margin-bottom: 0px;">
+          <li class="pt list-group-item rsas-process-step-title-li-div"
+              ng-repeat="process_step in process_steps"
+              ng-if="process_step.user_view && process_step.enabled"
+              ng-class="{true: 'list-group-item-success', false: 'rsas-step-disabled'}[$root.isInTime(process_step)]"
+          >
+            <div ng-click="changeStep(process_step)">
+              <span class="process-step-text rsas-process-step-title-font">
+                {{process_step.name}}
+              </span>
+              <span ng-click="process_step.time_to_show = !process_step.time_to_show;$event.stopPropagation()" class="pt glyphicon glyphicon-time"></span>
+              <span ng-class="{'arrow':isCurrentStepClassShow('id', process_step.id)}" style="right: -1px"></span>
+            </div>
+            <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">Start: {{process_step.t_start_string}}</div>
+            <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">End: {{process_step.t_end_string}}</div>
+            <ul class="list-group  rsas-process-sub-step-title-ul-div">
+              <li class="pt list-group-item rsas-process-sub-step-title-li-div"
+              		ng-repeat="sub_step in process_step.procedure_sub_steps"
+            	   	ng-click="changeSubStep(process_step, sub_step);$event.stopPropagation()"
+            	   	ng-if="sub_step.user_view && sub_step.enabled"
+              		ng-class="{
+              		  'list-group-item-info': $root.isInTime(sub_step),
+              		  'rsas-substep-disabled': checkSubStepDisabled(process_step, sub_step)
+              		}"
+              >
+                <span>
+                  {{sub_step.name}}
+                  <span ng-if="process_step.name == 'Application'">
+                    <span ng-show="sub_step.identify_name == 'fill_in_form'">
+                      {{$root.applicantApplicationStatus['form_progress']}}
+                    </span>
+                    <span ng-show="sub_step.identify_name == 'recommendation' && parseInt($root.applicantApplicationStatus['recommendation_progress'].split('/')[1]) > 0">
+                      {{$root.applicantApplicationStatus['recommendation_progress']}}
+                    </span>
+                    <span ng-show="$root.applicantApplicationStatus[sub_step.identify_name]" class="glyphicon glyphicon-ok"></span>
+                  </span>
+                  <span ng-show="sub_step.permission.round_related" class="">
+                    <span class="glyphicon glyphicon-user"></span>
+                  </span>
+                </span>
+
+                <span ng-class="{'arrow':isCurrentSubStepClassShow('id', sub_step.id)}" style="right: -10px"></span>
+                <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">Start: {{sub_step.t_start_string}}</div>
+                <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">End: {{sub_step.t_end_string}}</div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <p><i class="glyphicon glyphicon-user"></i> Invited or selected interviews</p>
+      <p><i class="glyphicon glyphicon-ok"></i> The step is complete</p>
+      <p><span class="glyphicon glyphicon-time"></span> View start and end time</p>
+      <p>
+        <span style="display: inline-block; width: 14px; height: 14px; background-color: #e9e6df; border: 1px solid #ddd; border-radius: 2px"></span>
+        Time is not due or required step is not complete
+      </p>
+    </div>
+    <div class="col-md-9">
+      <div ng-if="!$root.applicant_sub_step" ng-bind-html="landing"></div>
+      <div ng-if="isCurrentSubStep() && $root.isRunNowProcess">
+        <div ng-repeat="SubStepURL in processSubStepURL">
+          <div ng-include="SubStepURL">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

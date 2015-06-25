@@ -1,0 +1,405 @@
+<!-- <body ng-app="processApp"> -->
+<div ng-controller="process_control" class="container">
+  <div class="col-lg-12" id="content">
+    <button ng-show="permission_to_active" type="submit" class="btn btn-info" data-toggle="modal" data-target="#addProcess" style="margin: 10px 0px;">Add Process</button>
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <label>
+          Process in Year {{$root.current_year.name}}
+        </label>
+        <span class="pull-right">
+          Total:{{processTable.tbl.pTotal}}
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="processTable.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="processTable.tbl.searchClick(processTable.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="processTable.tbl.perPage" ng-change="processTable.tbl.setDataAndRequest();">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0">ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in processTable.tbl.header" ng-click="processTable.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==processTable.tbl.orderBy" ng-src="/saas/img/{{processTable.tbl.img[processTable.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=processTable.tbl.orderBy" ng-src="/saas/img/{{processTable.tbl.img[2]}}.png">
+              </th>
+              <th><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in processTable.tbl.show" class="process">
+              <td>{{tblTr.name}}</td>
+              <td>{{tblTr.status ? "true" : "false"}}</td>
+              <td>{{tblTr.rank}}</td>
+              <td>
+                <div ng-repeat="user_data in tblTr.procedure_mgrs">
+                  {{user_data.user.name}}
+                </div>
+              </td>
+              <td>
+                <div ng-repeat="user_data in tblTr.rd_mgrs">
+                  {{user_data.user.name}}
+                </div>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right" style="width: 190px;">
+                    <li ng-show="permission_to_active">
+                      <a>
+                        <button class="btn_li" data-target="#cloneProcess" ng-click="setCloneProcess(tblTr.id)" data-toggle="modal">Clone</button>
+                      </a>
+                    </li>
+                    <li ng-show="permission_to_active">
+                      <a>
+                        <button class="btn_li" data-target="#editProcess" ng-click="editProcess()" data-toggle="modal">Setting</button>
+                      </a>
+                    </li>
+                    <li ng-show="tblTr.permission.edit_users">
+                      <a ng-click="GoToUserPage(tblTr)">
+                        <button class="btn_li">Edit Users</button>
+                      </a>
+                    </li>
+                    <li ng-show="tblTr.permission.edit_apply_white_lists">
+                      <a>
+                        <button class="btn_li" data-target="#editApplyWhiteLists" ng-click="editApplyWhiteLists(tblTr)" data-toggle="modal">Edit Apply White List</button>
+                      </a>
+                    </li>
+                    <li ng-show="permission_to_active">
+                      <a>
+                        <button class="btn_li" data-target="#editHiringMgrs" ng-click="editHiringMgrs(tblTr)" data-toggle="modal">Edit Hiring Managers</button>
+                      </a>
+                    </li>
+                    <li ng-show="tblTr.permission.edit_rd_managers">
+                      <a>
+                        <button class="btn_li" data-target="#editRdMgrs" ng-click="editRdMgrs(tblTr)" data-toggle="modal">Edit RD Managers</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="GoToProcessSetting(tblTr)">
+                        <button class="btn_li">Edit</button>
+                      </a>
+                    </li>
+                    <li ng-show="permission_to_active">
+                      <a ng-click="remove($index)">
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pull-left tableRsasPagging">
+          <span>
+            <pagination ng-model="processTable.tbl.pNow" total-items="processTable.tbl.pTotal" items-per-page="processTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="processTable.tbl.pageChange()"></pagination>
+          </span>
+          <span class="tableRsasPageGoToSpan">
+            <span>
+              <input ng-model="processTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+            </span>
+            <span>
+               <button class="btn tableRsasBtn" ng-click="processTable.tbl.goToPage()" ng-disabled="processTable.tbl.goPageAble">Go</button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Process-->
+    <div class="modal fade" id="addProcess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form ng-submit="addProcess()">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Add Process</h4>
+            </div>
+            <div class="modal-body">
+              <div class="panel-body" ng-show="new_process.error_msg" style="color: red;">
+                <h4>{{new_process.error_msg}}</h4>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-2 control-label">*Name:</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" ng-model="new_process.name" required>
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-2 control-label">*Acronym:</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" ng-model="new_process.acronym" required placeholder="Only use Capital A-Z and Number 0-9">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-info">Add Process</button>
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clone Process-->
+    <div class="modal fade" id="cloneProcess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form ng-submit="cloneProcess()">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Clone Process</h4>
+            </div>
+            <div class="modal-body">
+              <div class="panel-body" ng-show="new_process.error_msg" style="color: red;">
+                <h4>{{new_process.error_msg}}</h4>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-2 control-label">*Name:</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" ng-model="new_process.name" required>
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-2 control-label">*Acronym:</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" ng-model="new_process.acronym" required placeholder="Only use Capital A-Z and Number 0-9">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-info">Clone Process</button>
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!--process_edit-->
+    <div class="modal fade" id="editProcess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form ng-submit="updateProcess()">
+            <div class="modal-header">
+              <h4 class="modal-title">Process Setting</h4>
+            </div>
+            <div class="modal-body">
+              <div class="panel-body">
+                <label class="col-lg-3 control-label">*Name:</label>
+                <div class="col-lg-9">
+                  <input type="text" class="form-control" ng-model="editing_process.name" required>
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-3 control-label">*Status:</label>
+                <div class="col-lg-9">
+                  <select class="form-control" ng-model="editing_process.status" ng-options="status for status in [true, false]" ng-change="check_recommendation_form_open(editing_process)">
+                  </select>
+                </div>
+                <div class="col-lg-9 col-lg-offset-3" ng-show="no_recommendation_form_open" style="font-weight: bold; color: red;">
+                  This process requires recommendation(s). Please make sure the recommendation form(s) has been set up and not hidden.
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-3 control-label">*Display Order:</label>
+                <div class="col-lg-9">
+                  <input type="text" class="form-control" ng-model="editing_process.rank" required>
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-3 control-label">Contact Email:</label>
+                <div class="col-lg-9">
+                  <input type="text" class="form-control" ng-model="editing_process.contact_email">
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-3 control-label">Domain:</label>
+                <div class="col-lg-9">
+                  <input type="text" class="form-control" ng-model="editing_process.domain">
+                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-lg-3 control-label">FAQ Url:</label>
+                <div class="col-lg-9">
+                  <input type="text" class="form-control" ng-model="editing_process.faq_url">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-info" ng-disabled="save_button_disabled">Save</button>
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Hiring Managers-->
+    <div class="modal fade" id="editHiringMgrs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="form-horizontal modal-content" ng-submit="updateHiringMgrs()">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Edit Hiring Managers</h4>
+          </div>
+          <div class="modal-body">
+             <div class="form-group">
+              <label class="col-lg-2 control-label">Filter:</label>
+              <span class="col-lg-9">
+                <input class="form-control" type="text" ng-model="edit_hiring_mgr_search.name">
+              </span>
+            </div>
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="edit_hiring_mgr in edit_hiring_mgrs | filter:edit_hiring_mgr_search">
+              <span class="col-lg-2 control-label">
+                <input ng-model="edit_hiring_mgr.is_select" type="checkbox" id="edit_hiring_mgr_{{$index}}" class="largeCeckBox" ng-change="checkHiringMgrs(edit_hiring_mgr)">
+              </span>
+              <p class="col-lg-10">
+                <label for="edit_hiring_mgr_{{$index}}" class="control-label">{{edit_hiring_mgr.name}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-info">Save</button>
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit RD Managers-->
+    <div class="modal fade" id="editRdMgrs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="form-horizontal modal-content" ng-submit="updateRdMgrs()">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Edit RD Managers</h4>
+          </div>
+          <div class="modal-body">
+             <div class="form-group">
+              <label class="col-lg-2 control-label">Filter:</label>
+              <span class="col-lg-9">
+                <input class="form-control" type="text" ng-model="edit_rd_mgr_search.name">
+              </span>
+            </div>
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="edit_rd_mgr in edit_rd_mgrs | filter:edit_rd_mgr_search">
+              <span class="col-lg-2 control-label">
+                <input ng-model="edit_rd_mgr.is_select" type="checkbox" id="edit_rd_mgr_{{$index}}" class="largeCeckBox" ng-change="checkRdMgrs(edit_rd_mgr)">
+              </span>
+              <p class="col-lg-10">
+                <label for="edit_rd_mgr_{{$index}}" class="control-label">{{edit_rd_mgr.name}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-info">Save</button>
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Apply White List-->
+    <div class="modal fade" id="editApplyWhiteLists" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="form-horizontal">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4>Edit Apply White List</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="col-md-2 control-label">Filter:</label>
+                <span class="col-md-10">
+                  <input class="form-control" type="text" ng-model="apply_white_list_search">
+                </span>
+              </div>
+              <hr />
+
+              <form ng-submit="createApplyWhiteList()">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">*Sunet ID:</label>
+                  <span class="col-md-8">
+                    <input class="form-control" type="text" ng-model="new_apply_white_list.sunet_id" ng-required="true" />
+                  </span>
+                  <span class="col-md-2">
+                    <button class="btn btn-primary form-control" type="submit">Add</button>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">*Email</label>
+                  <span class="col-md-10">
+                    <input class="form-control" type="email" ng-model="new_apply_white_list.email" ng-required="true" />
+                  </span>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">*First Name:</label>
+                  <span class="col-md-10">
+                    <input class="form-control" type="text" ng-model="new_apply_white_list.first_name" ng-required="true" />
+                  </span>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">Middle Name:</label>
+                  <span class="col-md-10">
+                    <input class="form-control" type="text" ng-model="new_apply_white_list.middle_name" />
+                  </span>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">Last Name:</label>
+                  <span class="col-md-10">
+                    <input class="form-control" type="text" ng-model="new_apply_white_list.last_name" />
+                  </span>
+                </div>
+              </form>
+              <hr />
+
+              <div class="form-group form-inline" ng-repeat="user in apply_white_lists | filter:apply_white_list_search | orderBy:'sunet_id'">
+                <span class="col-md-2 control-label">
+                  <span class="glyphicon glyphicon-trash" style="cursor:pointer;" ng-click="deleteApplyWhiteList(user.id)"></span>
+                </span>
+                <h4 class="col-md-10">
+                  <label class="control-label">{{user.sunet_id}}</label>
+                </h4>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

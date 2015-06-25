@@ -1,0 +1,33 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row [
+    "Location",
+    "Ranked",
+    "Time stamp of ranking",
+    "Rank",
+    "Student ID",
+    "Student Full Name",
+    "Student Position",
+    "Who Ranked"
+  ], style: title_style
+
+  @applications.each do |application|
+    user = application.user
+    sheet.add_row [
+      application.position.location.name,
+      application.mgr_ranked_at.present?,
+      application.mgr_ranked_at.try(:pst_s),
+      application.mgr_rank,
+      user.suid,
+      user.name,
+      application.position.name,
+      application.ranked_mgr.name
+    ], :types => [nil, nil, nil, nil, :string] #for SUID not to number
+  end
+end
+

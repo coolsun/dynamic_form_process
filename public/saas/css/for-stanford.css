@@ -1,0 +1,51 @@
+body {
+  font-family: 'Source Sans Pro', Arial, serif; 
+}
+  .all-about-header {
+    color: #ffffff;
+    background-color: #8c1515;
+    font-weight: 700;
+  }
+    #header-left {
+      position: absolute;
+    }
+    #home-page-link, #home-page-link:hover {
+      padding: 0px 10px;
+      color: #ffffff;
+      font-size: 40px;
+      font-weight: 400;
+      text-decoration: none;
+    }
+  
+  .all-about-footer {
+    font-weight: 700;
+  }
+    .footer-btn {
+      margin-top: 9px;
+      /*width:90px;*/
+      padding: 5px 20px;
+      
+      color: #000000;
+      background-color: transparent;
+      border:1px solid transparent;
+      text-align: center;
+    }
+    .footer-btn:hover {
+      color: #000000;
+      font-weight: 900;
+      text-decoration: underline;
+    }
+
+.caption-word {
+  font-family: 'Crimson Text', Arial, serif; 
+}
+.process-step-text {
+  font-weight: bold;
+}
+
+tbody.help-landing-list tr:nth-child(even) {
+  background: transparent
+}
+tbody.help-landing-list tr:nth-child(odd) {
+  background: #ebe8dc
+}

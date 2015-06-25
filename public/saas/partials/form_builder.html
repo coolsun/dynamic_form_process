@@ -1,0 +1,321 @@
+<!-- Tool bar elements -->
+<div class="container" ng-controller="FormBuilder">
+  <div class="row">
+    <div class="col-lg-8">
+
+      <!-- A button to start editing a new form, before existed forms -->
+      <div id="form-button-list">
+        <div id="loading" class="{{forms_obj ? 'hide' : ''}}">
+          Loading forms ..
+          <img src="/saas/img/wait_response.gif">
+        </div>
+        <button class="btn {{form.display ? 'btn-warning' : ''}}" ng-repeat="form in forms_obj" ng-click="edit_form(form)">
+          {{form.form_name}}
+        </button>
+        <div class="{{forms_obj.length == 0 ? '' : 'hide'}}"><h5>This step has no forms.</h5></div>
+      </div>
+
+      <div>
+        <div id="control-bar">
+          <button title="Create a new form" class="btn btn-default" ng-click="init()" ng-show="process_id" ng-disabled="!permission_to_active"><i class="glyphicon glyphicon-file"></i></button>
+          <button title="Preview" id="preview" class="btn btn-default" href="#preview-item-modify" data-toggle="modal"><i class="glyphicon glyphicon-search"></i></button>
+          <button title="Save" class="btn btn-default" ng-show="process_id != 0 || current_form" ng-click="save_form()" ng-disabled="!permission_to_active"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+          <button title="Delete" class="btn btn-default {{current_form ? '' : 'hide'}}" ng-show="process_id" ng-click="delete_this_form()" ng-disabled="!permission_to_active"><i class="glyphicon glyphicon-remove"></i></button>
+          <button title="See the key word list" class="btn btn-default" href="#key-word-list" data-toggle="modal" ng-show="sub_step_identify_name == 'set_up_system_forms'" ng-click="get_form_translations()">See the key word list</button>
+          <button title="Clone form" class="btn btn-warning" ng-show="current_form && process_id" ng-click="clone_form(current_form)">Clone form</button>
+          <button ng-click="toggle_form_show()" ng-show="current_form && process_id" ng-disabled="!permission_to_active" class="btn {{current_form.display ? 'btn-warning' : ''}}">
+            {{current_form.display ? 'Show' : 'Hide'}}
+          </button>
+        </div>
+        <h4> <!-- This text input is set and show current form name -->
+          <div>
+            {{current_form ? 'Change t' : 'T'}}itle :
+            <input type="text" id="current-fname" value="New Form" style="width: 50%; margin-bottom: 5px">
+          </div>
+          <div ng-show="sub_step_identify_name == 'set_up_attachable_forms' || sub_step_identify_name == 'post_offer_fill_in_form'">
+            Tag Type:
+            <select ng-model="tag_type" style="width: 50%; margin-bottom: 5px">
+              <option value="">All</option>
+              <option value="R">Role</option>
+              <option value="L">Location</option>
+              <option value="P">Position</option>
+            </select>
+            <div ng-switch="tag_type">
+              <div ng-switch-when="R">
+                Role Tag:
+                <multiselect style="width: 50%; display: inline-block;" multiple="true" ng-model="selected.roles" options="role.name for role in role_list" change="s()" ></multiselect>
+              </div>
+              <div ng-switch-when="L">
+                Location Tag:
+                <multiselect style="width: 50%; display: inline-block;" multiple="true" ng-model="selected.locations" options="location.name for location in location_list" change="s()" ></multiselect>
+              </div>
+              <div ng-switch-when="P">
+                Position Tag:
+                <multiselect style="width: 50%; display: inline-block;" multiple="true" ng-model="selected.positions" options="position.name for position in position_list" change="s()" ></multiselect>
+              </div>
+            </div>
+          </div>
+        </h4>
+        <div id="wait-response-icon" style="display: none;">
+          Change to "{{current_form.display ? 'Hide' : 'Show'}}"..
+          <img src="/saas/img/wait_response.gif">
+        </div>
+
+        <div id="render-block" ng-init="add_row()"></div>
+        <h4>
+          <button id="add-row-button" class="btn btn-default" title="Add One Row" ng-click="add_row()">
+            <i class="glyphicon glyphicon-arrow-down"></i>
+            <i class="glyphicon glyphicon-arrow-down"></i>
+            <i class="glyphicon glyphicon-arrow-down"></i>
+          </button>
+        </h4>
+      </div>
+
+      <!-- There are all kind of control items. -->
+      <div class="show-clear">
+
+        <div class="drag-item">
+          <div class="cover-icon" title="Name">
+            <i class="glyphicon glyphicon-user"> Name </i>
+          </div>
+          <label class="name" rq="no">Name</label>
+          <input type="text" class="name-format"/>
+          <input type="text" class="name-format"/>
+          <input type="text" class="name-format"/>
+          <br />
+          <span class="name-format">First Name</span>
+          <span class="name-format">Middle Name</span>
+          <span class="name-format">Last Name</span>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="E-mail">
+            <i class="glyphicon glyphicon-envelope"> E-mail </i>
+          </div>
+          <label class="e-mail" rq="no">E-mail</label>
+          <input type="text" style="width: 100%;"/>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Text">
+            <i class="glyphicon glyphicon-font"> Text </i>
+          </div>
+          <label class="simple" ps="no" rq="no">Text field</label>
+          <input type="text" style="width: 100%;"/>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Textarea">
+            <i class="glyphicon glyphicon-list-alt"> Textarea </i>
+          </div>
+          <label class="text-area" ps="no" rq="no" maxlength="1000">Textarea</label>
+          <textarea style="width: 100%; min-height: 200px; resize: none;"></textarea>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Select">
+            <i class="glyphicon glyphicon-collapse-down"> Select </i>
+          </div>
+          <label class="select" rq="no">Select field</label>
+          <select>
+            <option value="option1">Select 1</option>
+            <option value="option2">Select 2</option>
+            <option value="option3">Select 3</option>
+          </select>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Multiple Select">
+            <i class="glyphicon glyphicon glyphicon-align-justify"> Multi-Select</i>
+          </div>
+          <label class="select" rq="no">Multiple select field</label>
+          <select multiple="multiple">
+            <option value="option1">Multi Select 1</option>
+            <option value="option2">Multi Select 2</option>
+            <option value="option3">Multi Select 3</option>
+          </select>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Radio">
+            <i class="glyphicon glyphicon-record"> Radio </i>
+          </div>
+          <label class="multiple" rq="no">Radio button</label>
+          <div class="normal-height" style="height: 24px;">
+            <label class="radio">
+              <input type="radio" value="option1" />
+              <span>Radio 1</span>
+            </label>
+          </div>
+          <div class="normal-height" style="height: 24px;">
+            <label class="radio">
+              <input type="radio" value="option2" />
+              <span>Radio 2</span>
+            </label>
+            <label class="radio">
+              <input type="radio" value="option3" />
+              <span>Radio 3</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Checkbox">
+            <i class="glyphicon glyphicon glyphicon-check"> Checkbox </i>
+          </div>
+          <label class="multiple" rq="no">Checkbox button</label>
+          <div class="normal-height" style="height: 24px;">
+            <label class="checkbox">
+              <input type="checkbox" value="option1" />
+              <span>Checkbox 1</span>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" value="option2" />
+              <span>Checkbox 2</span>
+            </label>
+          </div>
+          <div class="normal-height" style="height: 24px;">
+            <label class="checkbox">
+              <input type="checkbox" value="option3">
+              <span>Checkbox 3</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New Date">
+            <i class="glyphicon glyphicon-calendar"> Date </i>
+          </div>
+          <label class="date" rq="no">Date</label>
+          <input type="text" class="date-format"/>
+          <input type="text" class="date-format"/>
+          <input type="text" class="date-format" style="width: 62px"/>
+          <br />
+          <span class="date-format">MM</span>
+          <span class="date-format">DD</span>
+          <span class="date-format">YYYY</span>
+       </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="New File Upload">
+            <i class="glyphicon glyphicon-folder-open"> File </i>
+          </div>
+          <label class="file">File Upload</label>
+          <input type="file" disabled="disabled">
+        </div>
+
+        <div class="drag-item">
+          <div class="cover-icon" title="Description">
+            <i class="glyphicon glyphicon-info-sign"> Description </i>
+          </div>
+          <div class="description"><p>Description</p></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Here is the modify control pane. -->
+    <div class="modal fade" id="control-item-modify" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-header">
+              <h4>Modify this item..</h4>
+            </div>
+            <div class="modal-body">
+              <div id="form-id" class="form-group">
+                  <input type="hidden" class="form-control" id="id" />
+              </div>
+              <div id="form-label" class="form-group">
+                <label for="label" class="col-lg-2 control-label">Description:</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" id="label" />
+                </div>
+              </div>
+              <div id="form-ps" class="form-group" ng-show="sub_step_identify_name == 'set_up_system_forms'">
+                <label for="label" class="col-lg-2 control-label">PeopleSoft:</label>
+                <div class="col-lg-10" style="padding-top: 7px">
+                  <input type="checkbox" id="ps" /> It's a PeopleSoft field.
+                </div>
+              </div>
+              <div id="form-options" class="form-group">
+                <label for="options" class="col-lg-2 control-label">Options:</label>
+                <div class="col-lg-10">
+                  <textarea class="form-control" id="options" rows="7"></textarea>
+                </div>
+              </div>
+
+              <div id="form-maxlength" class="form-group">
+                <label for="maxlength" class="col-lg-2 control-label">Max length:</label>
+                <div class="col-lg-10">
+                  <input type="bumber" class="form-control" id="maxlength" />
+                </div>
+              </div>
+
+              <div id="form-rq" class="form-group">
+                <label for="label" class="col-lg-2 control-label">Required:</label>
+                <div class="col-lg-10" style="padding-top: 7px">
+                  <input type="checkbox" id="rq" />
+                </div>
+                <div class="col-lg-12" style="color: red; font-weight: bold;">* Applicants must fill in this item if this box is checked.</div>
+              </div>
+
+              <div id="form-description" class="form-group">
+                <textarea id="description" class="tinymce col-lg-12" ui-tinymce rows="20" ng-model="des1" style="height: 300px"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="modal-change" class="btn btn-primary" data-dismiss="modal">Change</button>
+              <button id="modal-delete" class="btn btn-danger" data-dismiss="modal">Delete</button>
+              <button id="modol-close" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Here is preview pop window. -->
+    <div class="modal fade" id="preview-item-modify" role="dialog">
+      <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-header">
+              <h4> Preview "<span id="get-form-name"></span>" </h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <div id="preview-block"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="modol-close" class="btn btn-default" data-dismiss="modal">Back</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<!-- Here is preview pop window. -->
+    <div class="modal fade" id="key-word-list" role="dialog">
+      <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-body">
+              <p><h5>When you fill the <span style="color: red;">red words</span> in the description of Text, also check the box ''It's a PeopleSoft field'', the system would then get the corresponding information of <span style="color: blue;">blue words</span> from the PeopleSoft data base.</h5></p>
+              <ul>
+                <li ng-repeat="form_translation in form_translations">
+                  <span style="color: red;">{{form_translation.translate_key}}</span> corresponds to <span style="color: blue;">Student Applicant's {{form_translation.description}}</span>.
+                </li>
+              </ul>
+            </div>
+            <div class="modal-footer text-center">
+              <button id="modol-close" class="btn btn-default" data-dismiss="modal">Continue to edit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

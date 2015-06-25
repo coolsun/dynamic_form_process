@@ -1,0 +1,18 @@
+<div ng-controller="SelectPositions">
+  <form class="form-horizontal" ng-submit="updateSelectPositionSettings()">
+    <div class="modal-header">
+      <h4>Select Position Settings:</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="col-lg-8 control-label">Maximum number of positions that can be selected per applicant:<br>("0" means that there is no limit.)</label>
+        <div class="col-lg-4">
+          <input type="number" ng-model="select_position_settings.select_position_limit" min="0" ng-required="true" ng-disabled="!permission_to_active">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-info pull-right" type="submit" ng-disabled="!permission_to_active">Save</button>
+    </div>
+  </form>
+</div>

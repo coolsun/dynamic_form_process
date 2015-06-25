@@ -1,0 +1,23 @@
+<div ng-controller="EmailTemplateList">
+  <form class="form-horizontal" ng-submit="updateRecommendationSetting()">
+    <div class="modal-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><h4>Email Template List</h4></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="email_template in email_templates">
+            <td>{{email_template.name}}</td>
+            <td><a class="btn btn-info btn-sm" ng-href="{{email_template.href}}" target="_blank">Edit</a></td>
+            <td><span class="glyphicon glyphicon-question-sign" ng-click="pop_out(email_template.pop_text)"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </form>
+</div>
+

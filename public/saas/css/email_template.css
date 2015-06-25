@@ -1,0 +1,77 @@
+#easy-show td {
+  padding: 10px;
+  
+  background-color: white;
+  
+  text-align: left;
+  vertical-align: top;
+}
+#easy-show .glyphicon-remove {
+  /*border: 1px transparent solid;*/
+  cursor: pointer;
+}
+#addressee-set .btn {
+  margin: 0px 2px 0px 0px;
+}
+#add_new_one {
+  height: 75px;
+}
+#mail-to-list span {
+  display: inline-block;
+  margin: 0px 2px 2px 0px;
+  padding: 2px 5px;
+  /*border: 1px white solid;*/
+  border-radius: 3px;
+  
+  color: white;
+  background-color: #555555;
+
+  cursor: default;
+}
+#mail-to-list .glyphicon-remove {
+  border: 1px solid transparent;
+} 
+#mail-to-list .glyphicon-remove:hover {
+  border: 1px solid white;
+} 
+p#empty-message {
+  display: block;
+  margin: 0px 2px 0px 0px;
+  padding: 5px;
+  
+  border: 1px #808080 dashed;
+  color: #888888;
+  cursor: default;
+}
+h5 {
+  font-weight: bold;  
+}
+.notice {
+  font-style:italic
+}
+.temp-unit {
+  display: inline-block;
+  margin: 0px 2px 2px 0px;
+  padding: 2px 5px;
+  /*border: 1px solid black;*/
+  border-radius: 3px;
+  
+  color: black;
+  background-color: #cccccc;
+}
+.temp-unit>button {
+  border: 0px;
+  background-color: transparent;
+}
+.temp-unit .glyphicon-remove {
+  border: 1px solid transparent;
+} 
+.temp-unit .glyphicon-remove:hover {
+  border: 1px solid black;
+} 
+p.hide {
+  display: none;
+}
+#loading-msg, #result-msg {
+  text-align: center;
+}

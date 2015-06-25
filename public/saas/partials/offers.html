@@ -1,0 +1,252 @@
+<div class="container" ng-controller="Offers">
+  <div class="row">
+    <div class="col-md-10" id="content">
+      <tabset>
+        <tab heading="Offer List">
+          <div class="panel tableRsasPanel">
+            <div class="panel-heading">
+              <label>
+                {{$root.current_sub_step.identify_name == 'post_offer_offer' ? 'Post Match Offer' : 'Offer' }}
+              </label>
+              <span class="pull-right">
+                Total:{{offerTable.tbl.pTotal}}
+              </span>
+            </div>
+            <div class="table-responsive">
+              <div class="panel-body">
+                <div class="toolBarRsas">
+                  <span class="pull-left tableRsasSearch">
+                    <span>
+                      <input ng-model="offerTable.tbl.searchText" type="text" class="form-control">
+                    </span>
+                    <span>
+                      <button class="btn tableRsasBtn" ng-click="offerTable.tbl.searchClick(offerTable.tbl);">Search</button>
+                    </span>
+                  </span>
+                  <span class="tableRsasFloatRight">
+                    <select class="form-control" ng-model="offerTable.tbl.perPage" ng-change="offerTable.tbl.setDataAndRequest();">
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="0">ALL</option>
+                    </select>
+                  </span>
+                </div>
+                <div style="color: red; padding: 10px; clear: both;">* Offers can still be changed until offer notification emails are sent out via "Send Offer".</div>
+                <div class="toolBarRsas" style="float: left; width: 100%; margin: 5px 0px;">
+                  <table style="width: inherit;">
+                    <tr>
+                      <td style="width: 25%;">Location:</td>
+                      <td style="width: 25%;">Role:</td>
+                      <td style="width: 70px;"></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <multiselect multiple="true" id="select_locations" ng-model="offerTable.tbl.locations" options="list.name for list in location_list" change="selected()"></multiselect>
+                      </td>
+                      <td>
+                        <multiselect multiple="true" id="select_roles" ng-model="offerTable.tbl.roles" options="list.name for list in role_list" change="selected()"></multiselect>
+                      </td>
+                      <td>
+                        <button class="btn btn-info" ng-click="offerTable.tbl.setDataAndRequest()">Filter</button>
+                        <button class="btn btn-success" ng-show="permission_to_active" ng-click="quick_send_offer_list()">Send all filter offers</button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <table class="table table-bordered table-hover tableRsas">
+                <thead>
+                  <tr>
+                    <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in offerTable.tbl.header" ng-click="offerTable.tbl.headerClick(header)">
+                      {{header[0]}}
+                      <img ng-show="header[1] && header[0]==offerTable.tbl.orderBy" ng-src="/saas/img/{{offerTable.tbl.img[offerTable.tbl.sortOrder]}}.png">
+                      <img ng-show="header[1] && header[0]!=offerTable.tbl.orderBy" ng-src="/saas/img/{{offerTable.tbl.img[2]}}.png">
+                    </th>
+                    <th ng-show="permission_to_active"><span class="glyphicon glyphicon-cog"></span></th>
+                  </tr>
+
+                </thead>
+                <tbody>
+                  <tr ng-repeat="tblTr in offerTable.tbl.show">
+                    <td>{{tblTr.name}}</td>
+                    <td>{{tblTr.vacancy}}</td>
+                    <td>{{position_applicants_status(tblTr)}}</td>
+                    <td>{{readt_to_offer_applicants.join(", ")}}</td>
+                    <td>{{offer_applicants.join(", ")}}</td>
+                    <td>{{accepted_applicants.join(", ")}}</td>
+                    <td>{{decliend_applicants.join(", ")}}</td>
+                    <td ng-show="permission_to_active">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                          <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                          <li>
+                            <a data-target="#OfferApplicants" ng-click="copy_offer_applicants()" data-toggle="modal">
+                              <button class="btn_li">Offer Applicants</button>
+                            </a>
+                          </li>
+                          <li>
+                            <a data-target="#OfferAll" ng-click="get_offer_all_list()" data-toggle="modal">
+                              <button class="btn_li">Offer All</button>
+                            </a>
+                          </li>
+                          <li>
+                            <a ng-click="email_edit()">
+                              <button class="btn_li">Send Offers</button>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pull-left tableRsasPagging">
+                <span>
+                  <pagination ng-model="offerTable.tbl.pNow" total-items="offerTable.tbl.pTotal" items-per-page="offerTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="offerTable.tbl.pageChange()"></pagination>
+                </span>
+                <span class="tableRsasPageGoToSpan">
+                  <span>
+                    <input ng-model="offerTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+                  </span>
+                  <span>
+                     <button class="btn tableRsasBtn" ng-click="offerTable.tbl.goToPage()" ng-disabled="offerTable.tbl.goPageAble">Go</button>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </tab>
+        <tab heading="Import Ready To Offer" ng-show="show_import_offer_page"  deselect="reloadTable()">
+          <div  ng-include='"/saas/partials/import_pre_offered.html"'></div>
+        </tab>
+      </tabset>
+
+      <!-- Offer Applicants -->
+      <div class="modal fade" id="OfferApplicants" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title">Offer Applicants</h4>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div>
+                  <div class="panel-body">
+                    <div style="padding-bottom: 55px;">
+                      <label class="col-lg-2 control-label" style="font-size: 25px;">Filter:</label>
+                      <span class="col-lg-9">
+                        <input class="form-control" type="text" ng-model="editing_offer.search_name">
+                      </span>
+                    </div>
+                    <div class="col-lg-10" ng-repeat="applicant in editing_offer.applicants | filter: editing_offer.search_name">
+                      <input class="largeCeckBox check_box_align_label" id="applicant_{{applicant.application_id}}" ng-model="applicant.pre_offered" ng-disabled="(checkbox_limit(editing_offer.applicants, editing_offer.vacancy) && !applicant.pre_offered) || applicant.offered == 'offered' || applicant.offered == 'post_offered'" type="checkbox">
+                      <label for="applicant_{{applicant.application_id}}" class="largeCeckBoxLabel" style="font-size: 18px; padding-left: 20px;">{{applicant.name}}</label>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-info" data-dismiss="modal" ng-click="pre_offer_applicants();">Save</button>
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Offer All -->
+      <div class="modal fade" id="OfferAll" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title">Offer All</h4>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div>
+                  <div class="panel-body">
+                    <div style="padding-bottom: 55px;">
+                      <label class="col-lg-2 control-label" style="font-size: 25px;">Filter:</label>
+                      <span class="col-lg-9">
+                        <input class="form-control" type="text" ng-model="offer_all_list.search_name">
+                      </span>
+                    </div>
+                    <div class="col-lg-10" ng-repeat="applicant in offer_all_list.applicants | filter: offer_all_list.search_name">
+                      <input class="largeCeckBox check_box_align_label" id="applicant_{{applicant.application_id}}" ng-model="applicant.pre_offered" ng-disabled="(checkbox_limit(offer_all_list.applicants, offer_all_list.vacancy) && !applicant.pre_offered) || applicant.offered == 'offered' || applicant.offered == 'post_offered'" type="checkbox">
+                      <label for="applicant_{{applicant.application_id}}" class="largeCeckBoxLabel" style="font-size: 18px; padding-left: 20px;">{{applicant.name}}</label>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-info" data-dismiss="modal" ng-click="pre_offer_all();">Save</button>
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Send Email -->
+      <div class="modal fade" id="editEmail" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <form class="modal-content" ng-submit="email_send()">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Send Email</h4>
+            </div>
+            <div class="modal-body">
+              <div class="panel-body">
+                <rsas-email></rsas-email>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-info" type="submit">Send</button>
+              <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- pre_Offer Fail List -->
+      <div class="modal fade" id="preOfferFailList" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Offer Fail</h4>
+            </div>
+            <div class="modal-body">
+              <div style="color: red;">Please cancel any offer to this applicant.</div>
+              <div ng-repeat="item in pre_offer_fail_list">
+                {{item.applicant_name}} has an offer or he/she is in the ''ready to offer'' list of {{item.position_name}}.
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $('#offers_filder').dataTable({
+      "sPaginationType" : "bootstrap_full"
+    });
+  });
+</script>
+

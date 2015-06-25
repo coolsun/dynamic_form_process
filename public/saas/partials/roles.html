@@ -1,0 +1,202 @@
+<div class="container" ng-controller="Roles">
+  <div class="col-md-9">
+    <button type="submit" class="btn btn-info" data-toggle="modal" data-target="#addRole" ng-disabled="!permission_to_active" style="margin: 10px 0px;">Add Role</button>
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <span>
+          <label>Role</label>
+        </span>
+        <span class="tableRsasFloatRight">
+          <label>Total:{{RoleTable.tbl.pTotal}}</label>
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="RoleTable.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="RoleTable.tbl.searchClick(RoleTable.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="RoleTable.tbl.perPage" ng-change="RoleTable.tbl.setDataAndRequest();">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0">ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in RoleTable.tbl.header" ng-click="RoleTable.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==RoleTable.tbl.orderBy" ng-src="/saas/img/{{RoleTable.tbl.img[RoleTable.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=RoleTable.tbl.orderBy" ng-src="/saas/img/{{RoleTable.tbl.img[2]}}.png">
+              </th>
+              <th><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in RoleTable.tbl.show">
+              <td>{{tblTr.name}}</td>
+              <td>{{tblTr.tag}}</td>
+              <td>{{tblTr.description}}</td>
+              <td><div ng-repeat='role_mgr in tblTr.role_mgrs'>{{combineUserName(role_mgr.user)}}<span ng-hide="$last">,</span></div></td>
+              <th>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editRole" ng-click="editRole()" data-toggle="modal">Edit</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editRoleMgrs" ng-click="editRoleMgrs()" data-toggle="modal">Edit Role Managers</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="$root.defaultConfirm('Delete Role', 'Are you sure to delete this Role?', deleteRole, [$index, this.tblTr.id])">
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pull-left tableRsasPagging">
+          <span>
+            <pagination ng-model="RoleTable.tbl.pNow" total-items="RoleTable.tbl.pTotal" items-per-page="RoleTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="RoleTable.tbl.pageChange()"></pagination>
+          </span>
+          <span class="tableRsasPageGoToSpan">
+            <span>
+              <input ng-model="RoleTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+            </span>
+            <span>
+               <button class="btn tableRsasBtn" ng-click="RoleTable.tbl.goToPage()" ng-disabled="RoleTable.tbl.goPageAble">Go</button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add Role-->
+  <div class="modal fade" id="addRole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="insertRole()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Add Role</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">*Name:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_role.name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Tag:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_role.tag">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Description:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_role.description">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info navbar-right">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Role-->
+  <div class="modal fade" id="editRole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="updateRole()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Role</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">*Name:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_role.name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Tag:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_role.tag">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Description:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_role.description">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Role Mgrs-->
+  <div class="modal fade" id="editRoleMgrs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="form-horizontal modal-content" ng-submit="updateRoleMgrs()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Role Managers</h4>
+        </div>
+        <div class="modal-body">
+           <div class="form-group">
+            <label class="col-lg-2 control-label">Filter:</label>
+            <span class="col-lg-9">
+              <input class="form-control" type="text" ng-model="edit_role_mgr_search.name">
+            </span>
+          </div>
+          <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="edit_role_mgr in edit_role_mgrs | filter:edit_role_mgr_search">
+            <span class="col-lg-2 control-label">
+              <input ng-model="edit_role_mgr.is_select" type="checkbox" id="edit_role_mgr_{{$index}}" class="largeCeckBox" ng-change="checkRoleMgrs(edit_role_mgr)">
+            </span>
+            <p class="col-lg-10">
+              <label for="edit_role_mgr_{{$index}}" class="control-label">{{edit_role_mgr.name}}</label>
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

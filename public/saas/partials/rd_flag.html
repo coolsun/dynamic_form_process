@@ -1,0 +1,119 @@
+<div ng-controller="rdFlag">
+  <h3>Set the RD flag each applicant in this process.</h3>
+  <!-- Tips and informations -->
+  <p><i>Click the color button to set. </i></p>
+  <!-- Page list up, the same one down -->
+  <p class="text-center">
+    <a class="btn btn-default" href="{{current_path + '?page=' + 1}}">First</a>
+    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page - 1) <= 0 ? 1 : (current_page - 1))}}">Previous</a>
+    <a ng-repeat="page_num in page_num_list"
+       ng-hide="page_num < current_page - 4 || page_num > current_page + 4"
+       class="btn btn-default"
+       ng-class="{'btn-dark-red': current_page == page_num}"
+       href="{{current_path + '?page=' + page_num}}">{{page_num}}</a>
+    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page + 1) > page_num_list[page_num_list.length - 1] ? page_num_list[page_num_list.length - 1] : (current_page + 1))}}">Next</a>
+    <a class="btn btn-default" href="{{current_path + '?page=' + page_num_list[page_num_list.length - 1]}}">Last</a>
+    <input type="text" min="1" max="{{page_num_list[page_num_list.length - 1]}}" class="form-control" ng-model="switch_page" style="display: inline; padding-left: 7px; width: 40px; height: 34px; vertical-align: middle;">
+    <a class="btn btn-default btn-dark-red" ng-href="{{current_path + '?page=' + switch_page}}">Go</a>
+  </p>
+  <!-- Applicant list -->
+  <div ng-repeat="applicant_data in applicant_list" ng-init="applicant_data.wait_ajax = false" ng-hide="applicant_data.user.rd_records.length == 0" class="well">
+    <!-- Each applicant's name and rd flag color show -->
+    <h4>
+      {{applicant_data.user.name}}
+      <span ng-switch="applicant_data.rd_flag_color">
+        <!--Name : {{applicant_data.user.name}} | RD flag color :--> 
+        <button class="rd-flag-button-sm green-bgcolor" title="RD Flag: Green" ng-switch-when="green"></button>
+        <button class="rd-flag-button-sm yellow-bgcolor" title="RD Flag: Yellow" ng-switch-when="yellow"></button>
+        <button class="rd-flag-button-sm red-bgcolor" title="RD Flag: Red" ng-switch-when="red"></button>
+        <button class="rd-flag-button-sm" ng-switch-default></button>
+      </span>
+    </h4>
+    <!-- List the applicant illegal record -->
+    <ul>
+      <li ng-repeat="guilty_case in applicant_data.user.rd_records">
+        <a href="https://saisapp99.stanford.edu/caseapp/showNote.action?noteId={{guilty_case.case_id}}" target="_blank"><b>No. {{guilty_case.case_id}}</b></a>: 
+        <b ng-hide="applicant_data.user.suid == guilty_case.primary_student_id">Involved</b>
+        <b ng-hide="applicant_data.user.suid != guilty_case.primary_student_id">Primary</b> in 
+        <b>{{guilty_case.case_type}}</b> on 
+        <i>{{guilty_case.created_date}}</i>
+        <div ng-hide="applicant_data.user.suid == guilty_case.primary_student_id">
+          Primary : <button class="btn btn-default btn-xs" href="#flag-others" data-toggle="modal" ng-click="showInvolvedStudent(guilty_case.primary_student_id, guilty_case.primary_student_name)">{{remove_dot(guilty_case.primary_student_name)}}</button>
+        </div>
+        <div ng-hide="guilty_case.involvedStudentArray.length == 0">
+          Involved : 
+          <span ng-repeat="involved_student in guilty_case.involvedStudentArray">
+            <button class="btn btn-default btn-xs" href="#flag-others" data-toggle="modal" ng-click="showInvolvedStudent(involved_student.suid, involved_student.name)">{{involved_student.name}}</button>
+          </span>
+        </div>
+      </li>
+    </ul>
+    <!-- The button colors set -->
+    <p>
+      Click to set RD flag: 
+      <button class="rd-flag-button green-bgcolor" ng-click="changeRdFlagConfirm(applicant_data, 'green')"></button>
+      <button class="rd-flag-button yellow-bgcolor" ng-click="changeRdFlagConfirm(applicant_data, 'yellow')"></button>
+      <button class="rd-flag-button red-bgcolor" ng-click="changeRdFlagConfirm(applicant_data, 'red')"></button>
+      <img src="/saas/img/wait_response.gif" ng-show="applicant_data.wait_ajax" />
+    </p>
+  </div>
+  <!-- Page list down, the same one up -->
+  <p class="text-center">
+    <a class="btn btn-default" href="{{current_path + '?page=' + 1}}">First</a>
+    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page - 1) <= 0 ? 1 : (current_page - 1))}}">Previous</a>
+    <a ng-repeat="page_num in page_num_list"
+       ng-hide="page_num < current_page - 4 || page_num > current_page + 4"
+       class="btn btn-default"
+       ng-class="{'btn-dark-red': current_page == page_num}"
+       href="{{current_path + '?page=' + page_num}}">{{page_num}}</a>
+    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page + 1) > page_num_list[page_num_list.length - 1] ? page_num_list[page_num_list.length - 1] : (current_page + 1))}}">Next</a>
+    <a class="btn btn-default" href="{{current_path + '?page=' + page_num_list[page_num_list.length - 1]}}">Last</a>
+    <input type="text" min="1" max="{{page_num_list[page_num_list.length - 1]}}" class="form-control" ng-model="switch_page" style="display: inline; padding-left: 7px; width: 40px; height: 34px; vertical-align: middle;">
+    <a class="btn btn-default btn-dark-red" ng-href="{{current_path + '?page=' + switch_page}}">Go</a>
+  </p>
+  <!-- The pop window to set the rd flag of involved student -->
+  <div class="modal fade" id="flag-others" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          Change the RD flag of the involved student "{{other_applicant_name}}"
+        </div>
+        <div class="modal-body" ng-show="!get_other_applicant_success">
+          {{get_other_applicant_msg}}
+        </div>
+        <div class="modal-body" ng-show="get_other_applicant_success">
+          <h4>
+            {{other_applicant_name}}
+            <span ng-switch="other_applicant.rd_flag_color">
+              <!--Name : {{applicant_data.user.name}} | RD flag color :--> 
+              <button class="rd-flag-button-sm green-bgcolor" ng-switch-when="green"></button>
+              <button class="rd-flag-button-sm yellow-bgcolor" ng-switch-when="yellow"></button>
+              <button class="rd-flag-button-sm red-bgcolor" ng-switch-when="red"></button>
+              <button class="rd-flag-button-sm" ng-switch-default></button>
+            </span>
+          </h4>
+          <ul>
+            <li ng-repeat="guilty_case in other_applicant_ill_rec">
+              <a href="https://saisapp99.stanford.edu/caseapp/showNote.action?noteId={{guilty_case.caseId}}" target="_blank"><b>No. {{guilty_case.caseId}}</b></a>: 
+              <b ng-hide="applicant_data.user.suid == guilty_case.primaryStudentId">Involved</b>
+              <b ng-hide="applicant_data.user.suid != guilty_case.primaryStudentId">Primary</b> in 
+              <b>{{guilty_case.caseType}}</b> on 
+              <i>{{guilty_case.createdDate}}</i>
+            </li>
+          </ul>
+          <p>
+            Click to set RD flag: 
+            <button class="rd-flag-button green-bgcolor" ng-click="changeRdFlagConfirm(other_applicant, 'green')"></button>
+            <button class="rd-flag-button yellow-bgcolor" ng-click="changeRdFlagConfirm(other_applicant, 'yellow')"></button>
+            <button class="rd-flag-button red-bgcolor" ng-click="changeRdFlagConfirm(other_applicant, 'red')"></button>
+            <img src="/saas/img/wait_response.gif" ng-show="other_applicant.wait_ajax" />
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" data-dismiss="modal">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

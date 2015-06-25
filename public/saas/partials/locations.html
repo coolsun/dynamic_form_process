@@ -1,0 +1,203 @@
+<div class="container" ng-controller="Locations">
+  <div class="col-md-9">
+    <button type="submit" class="btn btn-info" data-toggle="modal" data-target="#addLocation" ng-disabled="!permission_to_active" style="margin: 10px 0px;">Add Location</button>
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <span>
+          <label>Location</label>
+        </span>
+        <span class="tableRsasFloatRight">
+          <label>Total:{{locationTable.tbl.pTotal}}</label>
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="locationTable.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="locationTable.tbl.searchClick(locationTable.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="locationTable.tbl.perPage" ng-change="locationTable.tbl.setDataAndRequest();">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0">ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in locationTable.tbl.header" ng-click="locationTable.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==locationTable.tbl.orderBy" ng-src="/saas/img/{{locationTable.tbl.img[locationTable.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=locationTable.tbl.orderBy" ng-src="/saas/img/{{locationTable.tbl.img[2]}}.png">
+              </th>
+              <th><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in locationTable.tbl.show">
+              <td>{{tblTr.name}}</td>
+              <td>{{tblTr.tag}}</td>
+              <td>{{tblTr.description}}</td>
+              <td><div ng-repeat='location_mgr in tblTr.location_mgrs'>{{combineUserName(location_mgr.user)}}<span ng-hide="$last">,</span></div></td>
+              <th>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editLocation" ng-click="editLocation()" data-toggle="modal">Edit</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editLocationMgrs" ng-click="editLocationMgrs()" data-toggle="modal">Edit Location Managers</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="$root.defaultConfirm('Delete Location', 'Are you sure to delete this Location?', deleteLocation, [$index, this.tblTr.id])">
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pull-left tableRsasPagging">
+          <span>
+            <pagination ng-model="locationTable.tbl.pNow" total-items="locationTable.tbl.pTotal" items-per-page="locationTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="locationTable.tbl.pageChange()"></pagination>
+          </span>
+          <span class="tableRsasPageGoToSpan">
+            <span>
+              <input ng-model="locationTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+            </span>
+            <span>
+               <button class="btn tableRsasBtn" ng-click="locationTable.tbl.goToPage()" ng-disabled="locationTable.tbl.goPageAble">Go</button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add Location-->
+  <div class="modal fade" id="addLocation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="insertLocation()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Add Location</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">*Name:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_location.name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Tag:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_location.tag">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Description:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_location.description">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Location-->
+  <div class="modal fade" id="editLocation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="updateLocation()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Location</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">*Name:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_location.name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Tag:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_location.tag">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Description:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_location.description">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Location Mgrs-->
+  <div class="modal fade" id="editLocationMgrs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="form-horizontal modal-content" ng-submit="updateLocationMgrs()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Location Managers</h4>
+        </div>
+        <div class="modal-body">
+           <div class="form-group">
+            <label class="col-lg-2 control-label">Filter:</label>
+            <span class="col-lg-9">
+              <input class="form-control" type="text" ng-model="edit_location_mgr_search.name">
+            </span>
+          </div>
+          <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="edit_location_mgr in edit_location_mgrs | filter:edit_location_mgr_search">
+            <span class="col-lg-2 control-label">
+              <input ng-model="edit_location_mgr.is_select" type="checkbox" id="edit_location_mgr_{{$index}}" class="largeCeckBox" ng-change="checkLocationMgrs(edit_location_mgr)">
+            </span>
+            <p class="col-lg-10">
+              <label for="edit_location_mgr_{{$index}}" class="control-label">{{edit_location_mgr.name}}</label>
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

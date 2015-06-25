@@ -1,0 +1,14 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row @title_row, style: title_style
+
+  @applicant_datas.each do |applicant_data|
+    sheet.add_row applicant_data, :types => @data_types
+  end
+end
+

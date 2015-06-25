@@ -1,0 +1,45 @@
+<div ng-controller="SystemMessages">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      System Message
+    </div>
+    <div class="panel-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Edit</th>
+            <th>View</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="system_message in system_messages | orderBy:'name'">
+            <td>{{system_message.name}}</td>
+            <td><div class="pt glyphicon glyphicon-pencil" ng-click="editSystemMessage(system_message)"></div></td>
+            <td><div class="pt glyphicon glyphicon-eye-open" ng-click="$root.systemMessage(system_message.message)"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editSystemMessage" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form class="modal-content"  ng-submit="updateSystemMessage(editing_system_message)">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title">{{editing_system_message.name}}</h4>
+        </div>
+        <div class="modal-body">
+          <textarea class="tinymce" ui-tinymce rows="10" ng-model="edit_message[editing_system_message.id]"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Update</button>
+          <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

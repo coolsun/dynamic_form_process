@@ -1,0 +1,13 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true)
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row @titles, style: title_style
+
+  @user_record.each do |user|
+    sheet.add_row user, :types => @data_types
+  end
+end

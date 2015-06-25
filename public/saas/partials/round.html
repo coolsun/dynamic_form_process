@@ -1,0 +1,495 @@
+<!-- target: admin procedure function -->
+<div ng-controller="roundCtrl">
+  <div class="col-md-12" ng-show="permission_to_active">
+    <div class="well well-lg">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <h4 class="col-lg-12">Create:</h4>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-2 control-label pull-left text-align-left">Title:</label>
+          <span class="col-lg-10">
+            <input class="form-control" ng-class="round.create.noTitleCss" type="text" ng-model="round.create.title" ng-change="round.create.titleOnChange();">
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="roundCreateStartTimePicker" class="col-lg-2 control-label pull-left text-align-left">Start Time:</label>
+          <span class="col-lg-10">
+            <input type="text" class="form-control" ng-class="round.create.noTimeStartCss" name="roundCreateStartTimePicker" id="roundCreateStartTimePicker" ng-model="round.create.timepicker.start" ng-change="round.create.timeStartOnChange();">
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="roundCreateEndTimePicker" class="col-lg-2 control-label pull-left text-align-left">End Time:</label>
+          <span class="col-lg-10">
+            <input type="text" class="form-control" ng-class="round.create.noTimeEndCss" name="roundCreateEndTimePicker" id="roundCreateEndTimePicker" ng-model="round.create.timepicker.end" ng-change="round.create.timeEndOnChange();">
+          </span>
+        </div>
+        <div class="form-group">
+          <label class="col-lg-2 control-label pull-left text-align-left">Location:</label>
+          <span class="col-lg-10">
+            <multi-select
+                input-model="round.create.selectLocationList"
+                output-model="round.create.selectedLocations"
+                button-label="icon name none"
+                item-label="icon name maker none"
+                tick-property="ticked"
+                selection-mode="multiple"
+                max-labels="2"
+                default-label="Please select one"
+                directive-id ="roundCreateSelectLocations"
+            >
+            </multi-select>
+          </span>
+        </div>
+        <div class="form-group">
+          <label class="col-lg-2 control-label pull-left text-align-left">Role:</label>
+          <span class="col-lg-10">
+            <multi-select
+                input-model="round.create.selectRoleList"
+                output-model="round.create.selectedRoles"
+                button-label="icon name none"
+                item-label="icon name maker none"
+                tick-property="ticked"
+                selection-mode="multiple"
+                max-labels="2"
+                default-label="Please select one"
+                directive-id ="roundCreateSelectRoles"
+            >
+            </multi-select>
+
+          </span>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-6">
+            <button class="btn tableRsasBtn" ng-click="round.create.send();" ng-disabled="!permission_to_active">Create</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <span>
+          <label>Round</label>
+        </span>
+        <span class="tableRsasFloatRight">
+          <label>Total:{{round.tbl.pTotal}}</label>
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="round.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="round.tbl.searchClick(round.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="round.tbl.perPage" ng-change="round.tbl.setDataAndRequest();">
+                <option value=25>25</option>
+                <option value=50>50</option>
+                <option value=100>100</option>
+                <option value=0>ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in round.tbl.header" ng-click="round.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==round.tbl.orderBy" ng-src="/saas/img/{{round.tbl.img[round.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=round.tbl.orderBy" ng-src="/saas/img/{{round.tbl.img[2]}}.png">
+              </th>
+              <th ng-show="permission_to_active"><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in round.tbl.show">
+              <td>{{tblTr.title}} <div ng-if="!tblTr.erasable">(in Post Match)</div></td>
+              <td>{{tblTr.t_start | dateFormatUTC2ZoneSub8}}<br />{{tblTr.t_start | timeFormatUTC2ZoneSub8}}</td>
+              <td>{{tblTr.t_end | dateFormatUTC2ZoneSub8}}<br />{{tblTr.t_end | timeFormatUTC2ZoneSub8}}</td>
+              <td ng-init="round.locationShow[$index]=false; round.locationShowHideNum=3;">
+                <div ng-repeat="location in tblTr.locations">
+                  <p ng-show="round.locationShowHideNum > $index || (round.locationShow[$parent.$index] && round.locationShowHideNum <= $index)">
+                    {{location.name}}
+                  </p>
+                </div>
+                <div ng-show="round.locationShowHideNum < tblTr.locations.length">
+                  <a href='' ng-show="!round.locationShow[$index]" ng-click="round.locationShow[$index] = !round.locationShow[$index]"><b>More ...</b></a>
+                  <a href='' ng-show="round.locationShow[$index]" ng-click="round.locationShow[$index] = !round.locationShow[$index]"><b>Less ...</b></a>
+                </div>
+              </td>
+              <td ng-init="round.roleShow[$index]=false; round.roleShowHideNum=3;">
+                <div ng-repeat="role in tblTr.roles">
+                  <p ng-show="round.roleShowHideNum > $index || (round.roleShow[$parent.$index] && round.roleShowHideNum <= $index)">
+                    {{role.name}}
+                  </p>
+                </div>
+                <div ng-show="round.roleShowHideNum < tblTr.roles.length">
+                  <a href='' ng-show="!round.roleShow[$index]" ng-click="round.roleShow[$index] = !round.roleShow[$index]"><b>More ...</b></a>
+                  <a href='' ng-show="round.roleShow[$index]" ng-click="round.roleShow[$index] = !round.roleShow[$index]"><b>Less ...</b></a>
+                </div>
+              </td>
+              <td ng-show="permission_to_active">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                      <a ng-click="round.tbl.dropdownClick.edit(tblTr);">
+                        <button class="btn_li">Edit</button>
+                      </a>
+                    </li>
+                    <li ng-show="tblTr.erasable">
+                      <a ng-click="round.tbl.dropdownClick.remove(tblTr);">
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pull-left tableRsasPagging">
+        <span>
+          <pagination ng-model="round.tbl.pNow" total-items="round.tbl.pTotal" items-per-page="round.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="round.tbl.pageChange()"></pagination>
+        </span>
+        <span class="tableRsasPageGoToSpan">
+          <span>
+            <input ng-model="round.tbl.goPage" type="text" class="form-control" maxlength="4">
+          </span>
+          <span>
+             <button class="btn tableRsasBtn" ng-click="round.tbl.goToPage()" ng-disabled="round.tbl.goPageAble">Go</button>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- alert admin delete round -->
+  <div class="modal fade" id="roundDeleteRoundForm">
+    <div class="modal-dialog">
+      <!-- Delete Round: check -->
+      <div ng-show="100==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Delete Round</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-lg-2 control-label"></label>
+              <span class="col-lg-10">
+                <h4>Are you sure to <b>Delete</b> this round?</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-2"><h4>Title:</h4></label>
+              <span class="col-lg-10">
+                <h4>{{round.remove.round.title}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-2"><h4>time:</h4></label>
+              <span class="col-lg-10">
+                <h4>{{round.remove.round.t_start | date: 'yyyy-MMM-dd HH:mm'}} ~ {{round.remove.round.t_end | date: 'yyyy-MMM-dd HH:mm'}}</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-dismiss="modal">
+              NO
+            </button>
+            <button class="btn btn-danger"  ng-click="round.nextFlow(100, 110)">
+              Sure
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Delete Round: delete success -->
+      <div ng-show="120==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Delete Round - Server Message</h4>
+            <h4>{{dt | date:'yyyy-MMM-dd'}}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-lg-2 control-label"></label>
+              <span class="col-lg-10">
+                <h2>Delete Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Delete Round: delete fail -->
+      <div ng-show="130==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Delete Round - Server Message</h4>
+            <h4>{{dt | date:'yyyy-MMM-dd'}}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <span class="col-lg-12">
+                <h3>Failed to delete this round.</h3>
+                <h3>Please check the interview list. Maybe some interviews are under this round.</h3>
+                <h3>After you delete all these interviews, you may try to delete this round again.</h3>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- edit round -->
+  <div class="modal fade" id="roundEditRoundForm">
+    <div class="modal-dialog">
+      <!-- Edit Interview: set setting -->
+      <div ng-show="200==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+              <h4>Edit
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label pull-left text-align-left">Title:</label>
+              <span ng-show="round.edit.round.erasable" class="col-md-10">
+                <input class="form-control" type="text" ng-model="round.edit.round.title" ng-class="round.edit.noTitleCss" ng-change="round.edit.titleOnChange();">
+              </span>
+              <label ng-hide="round.edit.round.erasable" class="col-md-10 control-label" style="text-align: left;">{{round.edit.round.title}}</label>
+            </div>
+            <div class="form-group" ng-class="round.edit.noTimeStartCss">
+              <label for="roundEditStartTimePicker" class="col-md-2 control-label pull-left text-align-left">Start Time:</label>
+              <span class="col-md-10">
+                <input type="text" class="form-control" name="roundEditStartTimePicker" id="roundEditStartTimePicker" ng-model="round.edit.timepicker.t_start" >
+              </span>
+            </div>
+            <div class="form-group" ng-class="round.edit.noTimeEndCss">
+              <label for="roundEditEndTimePicker" class="col-md-2 control-label pull-left text-align-left">End Time:</label>
+              <span class="col-md-10">
+                <input type="text" class="form-control" name="roundEditEndTimePicker" id="roundEditEndTimePicker" ng-model="round.edit.timepicker.t_end">
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-2 control-label pull-left text-align-left">Location:</label>
+              <span class="col-lg-10">
+                <multi-select
+                  input-model="round.edit.selectLocationList"
+                  output-model="round.edit.selectedLocations"
+                  button-label="icon name none"
+                  item-label="icon name maker none"
+                  tick-property="ticked"
+                  selection-mode="multiple"
+                  max-labels="2"
+                  default-label="Please select one"
+                  directive-id ="roundEditSelectLocations"
+                >
+                </multi-select>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-2 control-label pull-left text-align-left">Role:</label>
+              <span class="col-lg-10">
+                <multi-select
+                  input-model="round.edit.selectRoleList"
+                  output-model="round.edit.selectedRoles"
+                  button-label="icon name none"
+                  item-label="icon name maker none"
+                  tick-property="ticked"
+                  selection-mode="multiple"
+                  max-labels="2"
+                  default-label="Please select one"
+                  directive-id ="roundEditSelectRoles"
+                >
+                </multi-select>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="round.nextFlow(200,210);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- fail -->
+      <div ng-show="270==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>New round time is not during the step time.</h2>
+                <h2>Please Check and Edit again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- success -->
+      <div ng-show="280==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- fail -->
+      <div ng-show="290==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>Please Check and Edit again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Create -->
+  <div class="modal fade" id="roundCreateRoundForm">
+    <div class="modal-dialog">
+      <!-- fail -->
+      <div ng-show="350==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>New round time is not during the interview step time.</h2>
+                <h2>Please Check and Create again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- success -->
+      <div ng-show="380==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- fail -->
+      <div ng-show="390==round.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>Please Check and Edit again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

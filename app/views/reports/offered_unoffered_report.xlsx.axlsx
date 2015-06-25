@@ -1,0 +1,30 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row [
+    "Full Name",
+    "Preferred Name",
+    "SUNet ID",
+    "SUID",
+    "offer status",
+    "Offered Position"
+  ], style: title_style
+
+  @applicants.each do |applicant|
+    next if !applicant.submit_and_not_disqualify
+    user = applicant.user
+    sheet.add_row [
+      user.name,
+      applicant.preferred_name,
+      user.sunet_id,
+      user.suid,
+      applicant.offer_status,
+      applicant.offered_position.try(:name)
+    ], :types => [nil, nil, nil, :string] #for SUID not to number
+  end
+end
+

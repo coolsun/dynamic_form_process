@@ -1,0 +1,468 @@
+<div class="container" ng-controller="AdminApplicationForm">
+  <div class="row">
+    <div class="col-md-10" id="content">
+      <div class="col-lg-12">
+        <!-- Show Form -->
+        <div class="modal fade" id="showForm" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-show="form">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">{{form.form_name}}</h4>
+              </div>
+              <div class="modal-body">
+                <rsas-form-show></rsas-form-show>
+              </div>
+              <div class="modal-footer">
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Show Transcript -->
+        <div class="modal fade" id="showTranscript" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-show="form">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-body">
+                <rsas-transcripts></rsas-transcripts>
+              </div>
+              <div class="modal-footer">
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Select FormTypes -->
+        <div class="modal fade" id="selectFormTypes" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Select View/Download Form Types</h4>
+              </div>
+              <div class="modal-body">
+                <div class="panel-body">
+                  <div ng-repeat="option in formTypes">
+                    <input class="largeCeckBox check_box_align_label" id="form_type_{{$index}}" type="checkbox" checklist-model="selectFormTypes" checklist-value="option.value">
+                    <label for="form_type_{{$index}}" class="largeCeckBoxLabel" style="font-size: 18px; padding-left: 20px;">{{option.name}}</label>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <a><button class="btn btn-info" ng-click="previewSelectTypesForms()" data-dismiss="modal">Search</button></a>
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Applicant Form Filter -->
+        <div class="modal fade" id="formFilter" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Applicant Form Filter</h4>
+              </div>
+              <div class="modal-body">
+                <div class="panel-body">
+                  <select ng-model="applicant_form_filter">
+                    <option ng-value="type_name" ng-repeat="(type_name, form_names) in forms_and_questions">{{type_name}}</option>
+                  </select>
+                  <select ng-model="applicant_form_name_filter">
+                    <option ng-value="form_name"  ng-repeat="(form_name, questions) in forms_and_questions[applicant_form_filter] track by $index">{{form_name}}</option>
+                  </select>
+                  <select ng-model="applicant_form_question_filter" style="width: 100%; margin-top: 10px;">
+                    <option ng-value="question" ng-repeat="question in forms_and_questions[applicant_form_filter][applicant_form_name_filter] track by $index">{{question}}</option>
+                  </select>
+                  <div ng-show="applicant_form_question_filter" style="padding-top: 10px;">
+                    <select ng-model="form_question_attribute" ng-options="question_attribute for question_attribute in form_question_attributes">
+                      <option value=""></option>
+                    </select>
+                    <input type="text" ng-model="form_question_attribute_value">
+                    <button class="btn btn-success" ng-click="addQuestionFilter()" ng-disabled="(!form_question_attribute || !form_question_attribute_value) && (form_question_attribute != 'is null') && (form_question_attribute != 'not null')">Add</button>
+                    <hr>
+                    <div ng-repeat="form_question_filter in form_question_filters">
+                          {{form_question_filter.form_type}}.{{form_question_filter.form_name}} - {{form_question_filter.question}} {{form_question_filter.question_attribute}} {{form_question_filter.question_attribute_value}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <a class="btn btn-info" data-dismiss="modal">Done</a>
+                <button class="btn btn-default" ng-click="clearFormFilter()">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Forms To Print -->
+        <div class="modal fade" id="formsWaitedPrint" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header" style="text-align: right;">
+                <form method="post" action="/download_pdfs/pdf_form" style="display: inline">
+                  <input type="hidden" name="selected_forms" value="{{every_applicant_and_its_form_ids}}">
+                  <input class="btn btn-info" type="submit" value="Download">
+                </form>
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
+              </div>
+              <div class="modal-body" id="htmlStringToPrint">
+                <div ng-repeat="applicant_and_its_forms in every_applicant_and_its_forms" style="padding: 10px; margin-bottom: 10px">
+                  <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: break-all;">{{applicant_and_its_forms.applicant_name}}</h1>
+                  <div ng-repeat="form in applicant_and_its_forms.all_forms_about_applicant">
+                    <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow">{{form.form_name}}</h4>
+                    <rsas-form-show></rsas-form-show>
+                  </div>
+                  <div ng-if="is_staff && applicant_and_its_forms.transcripts.length > 0" >
+                    <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow">Transcripts</h4>
+                    <br />
+                    <div ng-init="grades = applicant_and_its_forms.transcripts">
+                      <rsas-transcripts></rsas-transcripts>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <form method="post" action="/download_pdfs/pdf_form" style="display: inline">
+                  <input type="hidden" name="selected_forms" value="{{every_applicant_and_its_form_ids}}">
+                  <input class="btn btn-info" type="submit" value="Download">
+                </form>
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Send Email-->
+        <div class="modal fade" id="editEmail" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <form class="modal-content" ng-submit="email.send()">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Send Email</h4>
+              </div>
+              <div class="modal-body">
+                <div class="panel-body">
+                  <rsas-email></rsas-email>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-info" type="submit">Send</button>
+                <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Show Edit Position -->
+        <div class="modal fade" id="showEditPosition" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Edit Position</h4>
+              </div>
+              <div class="modal-body">
+                <div class="panel-body">
+                  <div style="padding-bottom: 55px;">
+                    <label class="col-lg-2 control-label" style="font-size: 25px;">Filter:</label>
+                    <span class="col-lg-9">
+                      <input class="form-control" type="text" ng-model="add_positions.search_name">
+                    </span>
+                  </div>
+                  <div class="col-lg-10" ng-repeat="position in add_positions.positions | filter: add_positions.search_name">
+                    <input class="largeCeckBox check_box_align_label" id="position_{{$index}}" ng-model="position.is_select" ng-change="checkPositionsSelect(position)" type="checkbox">
+                    <label for="position_{{$index}}" class="largeCeckBoxLabel" style="font-size: 18px; padding-left: 20px;">{{position.name}}</label>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <a><button class="btn btn-info" ng-click="manualUpdatePositions(add_positions.applicant)" data-dismiss="modal">Submit</button></a>
+                <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Main -->
+        <tabset>
+          <tab heading="Applicant List">
+            <div class="panel tableRsasPanel">
+              <div class="panel-heading">
+                <label>
+                  Applicants
+                </label>
+                <span class="pull-right">
+                  Total:{{applicationFormTable.tbl.pTotal}}
+                </span>
+              </div>
+              <div class="table-responsive">
+                <div class="panel-body">
+                  <div class="toolBarRsas">
+                    <span class="pull-left tableRsasSearch">
+                      <span>
+                        <input ng-model="applicationFormTable.tbl.searchText" type="text" class="form-control">
+                      </span>
+                      <span>
+                        <button class="btn tableRsasBtn" ng-click="applicationFormTable.tbl.searchClick(applicationFormTable.tbl);">Search</button>
+                      </span>
+                    </span>
+                    <span class="tableRsasFloatRight">
+                      <select class="form-control" ng-model="applicationFormTable.tbl.perPage" ng-change="applicationFormTable.tbl.setDataAndRequest();">
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="0">ALL</option>
+                      </select>
+                    </span>
+                  </div>
+                  <div style="float: left; width: 100%; margin: 5px 0px;">
+                    <button class="btn btn-info" href="#editEmail" ng-click="email.editAll()" data-toggle="modal">Email All Applicants</button>
+                    <button class="btn btn-info" data-target="#selectFormTypes" data-toggle="modal">View/Download Forms for Filter Applicants</button>
+                    <button class="btn btn-info" ng-click="downloadUploadFiles()">Download All Uploaded Files</button>
+
+                    <form method="post" action="/applicants/download_answer_xls_file.xlsx" ng-if="is_staff" ng-submit="produce_applicant_id_arr()" style="display: inline-block;">
+                      <input type="hidden" name="current_process_id" value="{{$root.current_process.id}}">
+                      <input type="hidden" name="form_question_filters" value="{{form_question_filters}}">
+                      <input type="hidden" name="status" value="{{applicationFormTable.tbl.status}}">
+                      <input type="hidden" name="locations" value="{{applicationFormTable.tbl.locations}}">
+                      <input type="hidden" name="roles" value="{{applicationFormTable.tbl.roles}}">
+                      <input type="hidden" name="interviews" value="{{applicationFormTable.tbl.interviews}}">
+                      <input type="hidden" name="searchText" value="{{applicationFormTable.tbl.searchText}}">
+                      <input type="hidden" name="sub_step" value="{{$root.current_sub_step.identify_name}}">
+                      <button class="btn btn-info"  ng-disabled="form_question_filters.length == 0">Download Filter Report</button>
+                    </form>
+
+                    <button class="btn btn-success" href="#formFilter" data-toggle="modal">Form Filter</button>
+                  </div>
+                  <div class="toolBarRsas" style="float: left; width: 100%; margin: 5px 0px;">
+                    <table style="width: inherit;">
+                      <tr>
+                        <td style="width: 25%;">Status:</td>
+                        <td style="width: 25%;">Interview (Selected):</td>
+                        <td style="width: 25%;">Location:</td>
+                        <td style="width: 25%;">Role:</td>
+                        <td style="width: 70px;"></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <multiselect id="select_status" ng-model="applicationFormTable.tbl.status" options="list for list in status_list" change="selected()"></multiselect>
+                        </td>
+                        <td>
+                          <multiselect multiple="true" id="select_interviews" ng-model="applicationFormTable.tbl.interviews" options="list.title for list in interview_list" change="selected()"></multiselect>
+                        </td>
+                        <td>
+                          <multiselect multiple="true" id="select_locations" ng-model="applicationFormTable.tbl.locations" options="list.name for list in location_list" change="selected()"></multiselect>
+                        </td>
+                        <td>
+                          <multiselect multiple="true" id="select_roles" ng-model="applicationFormTable.tbl.roles" options="list.name for list in role_list" change="selected()"></multiselect>
+                        </td>
+                        <td><button class="btn btn-info" ng-click="applicationFormTable.tbl.setDataAndRequest()">Filter</button></td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <table class="table table-bordered table-hover tableRsas">
+                  <thead>
+                    <tr>
+                      <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in applicationFormTable.tbl.header" ng-click="applicationFormTable.tbl.headerClick(header)">
+                        {{header[0]}}
+                        <img ng-show="header[1] && header[0]==applicationFormTable.tbl.orderBy" ng-src="/saas/img/{{applicationFormTable.tbl.img[applicationFormTable.tbl.sortOrder]}}.png">
+                        <img ng-show="header[1] && header[0]!=applicationFormTable.tbl.orderBy" ng-src="/saas/img/{{applicationFormTable.tbl.img[2]}}.png">
+                      </th>
+                      <th><span class="glyphicon glyphicon-cog"></span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="tblTr in applicationFormTable.tbl.show">
+                      <td>
+                        <img src="/saas/img/delete.png" title="Disqualify" style="position: absolute; width: 5%" ng-show="tblTr.disqualify">
+                        {{tblTr.name}}
+                        <p ng-switch="tblTr.rd_flag_color">
+                          <button class="rd-flag-button-sm green-bgcolor" title="RD Flag: Green" ng-switch-when="green"></button>
+                          <button class="rd-flag-button-sm yellow-bgcolor" title="RD Flag: Yellow" ng-switch-when="yellow"></button>
+                          <button class="rd-flag-button-sm red-bgcolor" title="RD Flag: Red" ng-switch-when="red"></button>
+                        </p>
+                      </td>
+                      <td>{{tblTr.email}}</td>
+                      <td style="width: 25%;" ng-show="!see_applicant_forms.show"></td>
+                      <td style="width: 25%;" ng-show="see_applicant_forms.show">
+                        <accordion close-others="false">
+                          <accordion-group is-open="systems.open">
+                            <accordion-heading>
+                              <span class="pt">System Forms</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': systems.open, 'glyphicon-chevron-right': !systems.open}"></i>
+                            </accordion-heading>
+                            <div ng-repeat="system_form in tblTr.system_forms">
+                              <span>
+                                <input type="checkbox" ng-model="system_form.print_check" ng-init="system_form.print_check = true"/>
+                                <a class="pt btn_li box_hover" data-target="#showForm" ng-click="showForm(system_form.id)" data-toggle="modal">
+                                  {{system_form.form_name}}
+                                </a>
+                              </span>
+                            </div>
+                          </accordion-group>
+                          <accordion-group is-open="applications.open">
+                            <accordion-heading>
+                              <span class="pt">Attachable Forms</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': applications.open, 'glyphicon-chevron-right': !applications.open}"></i>
+                            </accordion-heading>
+                            <div ng-repeat="form in tblTr.user_forms">
+                              <span>
+                                <input type="checkbox" ng-model="form.print_check" ng-init="form.print_check = true"/>
+                                <a class="pt btn_li box_hover" data-target="#showForm" ng-click="showForm(form.id)" data-toggle="modal">
+                                  {{form.form_name}}
+                                </a>
+                              </span>
+                            </div>
+                          </accordion-group>
+                          <accordion-group is-open="recommendations.open">
+                            <accordion-heading>
+                                <span class="pt">Recommendations</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': recommendations.open, 'glyphicon-chevron-right': !recommendations.open}"></i>
+                            </accordion-heading>
+                            <div ng-repeat="recommendation_form in tblTr.recommendation_forms">
+                              <span>
+                                <input type="checkbox" ng-model="recommendation_form.print_check" ng-init="recommendation_form.print_check = true"/>
+                                <a class="pt btn_li box_hover" data-target="#showForm" ng-click="showRecommendationForm(recommendation_form.id)" data-toggle="modal">
+                                  {{recommendation_form.form_name}}
+                                </a>
+                                by {{recommendation_form.recommender}}
+                              </span>
+                            </div>
+                          </accordion-group>
+                          <accordion-group ng-if="is_staff" is-open="transcripts.open">
+                            <accordion-heading>
+                                <span class="pt">Transcripts</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': transcripts.open, 'glyphicon-chevron-right': !transcripts.open}"></i>
+                            </accordion-heading>
+                            <div ng-init="transcripts = tblTr.transcripts">
+                              <span>
+                                <input type="checkbox" ng-model="transcripts.print_check" ng-init="transcripts.print_check = true"/>
+                                <a class="pt btn_li box_hover" data-target="#showTranscript" ng-click="showTranscript(tblTr.id)" data-toggle="modal">
+                                  Transcript
+                                </a>
+                              </span>
+                            </div>
+                          </accordion-group>
+                        </accordion>
+                      </td>
+                      <td style="width: 100px;">
+                        <div>Submitted: {{tblTr.submited}}</div>
+                        <div>Offered: {{tblTr.offered}}</div>
+                        <div>Accepted: {{tblTr.accepted}}</div>
+                        <button type="button" class="btn btn-info" ng-if="tblTr.submited == 'N' && force_submit_permission_show" ng-click="force_submit_confirm(tblTr)">
+                          Submit
+                        </button>
+                      </td>
+                      <td>{{tblTr.interviews}}</td>
+                      <td style="word-break: normal;">{{tblTr.positions}}</td>
+                      <td>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right">
+                            <li ng-show="see_applicant_forms.show">
+                              <a>
+                                <button class="btn_li" href="#editEmail" ng-click="email.edit(tblTr)" data-toggle="modal">Email</button>
+                              </a>
+                            </li>
+                            <li ng-show="see_applicant_forms.show">
+                              <a>
+                                <button class="btn_li" href="#formsWaitedPrint" ng-click="previewApplicantSelectForms(tblTr)" data-toggle="modal">View / Download</button>
+                              </a>
+                            </li>
+                            <li ng-show="disqualify_permission_show">
+                              <a>
+                                <button class="btn_li" ng-click="applicantDisqualify(tblTr)" data-toggle="modal">{{tblTr.disqualify ? "Cancel " : ""}}Disqualify</button>
+                              </a>
+                            </li>
+                            <li ng-if="$root.current_user.is_admin">
+                              <a>
+                                <button class="btn_li" href="#showEditPosition"  ng-click="showEditPosition(tblTr)" data-toggle="modal">Edit Position</button>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pull-left tableRsasPagging">
+                  <span>
+                    <pagination ng-model="applicationFormTable.tbl.pNow" total-items="applicationFormTable.tbl.pTotal" items-per-page="applicationFormTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="applicationFormTable.tbl.pageChange()"></pagination>
+                  </span>
+                  <span class="tableRsasPageGoToSpan">
+                    <span>
+                      <input ng-model="applicationFormTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+                    </span>
+                    <span>
+                       <button class="btn tableRsasBtn" ng-click="applicationFormTable.tbl.goToPage()" ng-disabled="applicationFormTable.tbl.goPageAble">Go</button>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Time Allowed">
+            <div>
+              <table class="table" style="">
+                <thead>
+                  <tr>
+                    <th class="text-center">Location Allowed</th>
+                    <th class="text-center">(or)</th>
+                    <th class="text-center">Role Allowed</th>
+                    <th class="text-center">Start Time</th>
+                    <th class="text-center">~</th>
+                    <th class="text-center">End Time</th>
+                    <th class="text-center" ng-show="lower_mgr_see_time.active"></th>
+                  </tr>
+                  <tr ng-show="lower_mgr_see_time.active">
+                    <td><multiselect multiple="true" change="s()" ng-model="new_limit.locations" options="list.name for list in location_list"></multiselect></td>
+                    <td class="text-center">(or)</td>
+                    <td><multiselect multiple="true" change="s()" ng-model="new_limit.roles" options="list.name for list in role_list"></multiselect></td>
+                    <td><input type="text" class="setDatetimepicker form-control" ng-init="setDatetimepicker()" ng-model="new_limit.t_start" ng-disabled="!lower_mgr_see_time.active"></td>
+                    <td class="text-center">~</td>
+                    <td><input type="text" class="setDatetimepicker form-control" ng-init="setDatetimepicker()" ng-model="new_limit.t_end" ng-disabled="!lower_mgr_see_time.active"></td>
+                    <td>
+                      <button ng-click="createLimit(new_limit)" ng-disabled="!lower_mgr_see_time.active || (new_limit.t_start == '' || new_limit.t_end == '' || new_limit.t_start == null || new_limit.t_end == null)" class="btn btn-default">
+                        <i class="glyphicon glyphicon-plus"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="limit in all_limits" ng-init="setDatetimepicker()">
+                    <td>
+                      <multiselect multiple="true" ng-model="limit.locations" ng-show="lower_mgr_see_time.active" options="list.name for list in location_list" change="s()"></multiselect>
+                      <ul ng-show="!lower_mgr_see_time.active"><li ng-repeat="location in limit.locations">{{location.name}}</li></ul>
+                    </td>
+                    <td class="text-center">(or)</td>
+                    <td>
+                      <multiselect multiple="true" ng-model="limit.roles" ng-show="lower_mgr_see_time.active" options="list.name for list in role_list" change="s()"></multiselect>
+                      <ul ng-show="!lower_mgr_see_time.active"><li ng-repeat="role in limit.roles">{{role.name}}</li></ul>
+                    </td>
+                    <td><input type="text" class="setDatetimepicker form-control" ng-init="setDatetimepicker()" ng-model="limit.t_start_string" ng-disabled="!lower_mgr_see_time.active"></td>
+                    <td class="text-center">~</td>
+                    <td><input type="text" class="setDatetimepicker form-control" ng-init="setDatetimepicker()" ng-model="limit.t_end_string" ng-disabled="!lower_mgr_see_time.active"></td>
+                    <td ng-show="lower_mgr_see_time.active">
+                      <button ng-click="updateLimit(limit)" ng-disabled="!lower_mgr_see_time.active || (limit.t_start_string == '' || limit.t_end_string == '')" class="btn btn-default">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>
+                      </button>
+                      <button ng-click="deleteLimit(limit)" ng-disabled="!lower_mgr_see_time.active" class="btn btn-default">
+                        <i class="glyphicon glyphicon-remove"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</div>

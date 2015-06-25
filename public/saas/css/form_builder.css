@@ -1,0 +1,132 @@
+.sort-item {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  
+  border-radius:5px;
+  border: 2px #ffaaaa dashed;  
+}
+#render-block .sort-item *:hover {
+  cursor: pointer;
+}
+.drag-item {
+  cursor: move;
+  
+  display: inline-block;
+  width: 142px;
+  height:50px;
+  padding: 10px;
+  overflow:hidden;
+
+  border-radius:5px;
+  border: 2px #000000 solid;
+}
+.sort-item label, .drag-item label {
+  display: block;
+}
+.sort-item .checkbox, .sort-item .radio, .drag-item .checkbox, .drag-item .radio {
+  display: inline-block;
+  margin: 0px 15px 0px 0px;
+}
+.sort-item span.name-format, .drag-item span.name-format, .sort-item input.name-format, .drag-item input.name-format {
+  display: inline-block;
+  width: 104px;
+}
+.sort-item span.date-format, .drag-item span.date-format, .sort-item input.date-format, .drag-item input.date-format {
+  display: inline-block;
+  width: 41px;
+}
+.sort-item>label:first-child {
+  font-weight:bold;
+}
+.cover-icon {
+  position: relative;
+  top: -10px;
+  left: -10px;
+
+  width: 138px;
+  height: 46px;
+  padding: 10px;
+
+  background-color: white;
+}
+.cover-icon>* {
+  vertical-align: middle;
+}
+.drop-block {
+  display: inline-block;
+
+  min-width: 100px;
+  min-height: 77px;
+  padding: 2px;
+  
+  border-radius:5px;
+  border: 2px #0000ff dashed;
+}
+
+#form-button-list, .show-clear {
+  min-height: 50px;
+  padding: 10px;
+
+  border-radius:5px;
+  border: 2px solid #000000;
+
+  background-color: white;
+}
+#form-button-list {
+  margin-bottom: 10px;
+}
+#form-button-list .btn {
+  margin: 2px;
+}
+#form-button-list>div {
+  text-align: center;
+}
+#form-button-list>p {
+  color: #aaaaaa;
+}
+.show-clear {
+  margin: 10px 0px;
+}
+#control-bar {
+  margin: 10px 0px;
+}
+#render-block {
+  float: left; /* This is for margin effect, not left-close */
+ 
+  margin: 10px 0px 0px;
+  width: 100%; /* This is after float left, full width */
+}
+
+.row-in-form {
+  display: inline-block;
+  
+  margin: 0px;  
+  min-height: 77px;
+  padding: 2px;
+  
+  border-radius:5px;
+  border: 2px #ffaaaa dashed;
+}
+.control-grid {
+  position: absolute;
+  left: 750px;
+
+  margin: 0px;
+}
+.control-grid>.btn {
+  width: 54px;
+}
+
+.hide {
+  display: none;
+}
+.normal-height {
+  min-height: 24px;
+}
+#add-row-button {
+  width: 100%;
+}
+
+
+

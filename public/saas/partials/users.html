@@ -1,0 +1,223 @@
+<div class="container" ng-controller="Users">
+  <div class="col-md-12">
+    <button type="submit" ng-disabled="!permission_to_active" class="btn btn-info" data-toggle="modal" data-target="#addUser" style="margin: 10px 0px;">Add User</button>
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <span>
+          <label>User in {{$root.current_year.name}} {{$root.current_process.name}}</label>
+        </span>
+        <span class="tableRsasFloatRight">
+          <label>Total:{{userTable.tbl.pTotal}}</label>
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="userTable.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="userTable.tbl.searchClick(userTable.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="userTable.tbl.perPage" ng-change="userTable.tbl.setDataAndRequest();">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0">ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in userTable.tbl.header" ng-click="userTable.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==userTable.tbl.orderBy" ng-src="/saas/img/{{userTable.tbl.img[userTable.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=userTable.tbl.orderBy" ng-src="/saas/img/{{userTable.tbl.img[2]}}.png">
+              </th>
+              <th><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in userTable.tbl.show">
+              <td>{{tblTr.name}}</td>
+              <td>{{tblTr.sunet_id}}</td>
+              <td>{{tblTr.status}}</td>
+              <td style="text-align: center;"><span ng-if="tblTr.is_admin" class="glyphicon glyphicon-ok"></span></td>
+              <td><div ng-repeat='procedure in tblTr.procedures'>● {{procedure.name}}</div></td>
+              <td><div ng-repeat='location in tblTr.locations'>● {{location.name}} - {{location.procedure_name}}</div></td>
+              <td><div ng-repeat='role in tblTr.roles'>● {{role.name}} - {{role.procedure_name}}</div></td>
+              <td style="text-align: center;"><span ng-if="tblTr.is_interviewer" class="glyphicon glyphicon-ok"></span></td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!$root.current_user.is_admin && tblTr.is_admin">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editUser" ng-click="editUser()" data-toggle="modal">Edit</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="$root.defaultConfirm('Delete User', 'Are you sure to delete this User?', deleteUser, [$index, this.tblTr.id])"
+                         ng-if="$root.current_user.is_admin || !tblTr.is_admin"
+                      >
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                    <li ng-if="$root.current_user.is_admin">
+                      <a ng-click="changeUser(tblTr.id)">
+                        <button class="btn_li">Login as user</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pull-left tableRsasPagging">
+          <span>
+            <pagination ng-model="userTable.tbl.pNow" total-items="userTable.tbl.pTotal" items-per-page="userTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="userTable.tbl.pageChange()"></pagination>
+          </span>
+          <span class="tableRsasPageGoToSpan">
+            <span>
+              <input ng-model="userTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+            </span>
+            <span>
+               <button class="btn tableRsasBtn" ng-click="userTable.tbl.goToPage()" ng-disabled="userTable.tbl.goPageAble">Go</button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add User-->
+  <div class="modal fade" id="addUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="insertUser()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Add User</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*First Name:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="new_user.first_name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Middle Name:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="new_user.middle_name">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Last Name:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="new_user.last_name">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*Email:</label>
+            <div class="col-lg-9">
+              <input type="email" class="form-control" ng-model="new_user.email" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*SUNet ID:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="new_user.sunet_id" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*Status:</label>
+            <div class="col-lg-9">
+              <select class="form-control" ng-model="new_user.status" ng-options="option for option in ['Staff', 'Student']" ng-required="true"></select>
+            </div>
+          </div>
+          <div ng-show="$root.current_user.is_admin" class="panel-body">
+            <label class="col-lg-3 control-label">Admin:</label>
+            <div class="col-lg-9">
+             <select class="form-control" ng-model="new_user.is_admin" ng-options="switch for switch in [true, false]" ng-required="true"></select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit User-->
+  <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="updateUser()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit User</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*SUNet ID:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="edit_user.sunet_id" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*First Name:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="edit_user.first_name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Middle Name:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="edit_user.middle_name">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Last Name:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="edit_user.last_name">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*Email:</label>
+            <div class="col-lg-9">
+              <input type="email" class="form-control" ng-model="edit_user.email" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Status:</label>
+            <div class="col-lg-9">
+              <select class="form-control" ng-model="edit_user.status" ng-options="option for option in ['Staff', 'Student']" ng-required="true"></select>
+            </div>
+          </div>
+          <div ng-show="$root.current_user.is_admin" class="panel-body">
+            <label class="col-lg-3 control-label">Admin:</label>
+            <div class="col-lg-9">
+             <select class="form-control" ng-model="edit_user.is_admin" ng-options="switch for switch in [true, false]"></select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

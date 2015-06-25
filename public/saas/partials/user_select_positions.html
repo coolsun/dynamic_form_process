@@ -1,0 +1,28 @@
+<div ng-controller="UserSelectPositions">
+  <div class="well">Number of Positions that can be selected per Applicant: {{select_position_limit == 0 ? "No limit" : select_position_limit}}</div>
+  <table style="width: 50%;">
+    <tr>
+      <td style="text-align: center;">Location:</td>
+      <td><multiselect multiple="true" ng-model="filter_locations" options="location.name for location in locations" change="selected()"></multiselect></td>
+      <td style="text-align: center;">Role:</td>
+      <td><multiselect multiple="true" ng-model="filter_roles" options="role.name for role in roles" change="selected()"></multiselect></td>
+    </tr>
+  </table>
+  <form ng-submit="updatePositionsSelect()">
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="position in positions | showPositionsUseLocationsAndRoles:filter_locations:filter_roles | orderBy:'name'">
+          <td><input ng-disabled="!permission_to_active || (!position.is_select && disabled_to_select) || (remaining_year < 1 && position.one_year_up)" type="checkbox" ng-model="position.is_select" ng-change="checkPositionsSelect(position)"></td>
+          <td><span>{{position.name}}</span> <a class="pt" ng-if="remaining_year < 1 && position.one_year_up" ng-click="$root.systemMessage(one_year_up_message)">(Not enough years of guaranteed housing remaining.)</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <button ng-disabled="!permission_to_active" ng-hide="positions.length == 0" type="submit" class="btn btn-info navbar-right">Update</button>
+  </form>
+</div>

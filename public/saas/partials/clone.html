@@ -1,0 +1,68 @@
+<div class="container" ng-controller="Clone">
+  <form class="form-horizontal" ng-submit="showCloneConfirm()">
+    <div class="modal-header">
+      <h4>Clone all processes of a year:</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="col-lg-2">
+          <h4>Source Year:</h4>
+        </div>
+        <div class="col-lg-3">
+          <select class="form-control" ng-model="source_year" ng-options="year.name for year in years" ng-required="true">
+            <option value="">-- choose year --</option>
+          </select>
+        </div>
+        <div class="col-lg-2">
+          <h4>Process:</h4>
+        </div>
+        <div class="col-lg-4">
+          <div ng-repeat="procedure in source_year.procedures">&#8226;&nbsp;{{procedure.name}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="col-lg-2">
+          <h4>Target Year:</h4>
+        </div>
+        <div class="col-lg-3">
+          <select class="form-control" ng-model="target_year" ng-options="year.name for year in years" ng-required="true">
+            <option value="">-- choose year --</option>
+          </select>
+        </div>
+        <div class="col-lg-2">
+          <h4>Process:</h4>
+        </div>
+        <div class="col-lg-4">
+          <div ng-repeat="procedure in target_year.procedures">&#8226;&nbsp;{{procedure.name}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-info pull-right" ng-disabled="!permission_to_active">Clone</button>
+    </div>
+  </form>
+
+  <!-- Clone Confirm -->
+  <div class="modal fade" id="cloneConfirm" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title">Clone all processes of a year:</h4>
+        </div>
+        <div class="modal-body">
+          Do you REALLY want to clone all processes of year {{source_year.name}} to year {{target_year.name}}?
+          <div ng-repeat="clone_message in clone_messages" style="color: red; text-align: center; font-size: 16px;">{{clone_message}}</div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info" ng-click="cloneAllProcedures()">Confirm</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

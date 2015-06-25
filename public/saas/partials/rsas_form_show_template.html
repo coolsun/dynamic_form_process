@@ -1,0 +1,84 @@
+<table ng-repeat="row in getRows()" style="width: 100%; table-layout: fixed;">
+  <tr>
+    <td valign="top" ng-repeat="column in getColumns(row)">
+      <div ng-repeat="item in form.schema" ng-if="row == item.row && column == item.column" style="margin: 5px;">
+        <div ng-if="item.ps">
+          <h5>{{item.description}}</h5>
+          <span ng-bind-html="to_html(item.value)"></span>
+          <br / ng-if="!item.value">
+        </div>
+        <div ng-if="!item.ps">
+          <div ng-if="item.type=='name'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span ng-repeat="part_of_name in item.option">
+              {{part_of_name.key}}
+              <input type="text" name="{{part_of_name.key}}" ng-model="part_of_name.value" size="10">
+            </span>
+          </div>
+          <div ng-if="item.type=='date'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span>
+              MM <input type="number" name="{{item.option[0].key}}"  ng-model="item.option[0].value" size="10" min="1" max="12">
+              DD <input type="number" name="{{item.option[1].key}}"  ng-model="item.option[1].value" size="10" min="1" max="31">
+              YYYY <input type="number" name="{{item.option[2].key}}"  ng-model="item.option[2].value" size="10" min="1">
+            </span>
+          </div>
+          <div ng-if="item.type=='email'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <input type="{{item.type}}" ng-model="item.value" ng-value="item.value" ng-disabled="item.disabled">
+          </div>
+          <div ng-if="item.type=='file'">
+            <h5>{{item.description}}</h5>
+            <div ng-repeat="file in form.upload_files">
+              <div class="box_hover">
+                <a href="{{file.file_path}}" style="font-size: 15px;">{{file.original_filename}}</a>
+              </div>
+            </div>
+          </div>
+          <div ng-if="item.type=='textarea'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <pre style="width: 100%; min-height: 200px; resize: none; word-wrap: break-word; word-break: break-all; white-space: pre-wrap;" ng-model="item.value" ng-bind="item.value"></pre>
+          </div>
+          <div ng-if="item.type=='description'">
+            <span ng-bind-html="to_html(item.description)"></span>
+          </div>
+          <div ng-if="item.type=='text'||item.type=='password'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <pre style="width: 100%; min-height: 39px; resize: none; word-wrap: break-word; word-break: break-all; white-space: pre-wrap;" ng-model="item.value" ng-bind="item.value"></pre>
+          </div>
+          <div ng-if="item.type=='radio'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span ng-repeat="option in item.options track by $index">
+              <label style="margin-bottom: 10px;" ng-if="option != '\<br \/\>'">
+                <input type="radio" name="{{item.description}}_{{form.id}}" value="{{option}}" ng-model="item.select" ng-checked="option == item.select" disabled="true">
+                {{option}}
+              </label>
+              <br / ng-if="option == '\<br \/\>'">
+            </span>
+          </div>
+          <div ng-if="item.type=='checkbox'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span ng-repeat="option in item.options track by $index">
+              <label style="margin-bottom: 10px;" ng-if="option != '\<br \/\>'">
+                <input type="checkbox" name="{{item.description}}_{{form.id}}" value="{{option}}" checklist-model="item.select" checklist-value="option" ng-checked="item.select.indexOf(option) > -1">
+                {{option}}
+              </label>
+              <br / ng-if="option == '\<br \/\>'">
+            </span>
+          </div>
+          <div ng-if="item.type=='select'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span class="rsas-element-arrangement" ng-if="item.select">{{item.select}}</span>
+            <br ng-if="!item.select">
+          </div>
+          <div ng-if="item.type=='multi-select'">
+            <h5>{{item.description}}</h5>
+            <span class="rsas-element-arrangement" ng-repeat="option in item.select">{{option}}</span>
+            <br ng-if="!item.select || item.select.length == 0">
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+<br>

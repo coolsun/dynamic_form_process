@@ -1,0 +1,56 @@
+<div ng-controller="UserRanking">
+  <div class="well" ng-bind-html="rank_position_applicant_view"></div>
+  <form ng-submit="updateUserRank()">
+    <tabset>
+      <tab heading="Rank">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>
+                  New Rank <span ng-click="setRankbyInput()" class="pt glyphicon" ng-class="{true: 'glyphicon-floppy-disk rsas-font-text-red', false: 'glyphicon-pencil'}[set_rank_by_input]"></span>
+                </th>
+                <th>Existing Rank</th>
+                <th>Position</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody ui-sortable="sortableOptions" ng-model="user_rank_list.rank_applications">
+              <tr ng-repeat="application in user_rank_list.rank_applications">
+                <td style="cursor: n-resize;" class="Handle"><span style="float: left;" class="glyphicon glyphicon-resize-vertical"></span></td>
+                <td>
+                  <span  ng-hide="set_rank_by_input">{{application.new_rank}}</span>
+                  <input ng-show="set_rank_by_input" type="number" min="1" max="999999" ng-model="application.new_rank">
+                </td>
+                <td>{{application.rank}}</td>
+                <td>{{application.position_name}}</td>
+                <td>
+                  <span class="glyphicon glyphicon-trash pt" ng-click="removeFromRank($index)"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+      </tab>
+      <tab heading="Removed from rank">
+        <table class="table">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody ui-sortable="sortableOptions" ng-model="user_rank_list.disable_rank_applications">
+              <tr ng-repeat="application in user_rank_list.disable_rank_applications | orderBy: 'name'">
+                <td>{{application.position_name}}</td>
+                <td>
+                  <a class="pt" ng-click="addBackRank($index)">Add Back To Rank</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+      </tab>
+      <button type="submit" class="btn btn-info navbar-right" ng-disabled="(!permission_to_active || set_rank_by_input)">Update {{selected_location.name}}</button>
+    </tabset>
+  </form>
+</div>
+

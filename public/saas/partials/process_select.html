@@ -1,0 +1,6 @@
+<div ng-controller="processSelect" class="col-md-offset-4 col-md-4 text-center rsas-go-to-application-div">
+  <h3>Please select a process.</h3>
+  <select class="form-control" ng-model="prcoess" ng-options="process.name for process in processes" ng-change="changeProcess();">
+    <option value="">Change Process</option>
+  </select>
+</div>

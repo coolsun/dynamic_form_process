@@ -1,0 +1,89 @@
+<div ng-controller="UserRecommendations">
+  <div class="well" ng-bind-html="requirementHTML"></div>
+  <div class="well" ng-show="recommendation_emails.length == 0"><h5>You have not received any recommendation yet.</h5></div>
+  <div class="panel panel-primary" ng-hide="recommendation_emails.length == 0">
+    <div class="panel-heading">
+      Recommendation
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="text-center">Name</th>
+          <th class="text-center">Email Address</th>
+          <th class="text-center">Request Date</th>
+          <th class="text-center">Submit Date</th>
+          <th class="text-center">Recommendation Form</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="recommendation_email in recommendation_emails">
+          <th class="text-center" ng-mouseover="record_detail = recommendation_email.id" ng-mouseleave="record_detail = null">
+            <div class="well text-left detail-box" ng-show="record_detail == recommendation_email.id">
+              Title : {{recommendation_email.title}}<br />
+              Relationship : {{recommendation_email.relationship}}
+            </div>
+            {{recommendation_email.name}}
+          </th>
+          <th class="text-center">{{recommendation_email.email}}</th>
+          <th class="text-center">{{recommendation_email.created_at | date : 'MM/dd/yyyy HH:mm'}}</th>
+          <th class="text-center">{{recommendation_email.submit_date | date : 'MM/dd/yyyy HH:mm'}}</th>
+          <th class="text-center">{{get_recommendation_form_name(recommendation_email.recommendation_form_id)}}</th>
+          <th class="text-center">
+            <button class="btn-xs btn btn-info" ng-disabled="!permission_to_active" ng-click="resendRecommandation(recommendation_email.id)">Reminder</button><br />
+            <button class="btn-xs btn {{recommendation_email.disabled ? '' : 'btn-info'}}" ng-click="disable_record(recommendation_email)">
+              {{recommendation_email.disabled ? 'Enable' : 'Disable'}}
+            </button>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <form class="form-horizontal col-lg-10" ng-submit="sendRecommendation()">
+    <div class="modal-header">
+      <h4 class="form-group">Recommendation Form:</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <div>Request a recommendation:</div>
+        <div>Use the form below to send a recommendation request via email. All fields are required.</div>
+      </div>
+      <div class="form-group">
+        <label class="col-lg-3 control-label">* Name:</label>
+        <div class="col-lg-9">
+          <input ng-model="request.name" class="form-control" type="text" ng-required="true" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-lg-3 control-label">* Title:</label>
+        <div class="col-lg-9">
+          <input ng-model="request.title" class="form-control" type="text" ng-required="true" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-lg-3 control-label">* Relationship:</label>
+        <div class="col-lg-9">
+          <input ng-model="request.relationship" class="form-control" type="text" ng-required="true" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-lg-3 control-label">* Email Address:</label>
+        <div class="col-lg-9">
+          <input ng-model="request.email" class="form-control" type="email" ng-required="true" ng-change="check_duplicate_email()"/>
+        </div>
+      </div>
+      <div class="form-group" ng-show="recommendation_forms.length > 0">
+        <label class="col-lg-3 control-label">* Select Form:</label>
+        <div class="col-lg-9">
+          <div ng-repeat="form in recommendation_forms">
+            <input ng-model="request.recommendation_form_id" ng-value="form.id" ng-change="check_duplicate_email()" type="radio" ng-required="true" name="whatever" /> {{form.form_name}}
+          </div>
+          <h6 ng-show="duplicate_form_record != null" style="color: red">You have sent this recommender the same form already.</h6>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-info" ng-disabled="!permission_to_active || duplicate_form_record != null" type="submit">Send Request</button>
+    </div>
+  </form>
+</div>

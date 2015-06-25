@@ -1,0 +1,10 @@
+<div class="container" ng-controller="Global">
+  <tabset>
+    <tab heading="Default emails" select="global.include.default_emails = true">
+      <div ng-if="global.include.default_emails" class="well" ng-include="'/saas/partials/email_template_list.html'"></div>
+    </tab>
+    <tab heading="Default forms" select="global.include.default_forms = true">
+      <div ng-if="global.include.default_forms" class="well" ng-include="'/saas/partials/form_builder.html'"></div>
+    </tab>
+  </tabset>
+</div>

@@ -1,0 +1,40 @@
+<div class="well" ng-controller="Matching">
+  <div class="well">
+    <h5>Match conditions</h5>
+    <form ng-submit="match()">
+      <table>
+        <tr ng-repeat="match_condition in match_conditions">
+          <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.location" ng-options="location as location.name for location in locations"></select></td>
+          <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.tag" ng-options="tag.name as tag.option_name for tag in match_condition.location.tags"></select></td>
+          <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.symbol" ng-options="symbol.key as symbol.value for symbol in mathematical"></select></td>
+          <td style="padding: 3px"><input type="number" ng-required="true" min="0" ng-model="match_condition.value" /></td>
+          <td style="padding: 3px"><span ng-click="match_conditions.splice($index, 1)" class="glyphicon glyphicon-remove" style="cursor: pointer;"></span></td>
+        </tr>
+      </table>
+      <div ng-click="match_conditions.push({})" class="glyphicon glyphicon-plus" style="cursor: pointer;"></div>
+      <button type="submit" class="btn btn-info navbar-right" ng-disabled="!permission_to_active">Match</button>
+    </form>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Vacancy</th>
+        <th>Applicants</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="position in matching.positions">
+        <td>{{position.name}}</td>
+        <td>{{position.users.length}}/{{position.vacancy}}</td>
+        <td>
+          <ol><li ng-repeat="user in position.users">{{user.name}}</li></ol>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="well">
+    <h5>Not match users</h5>
+    <span ng-repeat="user in matching.not_match_users" class="rsas-element-arrangement">{{$index+1}}. {{user.name}} </span>
+  </div>
+</div>

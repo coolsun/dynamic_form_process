@@ -1,0 +1,553 @@
+<!-- target: user function -->
+<div ng-controller="interviewUserProcessCtrl">
+  <div class="">
+    <div class="col-md-12">
+      <h2 ng-show="interviewUserProcess.round.t_start">
+        Round: <b>{{interviewUserProcess.round.title}}</b> <br /> From <b>{{interviewUserProcess.round.t_start | datetimeFormatUTC2ZoneSub8}}</b> To <b>{{interviewUserProcess.round.t_end | datetimeFormatUTC2ZoneSub8}}</b>
+      </h2>
+    </div>
+    <hr />
+
+    <div class="col-md-12">
+      <tabset>
+        <tab select="interviewUserProcess.tabInterviewSelect()">
+          <tab-heading>
+            <span class="glyphicon glyphicon-list-alt"></span>My Interviews
+          </tab-heading>
+          <div class="panel tableRsasPanel">
+            <div class="panel-heading">
+              <span>
+                <label>Time Slots</label>
+              </span>
+              <span class="tableRsasFloatRight">
+                <label>Total:{{interviewUserProcess.interview.tbl.pTotal}}</label>
+              </span>
+            </div>
+            <div class="table-responsive">
+              <div class="panel-body">
+                <div class="toolBarRsas">
+                  <span class="pull-left tableRsasSearch">
+                    <span>
+                      <input ng-model="interviewUserProcess.interview.tbl.searchText" type="text" class="form-control">
+                    </span>
+                    <span>
+                      <button class="btn tableRsasBtn" ng-click="interviewUserProcess.interview.tbl.searchClick(interviewUserProcess.interview.tbl);">Search</button>
+                    </span>
+                  </span>
+                  <span class="tableRsasFloatRight">
+                    <select class="form-control" ng-model="interviewUserProcess.interview.tbl.perPage" ng-change="interviewUserProcess.interview.tbl.setDataAndRequest();">
+                      <option value=25>25</option>
+                      <option value=50>50</option>
+                      <option value=100>100</option>
+                      <option value=0>ALL</option>
+                    </select>
+                  </span>
+                </div>
+              </div>
+              <table class="table table-bordered table-hover tableRsas">
+                <thead>
+                  <tr>
+                    <!-- <th class="rsas-table-applied-field">Applied</th> -->
+                    <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in interviewUserProcess.interview.tbl.header" ng-click="interviewUserProcess.interview.tbl.headerClick(header)">
+                      {{header[0]}}
+                      <img ng-show="header[1] && header[0]==interviewUserProcess.interview.tbl.orderBy" ng-src="/saas/img/{{interviewUserProcess.interview.tbl.img[interviewUserProcess.interview.tbl.sortOrder]}}.png">
+                      <img ng-show="header[1] && header[0]!=interviewUserProcess.interview.tbl.orderBy" ng-src="/saas/img/{{interviewUserProcess.interview.tbl.img[2]}}.png">
+                    </th>
+                    <th><span class="glyphicon glyphicon-cog"></span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="tblTr in interviewUserProcess.interview.tbl.show">
+                    <!-- <td><span ng-show="tblTr.applied.isApplied" class="glyphicon glyphicon-ok"></span></td> -->
+                    <td>{{tblTr.name}}</td>
+                    <td class="rsas-table-position-name-field">
+                      <div ng-repeat="positions_in_interview in tblTr.positions_in_interviews">
+                        <p>
+                          {{positions_in_interview.position.name}}
+                        </p>
+                      </div>
+                    </td>
+                    <td>
+                      <div ng-repeat="timeSlot in tblTr.time_slots">
+                        <div ng-class="{rsas_time_slot_has_reserve: (timeSlot.id==tblTr.applied.timeSlotId)}">
+                          <p>
+                            <!-- <a class="" href="" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)">{{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</a> -->
+                            <!-- {{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | datetimeFormatUTC2ZoneSub8}} -->
+                            <span ng-show="timeSlot.id==tblTr.applied.timeSlotId" class="glyphicon glyphicon-ok"></span>
+                            {{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | timeFormatUTC2ZoneSub8}}
+                          </p>
+                          <p>
+                            Place: {{timeSlot.place}}
+                          </p>
+                          <p>
+                            <div ng-if="!interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end)" ng-click="interviewUserProcess.interview.timeSlot.checkActive(interviewUserProcess.round.permission.active);">
+                              <button class="btn btn-primary" ng-hide="timeSlot.id==tblTr.applied.timeSlotId" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end)">Apply</button>
+                              <button class="btn btn-danger" ng-show="tblTr.applied.isApplied && (timeSlot.id==tblTr.applied.timeSlotId)" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active">Cancel</button>
+                            </div>
+                          </p>
+                        </div>
+                        <br />
+                      </div>
+                    </td>
+                    <!-- <td>{{tblTr.vacancy}}</td> -->
+                    <td class="rsas-table-dropdown-field">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                          <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                          <li>
+                            <a>
+                              <button class="btn_li" ng-click="interviewUserProcess.dropdownClick.emailInterviewer(tblTr)">Email to interviewers</button>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pull-left tableRsasPagging">
+              <span>
+                <pagination ng-model="interviewUserProcess.interview.tbl.pNow" total-items="interviewUserProcess.interview.tbl.pTotal" items-per-page="interviewUserProcess.interview.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="interviewUserProcess.interview.tbl.pageChange()"></pagination>
+              </span>
+              <span class="tableRsasPageGoToSpan">
+                <span>
+                  <input ng-model="interviewUserProcess.interview.tbl.goPage" type="text" class="form-control" maxlength="4">
+                </span>
+                <span>
+                   <button class="btn tableRsasBtn" ng-click="interviewUserProcess.interview.tbl.goToPage()" ng-disabled="interviewUserProcess.interview.tbl.goPageAble">Go</button>
+                </span>
+              </span>
+            </div>
+          </div>
+        </tab>
+        <tab select="interviewUserProcess.calendar.renderCalender(calendarUserProcess); interviewUserProcess.tabCalendarSelect()">
+          <tab-heading>
+            <span class="glyphicon glyphicon-calendar"></span>Calendar
+          </tab-heading>
+          <div class="well">
+            <div class="row-fluid">
+              <div class="span8">
+                <div class="btn-toolbar">
+                  <p class="pull-right lead">
+                    Interview
+                  </p>
+                  <div class="btn-group">
+                    <!--
+                    <button class="btn btn-success" ng-click="interviewUserProcess.calendar.changeView('agendaDay', calendarUserProcess)">
+                      Day
+                    </button>
+                    <button class="btn btn-success" ng-click="interviewUserProcess.calendar.changeView('agendaWeek', calendarUserProcess)">
+                      Week
+                    </button>
+                    <button class="btn btn-success" ng-click="interviewUserProcess.calendar.changeView('month', calendarUserProcess)">
+                      Month
+                    </button>
+                    -->
+                  </div>
+                </div>
+                <div class="calendar" ng-model="interviewUserProcess.calendar.eventSources" calendar="calendarUserProcess" config="interviewUserProcess.calendar.uiConfig.calendar" ui-calendar="interviewUserProcess.calendar.uiConfig.calendar"></div>
+              </div>
+            </div>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+
+  <!-- @alert form series -->
+  <!-- alert user apply or cancel interview -->
+  <div class="modal fade" id="interviewUserProcessApplyCancelForm">
+    <div class="modal-dialog">
+    <!-- has another time slot applied -->
+      <div ng-show="400==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4></h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <span class="col-md-1"></span>
+              <span class="col-md-10">
+                <h4>Sorry, you have applied another time slot in this interview.</h4>
+              </span>
+              <span class="col-md-1"></span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- change applied time slot -->
+      <div ng-show="410==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Change Time Slot</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h4>Do you want to <b>Change</b> to this time slot?</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>Interview:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.interviewName}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>time:</h4></label>
+              <span class="col-md-10">
+                <h4>From {{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>place:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.place}}</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-danger" type="submit" ng-click="interviewUserProcess.nextFlow(410,420);">
+              Change
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Apply Interview -->
+      <div ng-show="500==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Apply Interview's Time Slot</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h4>Are you sure to Apply this interview's time slot?</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>Interview:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.reserve.timeSlot.interviewName}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>Time:</h4></label>
+              <span class="col-md-10">
+                <h4>From {{interviewUserProcess.interview.timeSlot.reserve.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.reserve.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>Place:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.reserve.timeSlot.place}}</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" type="submit" ng-click="interviewUserProcess.nextFlow(500,510);">
+              Apply
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- it's scheduling conflict. -->
+      <div ng-show="560==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Warning</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-8"><b>
+                <h4>It is scheduling conflict.</h4>
+                <h4>Please check schedule.</h4>
+              </span>
+              <label class="col-md-2 control-label"></label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- it's not round time. -->
+      <div ng-show="570==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Warning</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-8"><b>
+                <h4>This interview is active from <b>{{interviewUserProcess.round.t_start | datetimeFormatUTC2ZoneSub8}}</b> to <b>{{interviewUserProcess.round.t_end | datetimeFormatUTC2ZoneSub8}}</b>.</h4>
+                <h4>It is not active yet.</h4>
+              </span>
+              <label class="col-md-2 control-label"></label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Apply Success -->
+      <div ng-show="580==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Apply Success</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-8">
+                <h4>You have applied this time slot successfully.</h4>
+              </span>
+              <label class="col-md-2 control-label"></label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Apply Failed -->
+      <div ng-show="590==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Apply Failed</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-8">
+                <h4>Sorry, there is no vacancy left for this interview time slot.</h4>
+                <h4>Please sign up for another interview time slot or try again later.</h4>
+              </span>
+              <label class="col-md-2 control-label"></label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- system error -->
+      <div ng-show="599==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>System Error</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-8">
+                <h4>It's <b>System Error</b> now.</h4>
+                <h4>Please talk to system provider.</h4>
+              </span>
+              <label class="col-md-2 control-label"></label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Cancel interview -->
+      <div ng-show="600==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Cancel Interview's Time Slot.</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h4>Are you sure to <b>Cancel</b> this interview's time slot?</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>Interview:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.cancel.timeSlot.interviewName}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>time:</h4></label>
+              <span class="col-md-10">
+                <h4>From {{interviewUserProcess.interview.timeSlot.cancel.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.cancel.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>place:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.cancel.timeSlot.place}}</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-danger" type="submit" ng-click="interviewUserProcess.nextFlow(600,610);">
+              Sure
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Cancel Interview: Cancel success -->
+      <div ng-show="680==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Cancel Interview</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Cancel Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Cancel Interview: Cancel Fail -->
+      <div ng-show="690==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Cancel Interview</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Cancel Fail</h2>
+                <h2>Please Check Interview List, and Cancel again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- time slot info -->
+      <div ng-show="700==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Time Slot Info</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2"><h4>Interview:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.info.timeSlot.interviewName}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>time:</h4></label>
+              <span class="col-md-10">
+                <h4>From {{interviewUserProcess.interview.timeSlot.info.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.info.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>place:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewUserProcess.interview.timeSlot.info.timeSlot.place}}</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-danger" type="submit" ng-click="interviewUserProcess.nextFlow(700,710);">
+              Cancel this interview
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Email-->
+  <div class="modal fade" id="interviewUserProcessEmailInterviewerForm">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="interviewUserProcess.interview.emailInterviewers.send();">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title">Send Email</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <div class="col-lg-12">
+              <h5>Subject : </h5>
+              <input type="text" class="form-control" ng-model="interviewUserProcess.interview.emailInterviewers.mail.subject">
+            </div>
+            <div class="col-lg-12">
+              <h5>Content : </h5>
+              <textarea id="tinymce" ui-tinymce ng-model="interviewUserProcess.interview.emailInterviewers.mail.content" style="height: 300px"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-info" type="submit">Send</button>
+          <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

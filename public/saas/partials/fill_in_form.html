@@ -1,0 +1,22 @@
+<div ng-controller="FillInForm">
+  <div class="well">Order by dragging</div>
+  <form ng-submit="updateFormRank()">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>List Order</th>
+          <th>Form Name</th>
+          <th>Display</th>
+        </tr>
+      </thead>
+      <tbody ui-sortable ng-model="forms">
+        <tr ng-repeat="form in forms" style="cursor: n-resize;">
+          <td>{{$index+1}}</td>
+          <td><span style="float: left;" class="glyphicon glyphicon-resize-vertical"></span><span style="float: left;">{{form.form_name}}</span></td>
+          <td>{{form.display ? "True" : "False"}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button ng-disabled="!permission_to_active" ng-hide="forms.length == 0" type="submit" class="btn btn-info navbar-right">Update</button>
+  </form>
+</div>

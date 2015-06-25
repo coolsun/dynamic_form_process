@@ -1,0 +1,82 @@
+<div class="container" ng-controller="email_template_control">
+  <div class="col-lg-12">
+    <p>
+      <button ng-repeat="template in template_id_list"
+              ng-class="{'btn-warning': template.is_active, 'btn-xs': template.id != current_email.id}"
+              ng-click="show_template(template.id)"
+              class="btn">
+        {{template.title}}
+      </button>
+    </p>
+  </div>
+  <div class="col-lg-12">
+    <p>
+      <button class="btn btn-default" ng-click="new_template()" ng-disabled="!permission_to_active" title="New">
+        <i class="glyphicon glyphicon-file"></i>
+      </button>
+      <button class="btn btn-default" ng-click="create_template()" ng-disabled="!permission_to_active || disable_save_button" ng-if="!current_email.id" title="Save">
+        <i class="glyphicon glyphicon-floppy-disk"></i>
+      </button>
+      <button class="btn btn-default" ng-click="update_template()" ng-disabled="!permission_to_active || disable_save_button" ng-if="current_email.id" title="Save">
+        <i class="glyphicon glyphicon-floppy-disk"></i>
+      </button>
+      <button class="btn btn-default" ng-click="delete_template()" ng-disabled="!permission_to_active || current_email.is_active" ng-if="current_email.id" title="Delete">
+        <i class="glyphicon glyphicon-remove"></i>
+      </button>
+      <button class="btn btn-default" ng-click="run_template()" ng-disabled="!permission_to_active || current_email.is_active" ng-if="current_email.id" title="Use">
+        <i class="glyphicon glyphicon-star"></i>
+      </button>
+      <button class="btn btn-default" href="#replace-word-list" data-toggle="modal">See the replaced words list</button>
+    </p>
+  </div>
+  <div class="col-lg-12">
+    <h5>Title: </h5>
+    <input type="text" class="form-control" ng-model="current_email.title" ng-change="check_same_title()">
+    <h5 style="color: red" ng-show="disable_save_button">This title has been used. Please try another title.</h5>
+  </div>
+  <div class="col-lg-12">
+    <h5>Content: </h5>
+    <textarea id="tinymce" ui-tinymce ng-model="current_email.content" style="height: 500px"></textarea>
+  </div>
+
+  <div class="modal fade" id="replace-word-list" role="dialog">
+    <div class="modal-dialog" style="width: 800px;">
+      <div class="modal-content">
+        <div class="modal-body">
+          <ul>
+            <li>[[RecommenderName]]: It will be replaced by a recommender's name in the email title or content.</li>
+            <li>[[RecommenderTitle]]: It will be replaced by a recommender's title in the email title or content.</li>
+            <li>[[RecommenderRelationship]]: It will be replaced by a recommender and applicant's relationship in the email title or content.</li>
+            <li>[[RecommenderEmail]]: It will be replaced by a recommender's email in the email title or content.</li>
+            <li>[[ApplicantName]]: It will be replaced by an applicant's name in the email title or content.</li>
+            <li>[[ProcessName]]: It will be replaced by a process name in the email title or content.</li>
+            <li>[[RecommendationFormURL]]: It will be replaced by a URL link to fill the recommendation form in the content.</li>
+            <li>[[RecommendationRequestDate]]: It will be replaced the date with the time zone PST in the content.</li>
+            <li>[[Positions]]: It will be replaced by the Position's name. Ex. Graduate Community Associate (CA)</li>
+            <li>[[Roles]]: It will be replaced by the Role's name that applicant is applying.</li>
+            <li>[[HiringManagerName]]: It will be replaced by the name of Hiring Manager in current process.</li>
+            <li>[[FirstName]]: It will be replaced by the first name of the receiver.</li>
+            <li>[[Due Date]]: It will be replaced by the end date/time of the activity.</li>
+            <li>[[ApplicantEmail]]: It will be replaced by the Applicant's email in the email content.</li>
+            <li>[[RecommendationEndDate]]: It will be replaced by the end time of recommendation.</li>
+            <li>[[Round]]: It will be replaced by the name of mentioned Round.</li>
+            <li>[[Interview]]: It will be replaced by the name of mentioned Interview.</li>
+            <li>[[SignUpInterviewURL]]: It will be replaced by the URL links to let users to sign up the mentioned interview.</li>
+            <li>[[InterviewTime]]: It will be replaced by the time of mentioned Interview.</li>
+            <li>[[InterviewerName]]: It will be replaced by the name of Interviewer.</li>
+            <li>[[HiringManagerEmail]]: It will be replaced by the email of Hiring manager(s).</li>
+            <li>[[PostMatchURL]]: It will be replaced by the URL links to check applicant's post match application status.</li>
+            <li>[[ViewInterviewURL]]: It will be replaced by the URL links to let users to view the mentioned interview.</li>
+            <li>[[ContactEmail]]: It shows the email of the contact person of this process.</li>
+            <li>[[AlreadySelectedPositions]]: It will be replaced by the Position's name that applicant already selected.</li>
+            <li>[[CurrentYear]]: It shows the current year in this process. <i>Ex. 2014-2015</i></li>
+            <li>[[NextYear]]: It shows the value in the "Next Year" column on the year page of this process.</li>
+          </ul>
+        </div>
+        <div class="modal-footer text-center">
+          <button id="modol-close" class="btn btn-default" data-dismiss="modal">Continue to edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

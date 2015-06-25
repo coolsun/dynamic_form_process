@@ -1,0 +1,25 @@
+<div class="container" ng-controller="Import">
+  <div class="col-md-9">
+    <h3>Import Ready To Offer By Xlsx</h3>
+    <div class="well">
+      <div class="well">
+        <p>* If the applicant is offer the same position again, the second offer will be skipped.</p>
+        <p>* The upload process will continue after any error to process and upload all offers in the file.</p>
+      </div>
+      <form>
+        <input type="file" nv-file-select uploader="importXlsx('/import/import_pre_offered_applicants_by_xlsx')" accept=".xlsx" />
+      </form>
+
+      <h4><a href="/examples/import_ready_to_offers_example.xlsx">Example</a></h4>
+    </div>
+    <div ng-hide="errors.length == 0">
+      <h3>Error:</h3>
+      <table class="table table-striped">
+        <tr ng-repeat="error in errors">
+          <td>{{$index + 1}}</td>
+          <td>{{error}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

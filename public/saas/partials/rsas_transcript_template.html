@@ -1,0 +1,16 @@
+<table style="width: 100%; table-layout: fixed;" class="table">
+  <tr>
+    <th style="width: 20%;">Term</th>
+    <th>Career</th>
+    <th style="width: 40%;">Class</th>
+    <th>Grade</th>
+    <th>Units Earned</th>
+  </tr>
+  <tr ng-repeat="grade in grades">
+    <td>{{grade.term}}</td>
+    <td>{{grade.career}}</td>
+    <td>{{grade.grade_class}}</td>
+    <td>{{grade.grade}}</td>
+    <td>{{grade.unit}}</td>
+  </tr>
+</table>

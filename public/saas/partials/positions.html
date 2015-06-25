@@ -1,0 +1,218 @@
+<div class="container" ng-controller="Positions">
+  <div class="col-md-9">
+    <button type="submit" class="btn btn-info" data-toggle="modal" data-target="#addPosition" ng-disabled="!permission_to_active" ng-click="addPosition()" style="margin: 10px 0px;">Add Position</button>
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <span>
+          <label>Position</label>
+        </span>
+        <span class="tableRsasFloatRight">
+          <label>Total:{{positionTable.tbl.pTotal}}</label>
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="positionTable.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="positionTable.tbl.searchClick(positionTable.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="positionTable.tbl.perPage" ng-change="positionTable.tbl.setDataAndRequest();">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0">ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in positionTable.tbl.header" ng-click="positionTable.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==positionTable.tbl.orderBy" ng-src="/saas/img/{{positionTable.tbl.img[positionTable.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=positionTable.tbl.orderBy" ng-src="/saas/img/{{positionTable.tbl.img[2]}}.png">
+              </th>
+              <th><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in positionTable.tbl.show">
+              <td>{{combinePositionName(tblTr)}}</td>
+              <td>{{tblTr.tag}}</td>
+              <td>{{tblTr.description}}</td>
+              <td>{{tblTr.vacancy}}</td>
+              <td style="text-align: center;"><span ng-if="tblTr.auto_matching" class="glyphicon glyphicon-ok"></span></td>
+              <td style="text-align: center;"><span ng-if="tblTr.one_year_up" class="glyphicon glyphicon-ok"></span></td>
+              <th>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editPosition" ng-click="editPosition()" data-toggle="modal">Edit</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="deletePosition($index)">
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pull-left tableRsasPagging">
+          <span>
+            <pagination ng-model="positionTable.tbl.pNow" total-items="positionTable.tbl.pTotal" items-per-page="positionTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="positionTable.tbl.pageChange()"></pagination>
+          </span>
+          <span class="tableRsasPageGoToSpan">
+            <span>
+              <input ng-model="positionTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+            </span>
+            <span>
+               <button class="btn tableRsasBtn" ng-click="positionTable.tbl.goToPage()" ng-disabled="positionTable.tbl.goPageAble">Go</button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add Position-->
+  <div class="modal fade" id="addPosition" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="insertPosition()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Add Position</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Name:</label>
+            <div class="col-lg-9">
+              {{combinePositionNameUseID(new_position)}}
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*Role:</label>
+            <div class="col-lg-9">
+              <select class="form-control" ng-model="new_position.role_id" ng-options="role.id as role.name for role in roles" ng-required="true">
+                <option value="">-- choose role --</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*Location:</label>
+            <div class="col-lg-9">
+              <select class="form-control" ng-model="new_position.location_id" ng-options="location.id as location.name for location in locations" ng-required="true">
+                <option value="">-- choose location --</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Tag:</label>
+            <div class="col-lg-9">
+             <input type="text" class="form-control" ng-model="new_position.tag">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Description:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="new_position.description">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">*Vacancy:</label>
+            <div class="col-lg-9">
+              <input type="number" min="0" class="form-control" ng-model="new_position.vacancy" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Auto Matching:</label>
+            <div class="col-lg-9">
+             <select class="form-control" ng-model="new_position.auto_matching" ng-options="switch for switch in [true, false]" ng-required="true"></select>
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">One Year Up:</label>
+            <div class="col-lg-9">
+              <input type="checkbox" ng-model="new_position.one_year_up">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Position-->
+  <div class="modal fade" id="editPosition" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="updatePosition()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Position</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Name:</label>
+            <div class="col-lg-9">
+              {{combinePositionName(edit_position)}}
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Tag:</label>
+            <div class="col-lg-9">
+             <input type="text" class="form-control" ng-model="edit_position.tag">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Description:</label>
+            <div class="col-lg-9">
+              <input type="text" class="form-control" ng-model="edit_position.description">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Vacancy:</label>
+            <div class="col-lg-9">
+              <input type="number" min="0" class="form-control" ng-model="edit_position.vacancy" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">Auto Matching:</label>
+            <div class="col-lg-9">
+             <select class="form-control" ng-model="edit_position.auto_matching" ng-options="switch for switch in [true, false]" ng-required="true"></select>
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-3 control-label">One Year Up:</label>
+            <div class="col-lg-9">
+              <input type="checkbox" ng-model="edit_position.one_year_up">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

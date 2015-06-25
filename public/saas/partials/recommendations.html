@@ -1,0 +1,35 @@
+<div ng-controller="Recommendations">
+  <form class="form-horizontal" ng-submit="updateRecommendationSetting()">
+    <div class="modal-header">
+      <h5>Recommendation Setting</h5>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <h6 class="col-lg-12">The number of recommendation applicant should get : </h6>
+        <div class="col-lg-2">
+          <select class="form-control" ng-model="recommendation_setting.number" ng-options="num for num in [0,1,2,3,4,5]">
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <h6 class="col-lg-12">Ask the question to recommender "Show recommendation forms to student interviewers" : </h6>
+        <div class="col-lg-2">
+          <input type="checkbox" ng-model="recommendation_setting.show_recommendation"> Yes
+        </div>
+      </div>
+      <div class="form-group">
+        <h6 class="col-lg-12">The message about applying this process : </h6>
+        <div class="col-lg-12">
+          <textarea id="tinymce" ui-tinymce rows="10" ng-model="recommendation_setting.requirement"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <h6 class="col-lg-12"></h6>
+        <div class="col-lg-12">
+          <button class="btn btn-info pull-right" type="submit" ng-disabled="!permission_to_active">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+

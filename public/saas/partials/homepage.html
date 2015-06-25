@@ -1,0 +1,16 @@
+<div ng-controller="homePageCrtl">
+  <!--<div>
+    <h3 class="col-md-offset-5"><b>{{$root.current_process.name}}</b></h3>
+  </div>-->
+  <div class="col-md-offset-2 col-md-8" ng-bind-html="landingHTML"></div>
+  <div class="col-md-offset-4 col-md-4 text-center rsas-go-to-application-div">
+    <div ng-if="homePage.checkSelectProcess('goToApplication')">
+      <h5 class="rsas-text-dark-red">Click here to check your application status at any time</h5>
+      <button id="APPLY-GO-TO-APPLICATION" class="btn-dark-red rsas-home-apply-btn" ng-click="homePage.goMyApplication()">APPLY / GO TO APPLICATION</button>
+    </div>
+    <div ng-if="homePage.checkSelectProcess('select')">
+      <h3>Please select a process.</h3>
+      <div ng-include='"/saas/partials/process_select_bar.html"'></div>
+    </div>
+  </div>
+</div>

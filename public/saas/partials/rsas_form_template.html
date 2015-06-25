@@ -1,0 +1,85 @@
+<table ng-repeat="row in getRows()" style="width:100%;table-layout: fixed;">
+  <tr>
+    <td valign="top" ng-repeat="column in getColumns(row)">
+      <div ng-repeat="item in form.schema" ng-if="row == item.row && column == item.column" style="margin: 5px;">
+        <div ng-if="item.ps">
+          <h5>{{item.description}}</h5>
+          <span ng-bind-html="to_html(item.value)"></span>
+          <br / ng-if="!item.value">
+        </div>
+        <div ng-if="!item.ps">
+          <div ng-if="item.type=='name'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span ng-repeat="part_of_name in item.option">
+              {{part_of_name.key}}
+              <input type="text" name="{{part_of_name.key}}" ng-model="part_of_name.value" size="10" ng-required="item.rq">
+            </span>
+          </div>
+          <div ng-if="item.type=='date'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span>
+              MM <input type="number" name="{{item.option[0].key}}"  ng-model="item.option[0].value" size="10" min="1" max="12" ng-required="item.rq">
+              DD <input type="number" name="{{item.option[1].key}}"  ng-model="item.option[1].value" size="10" min="1" max="31" ng-required="item.rq">
+              YYYY <input type="number" name="{{item.option[2].key}}"  ng-model="item.option[2].value" size="10" min="1" ng-required="item.rq">
+            </span>
+          </div>
+          <div ng-if="item.type=='email'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <input type="{{item.type}}" ng-model="item.value" ng-value="item.value" ng-disabled="item.disabled" ng-required="item.rq">
+          </div>
+          <div ng-if="item.type=='file'">
+            <h5>{{item.description}}</h5>
+            <input type="file" nv-file-select="" uploader="set_uploader(form.id)" ng-disabled="!permission_to_active">
+            <div ng-repeat="file in form.upload_files">
+              <div class="box_hover">
+                <a href="{{file.file_path}}" style="font-size: 15px;">{{file.original_filename}}</a>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="delete_file(form, file.id, $index)" ng-disabled="!permission_to_active">&times;</button>
+              </div>
+            </div>
+          </div>
+          <div ng-if="item.type=='textarea'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <textarea style="width: 100%; min-height: 200px; resize: none;" ng-model="item.value" ng-bind="item.value" ng-required="item.rq" rsas-maxlength="{{item.maxlength}}"></textarea>
+            <div style="color: red;" ng-show="item.value.length == item.maxlength">Maxlength = {{item.maxlength}} characters (around 250 words).</div>
+          </div>
+          <div ng-if="item.type=='description'">
+            <span ng-bind-html="to_html(item.description)"></span>
+          </div>
+          <div ng-if="item.type=='text'||item.type=='password'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <input type="{{item.type}}" ng-model="item.value" ng-value="item.value" ng-disabled="item.disabled" ng-required="item.rq">
+          </div>
+          <div ng-if="item.type=='radio'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span ng-repeat="option in item.options track by $index">
+              <label style="margin-bottom: 10px;" ng-if="option != '\<br \/\>'">
+                <input type="radio" value="{{option}}" name="{{item.description}}" ng-model="item.select" ng-checked="option == item.select" ng-required="item.rq" ng-click>
+                {{option}}
+              </label>
+              <br / ng-if="option == '\<br \/\>'">
+            </span>
+          </div>
+          <div ng-if="item.type=='checkbox'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <span ng-repeat="option in item.options track by $index">
+              <label style="margin-bottom: 10px;" ng-if="option != '\<br \/\>'">
+                <input type="checkbox" value="{{option}}" name="{{item.description}}" checklist-model="item.select" checklist-value="option" ng-checked="item.select.indexOf(option) > -1">
+                {{option}}
+              </label>
+              <br / ng-if="option == '\<br \/\>'">
+            </span>
+          </div>
+          <div ng-if="item.type=='select'">
+            <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
+            <select ng-model="item.select" ng-options="option for option in item.options" ng-required="item.rq"><option value=""></option></select>
+          </div>
+          <div ng-if="item.type=='multi-select'">
+            <h5>{{item.description}}</h5>
+            <multiselect multiple="true" ng-model="item.select" options="option for option in item.options" change="selected()" ng-selected="option == item.select"></multiselect>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+<br>

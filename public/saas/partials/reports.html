@@ -1,0 +1,85 @@
+<div class="container" ng-controller="Reports">
+
+  <div class="panel panel-primary" ng-if="permission_to_show">
+
+    <div class="panel-heading">
+      Reports
+    </div>
+    <div class="panel-body">
+      <div class="report_container">
+        <form>
+          <span class="report_title">Export Form Schema:</span>
+          <span class="report_options">
+            Export Form Schema to Form_Inputs Table
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="button" ng-click="exportFormSchema()" value="Export"/></span>
+        </form>
+      </div>
+      <div class="report_container">
+        <form method="post" action="/reports/applicant_list_report.xlsx">
+          <span class="report_title">Applicant List Report:</span>
+          <span class="report_options">
+            Process:&nbsp;
+            <select ng-model="applicant_list.procedure_id" ng-options="procedure.id as procedure.name for procedure in procedures" ng-required="true">
+              <option value="">-- choose process --</option>
+            </select>
+            <input type="hidden" name="procedure_id" value="{{applicant_list.procedure_id}}">
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
+        </form>
+      </div>
+      <div class="report_container">
+        <form method="post" action="/reports/academic_record_report.xlsx">
+          <span class="report_title">Academic Record Report:</span>
+          <span class="report_options">
+            Process:&nbsp;
+            <select ng-model="academic_record.procedure_id" ng-options="procedure.id as procedure.name for procedure in procedures" ng-required="true">
+              <option value="">-- choose process --</option>
+            </select>
+            <input type="hidden" name="procedure_id" value="{{academic_record.procedure_id}}">
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
+        </form>
+      </div>
+      <div class="report_container">
+        <form method="post" action="/reports/ranking_report.xlsx">
+          <span class="report_title">Ranking Report:</span>
+          <span class="report_options">
+            Process:&nbsp;
+            <select ng-model="ranking_report.procedure_id" ng-options="procedure.id as procedure.name for procedure in procedures" ng-required="true">
+              <option value="">-- choose process --</option>
+            </select>
+            <input type="hidden" name="procedure_id" value="{{ranking_report.procedure_id}}">
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
+        </form>
+      </div>
+      <div class="report_container">
+        <form method="post" action="/reports/offered_unoffered_report.xlsx">
+          <span class="report_title">Offered/Unoffered Report:</span>
+          <span class="report_options">
+            Process:&nbsp;
+            <select ng-model="offered_unoffered_report.procedure_id" ng-options="procedure.id as procedure.name for procedure in procedures" ng-required="true">
+              <option value="">-- choose process --</option>
+            </select>
+            <input type="hidden" name="procedure_id" value="{{offered_unoffered_report.procedure_id}}">
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
+        </form>
+      </div>
+      <div class="report_container">
+        <form method="post" action="/reports/manager_ranking_report.xlsx">
+          <span class="report_title">Manager Ranking Report:</span>
+          <span class="report_options">
+            Process:&nbsp;
+            <select ng-model="manager_ranking_report.procedure_id" ng-options="procedure.id as procedure.name for procedure in procedures" ng-required="true">
+              <option value="">-- choose process --</option>
+            </select>
+            <input type="hidden" name="procedure_id" value="{{manager_ranking_report.procedure_id}}">
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

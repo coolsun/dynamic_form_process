@@ -1,0 +1,162 @@
+<div class="container" ng-controller="Years">
+  <div>
+    <button type="submit" class="btn btn-info" data-toggle="modal" data-target="#addYear" ng-disabled="!permission_to_active" style="margin: 10px 0px;">Add Year</button>
+    <div class="panel tableRsasPanel">
+      <div class="panel-heading">
+        <span>
+          <label>Year</label>
+        </span>
+        <span class="tableRsasFloatRight">
+          <label>Total:{{yearTable.tbl.pTotal}}</label>
+        </span>
+      </div>
+      <div class="table-responsive">
+        <div class="panel-body">
+          <div class="toolBarRsas">
+            <span class="pull-left tableRsasSearch">
+              <span>
+                <input ng-model="yearTable.tbl.searchText" type="text" class="form-control">
+              </span>
+              <span>
+                <button class="btn tableRsasBtn" ng-click="yearTable.tbl.searchClick(yearTable.tbl);">Search</button>
+              </span>
+            </span>
+            <span class="tableRsasFloatRight">
+              <select class="form-control" ng-model="yearTable.tbl.perPage" ng-change="yearTable.tbl.setDataAndRequest();">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="0">ALL</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        <table class="table table-bordered table-hover tableRsas">
+          <thead>
+            <tr>
+              <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in yearTable.tbl.header" ng-click="yearTable.tbl.headerClick(header)">
+                {{header[0]}}
+                <img ng-show="header[1] && header[0]==yearTable.tbl.orderBy" ng-src="/saas/img/{{yearTable.tbl.img[yearTable.tbl.sortOrder]}}.png">
+                <img ng-show="header[1] && header[0]!=yearTable.tbl.orderBy" ng-src="/saas/img/{{yearTable.tbl.img[2]}}.png">
+              </th>
+              <th><span class="glyphicon glyphicon-cog"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tblTr in yearTable.tbl.show">
+              <td style="text-align: center;"><span ng-if="tblTr.is_current_year" class="glyphicon glyphicon-ok"></span></td>
+              <td style="text-align: center;"><span ng-if="tblTr.id == $root.current_year.id" class="glyphicon glyphicon-ok"></span></td>
+              <td>{{tblTr.name}}</td>
+              <td>{{tblTr.next_year}}</td>
+              <th>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                      <a>
+                        <button class="btn_li" href="#editYear" ng-click="editYear()" data-toggle="modal">Edit</button>
+                      </a>
+                    </li>
+                    <li ng-if="!tblTr.is_current_year">
+                      <a ng-click="$root.defaultConfirm('Delete Year', 'Are you sure to delete this year? Once you deleted this year, all the process information of this year would be deleted permanently.', deleteYear, [$index, tblTr.id])">
+                        <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                    <li ng-if="!tblTr.is_current_year">
+                      <a ng-click="setCurrentYearConfirm()">
+                        <button class="btn_li">Set Current Year</button>
+                      </a>
+                    </li>
+                    <li ng-if="tblTr.id != $root.is_current_year.id">
+                      <a ng-click="adminSwitchYearConfirm()">
+                        <button class="btn_li">Admin Switch Year</button>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pull-left tableRsasPagging">
+          <span>
+            <pagination ng-model="yearTable.tbl.pNow" total-items="yearTable.tbl.pTotal" items-per-page="yearTable.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="yearTable.tbl.pageChange()"></pagination>
+          </span>
+          <span class="tableRsasPageGoToSpan">
+            <span>
+              <input ng-model="yearTable.tbl.goPage" type="text" class="form-control" maxlength="4">
+            </span>
+            <span>
+               <button class="btn tableRsasBtn" ng-click="yearTable.tbl.goToPage()" ng-disabled="yearTable.tbl.goPageAble">Go</button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add Year-->
+  <div class="modal fade" id="addYear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="insertYear()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Add Year</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">*Name:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_year.name" ng-required="true" placeholder="Only use Number 0-9 and Symbol '-' for Name">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Next Year:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="new_year.next_year" ng-required="true" placeholder="Only use Number 0-9 and Symbol '-' for Name">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Year-->
+  <div class="modal fade" id="editYear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" ng-submit="updateYear()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edit Year</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">*Name:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_year.name" ng-required="true" placeholder="Only use Number 0-9 and Symbol '-' for Name">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Next Year:</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" ng-model="edit_year.next_year" ng-required="true" placeholder="Only use Number 0-9 and Symbol '-' for Name">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

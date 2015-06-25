@@ -1,0 +1,109 @@
+<ol class="breadcrumb">{{current_step.name}} Settings</ol>
+<form ng-submit="updateSubStepsTime()">
+  <div class="panel panel-primary">
+    <div class="panel-heading">{{current_step.name}} Time Setting</div>
+    <div class="panel-body" ng-show="check_in_time_message" style="color: red">{{check_in_time_message}}</div>
+    <table class="table">
+      <tbody>
+        <tr>
+          <td>Step</td>
+          <td>Sub Step</td>
+          <td>Start Time</td>
+          <td>End Time</td>
+        </tr>
+        <tr>
+          <td>{{current_step.name}}</td>
+          <td></td>
+          <td><input type="text"
+                     ng-model="current_step.t_start_string"
+                     ng-change="checkInTime('step')"
+                     class="form-control setDatetimepicker"
+                     ng-disabled="!current_step.permission.active">
+          </td>
+          <td><input type="text"
+                     ng-model="current_step.t_end_string"
+                     ng-change="checkInTime('step')"
+                     class="form-control setDatetimepicker"
+                     ng-disabled="!current_step.permission.active">
+          </td>
+        </tr>
+        <tr ng-repeat="sub_step in current_step.procedure_sub_steps" ng-show="sub_step.permission.show" repeat-done="loadTimepickerAndCheckInTime()">
+          <td></td>
+          <td>{{sub_step.name}}</td>
+          <td><input type="text"
+                     ng-model="sub_step.t_start_string"
+                     ng-change="checkInTime('sub_step')"
+                     ng-class="{'rsas-error': sub_step.t_start_over_time}"
+                     class="form-control setDatetimepicker"
+                     ng-disabled="!current_step.permission.active || !sub_step.permission.active">
+          </td>
+          <td><input type="text"
+                     ng-model="sub_step.t_end_string"
+                     ng-change="checkInTime('sub_step')"
+                     ng-class="{'rsas-error': sub_step.t_end_over_time}"
+                     class="form-control setDatetimepicker"
+                     ng-disabled="!current_step.permission.active || !sub_step.permission.active"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="panel-footer" style="height: 55px;">
+      <button class="btn btn-primary navbar-right" type="submit" ng-disabled="(!current_step.permission.active && !sub_step.permission.active) || current_step.is_over_time">Upate {{current_step.name}} Time</button>
+    </div>
+  </div>
+</form>
+<hr>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    {{current_step.name}} Landing Page
+    <button class="btn-info" ng-click="landing_edit = !landing_edit" ng-show="current_step.permission.active">{{ landing_edit ? "Done":"Edit"}}</button>
+    <button class="btn-default" href="#key-word-list" data-toggle="modal">See the key word list</button>
+  </div>
+  <div class="panel-body">
+    <div ng-if="!landing_edit" ng-bind-html="landing_show"></div>
+    <div ng-if="landing_edit" ng-include='"/saas/partials/landing_edit.html"'></div>
+  </div>
+</div>
+
+<div class="panel panel-primary" ng-if="current_step.name == 'Process'">
+  <div class="panel-heading">
+    Set Help Landing Page
+    <button class="btn-info" ng-click="help_edit = !help_edit" ng-show="permission_edit_help">{{ help_edit ? "Done":"Edit"}}</button>
+  </div>
+  <div class="panel-body">
+    <div>
+      <div ng-if="!help_edit" ng-show="current_step.permission.show" ng-include='"/saas/partials/procedure_help_landing.html"'></div>
+      <div ng-if="help_edit" ng-show="current_step.permission.show" ng-include='"/saas/partials/edit_help_landing.html"'></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="key-word-list" role="dialog">
+  <div class="modal-dialog" style="width: 800px;">
+    <div class="modal-content">
+      <form class="form-horizontal">
+        <div class="modal-body">
+          <ul>
+            <li>[[(StepName)StartTime]]: The start time of the step. <i>Ex. ApplicationStartTime</i></li>
+            <li>[[(StepName)EndTime]]: The end time of the step. <i>Ex. OfferEndTime</i></li>
+            <li>[[(StepName)-(SubStepName)-StartTime]]: The start time of the sub step. <i>Ex. Application-Recommendation-StartTime</i></li>
+            <li>[[(StepName)-(SubStepName)-EndTime]]: The end time of the sub step. <i>Ex. Offer-OfferStatus-EndTime</i></li>
+            <li>[[Round-(RoundTitle)-StartTime]]: The start time of the round.</li>
+            <li>[[Round-(RoundTitle)-EndTime]]: The end time of the round.</li>
+            <li>[[CurrentYear]]: It shows the current year in this process. <i>Ex. 2014-2015</i></li>
+            <li>[[NextYear]]: It shows the value in the "Next Year" column on the year page of this process.</li>
+            <li>[[CurrentProcess]]: It shows the name of the process you are editing currently. <i>Ex. Graduate Community Associate (CA)</i></li>
+            <li>[[ContactEmail]]: It shows the email of the contact person of this process.</li>
+            <li>[[TheMessageAboutSubmitApplication]]: It shows the status whether the application has been submitted successfully or not. No message will show up if the application has not been submitted successfully before the due date.</li>
+            <li>[[TheMessageAboutRecommendationRequested]]: It shows the fact that the applicant hasn't request any recommendations yet.</li>
+            <li>[[TheMessageAboutRecommendationReceived]]: It shows the number of recommendation that the appicant actually received.</li>
+            <li>[[TheMessageAboutRecommendationTimesUp]]: It shows when the recommendation due date has passed.</li>
+          </ul>
+        </div>
+        <div class="modal-footer text-center">
+          <button id="modol-close" class="btn btn-default" data-dismiss="modal">Continue to edit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

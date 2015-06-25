@@ -1,0 +1,1855 @@
+<!-- target: admin procedure function -->
+<div ng-controller="interviewAdminProcessCtrl">
+  <div class="">
+    <div class="col-md-12">
+      <h2 ng-show="interviewAdminProcess.round.t_start">
+        Round: <b>{{interviewAdminProcess.round.title}}</b> <br /> From <b>{{interviewAdminProcess.round.t_start | datetimeFormatUTC2ZoneSub8}}</b> To <b>{{interviewAdminProcess.round.t_end | datetimeFormatUTC2ZoneSub8}}</b>
+      </h2>
+      <div>
+        <h3>Locations: {{interviewAdminProcess.locationTitle}}</h3>
+        <span class="rsas-element-arrangement" ng-repeat="location in interviewAdminProcess.locations">
+          {{location.name}}
+        </span>
+      </div>
+      <div>
+        <h3>Roles: {{interviewAdminProcess.roleTitle}}</h3>
+        <span class="rsas-element-arrangement" ng-repeat="role in interviewAdminProcess.roles">
+          {{role.name}}
+        </span>
+      </div>
+    </div>
+    <hr />
+    <div class="col-md-12">
+      <tabset>
+        <!-- Interviews -->
+        <tab select="interviewAdminProcess.tab.interviewSelect();">
+          <tab-heading>
+            <span class="glyphicon glyphicon-list-alt"></span> Interviews
+          </tab-heading>
+
+          <button type="submit" ng-show="interviewAdminProcess.myInterview.tbl.create_permission" class="btn btn-info rsas-margin-10-0" data-toggle="modal" data-target="#interviewAdminProcessInterviewCreateDiv" ng-click="interviewAdminProcess.interview.create.init();">Create Interview</button>
+          <div class="col-md-12 padding-0">
+            <div class="panel tableRsasPanel">
+              <div class="panel-heading">
+                <span>
+                  <label>Interviews</label>
+                </span>
+                <span class="tableRsasFloatRight">
+                  <label>Total:{{interviewAdminProcess.interview.tbl.pTotal}}</label>
+                </span>
+              </div>
+              <div class="table-responsive">
+                <div class="panel-body">
+                  <div class="toolBarRsas">
+                    <span class="pull-left tableRsasSearch">
+                      <span>
+                        <input ng-model="interviewAdminProcess.interview.tbl.searchText" type="text" class="form-control">
+                      </span>
+                      <span>
+                        <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.interview.tbl.searchClick(interviewAdminProcess.interview.tbl);">Search</button>
+                      </span>
+                    </span>
+                    <span class="tableRsasFloatRight">
+                      <select class="form-control" ng-model="interviewAdminProcess.interview.tbl.perPage" ng-change="interviewAdminProcess.interview.tbl.setDataAndRequest();">
+                        <option value=25>25</option>
+                        <option value=50>50</option>
+                        <option value=100>100</option>
+                        <option value=0>ALL</option>
+                      </select>
+                    </span>
+                  </div>
+                </div>
+                <table class="table table-bordered table-hover tableRsas">
+                  <thead>
+                    <tr>
+                      <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in interviewAdminProcess.interview.tbl.header" ng-click="interviewAdminProcess.interview.tbl.headerClick(header)">
+                        {{header[0]}}
+                        <img ng-show="header[1] && header[0]==interviewAdminProcess.interview.tbl.orderBy" ng-src="/saas/img/{{interviewAdminProcess.interview.tbl.img[interviewAdminProcess.interview.tbl.sortOrder]}}.png">
+                        <img ng-show="header[1] && header[0]!=interviewAdminProcess.interview.tbl.orderBy" ng-src="/saas/img/{{interviewAdminProcess.interview.tbl.img[2]}}.png">
+                      </th>
+                      <th><span class="glyphicon glyphicon-cog"></span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="tblTr in interviewAdminProcess.interview.tbl.show">
+                      <td>{{tblTr.name}}</td>
+                      <td class="rsas-table-position-name-field" ng-init="interviewAdminProcess.interview.positionShow[$index]=false; interviewAdminProcess.interview.positionShowHideNum = 3">
+                        <!-- <button ng-click="interviewAdminProcess.interview.positionShow[$index] = !interviewAdminProcess.interview.positionShow[$index]" ng-init="interviewAdminProcess.interview.positionShow[$index]=false; interviewAdminProcess.interview.positionShowHideNum = 3">show/hide All</button> -->
+                        <div ng-repeat="positions_in_interview in tblTr.positions_in_interviews | orderBy:'position.name'">
+                          <p ng-show="interviewAdminProcess.interview.positionShowHideNum > $index || (interviewAdminProcess.interview.positionShow[$parent.$index] && interviewAdminProcess.interview.positionShowHideNum <= $index)">
+                            {{positions_in_interview.position.name}}
+                          </p>
+                        </div>
+                        <div ng-show="interviewAdminProcess.interview.positionShowHideNum < tblTr.positions_in_interviews.length">
+                          <a href='' ng-show="!interviewAdminProcess.interview.positionShow[$index]" ng-click="interviewAdminProcess.interview.positionShow[$index] = !interviewAdminProcess.interview.positionShow[$index]"><b>More ...</b></a>
+                          <a href='' ng-show="interviewAdminProcess.interview.positionShow[$index]" ng-click="interviewAdminProcess.interview.positionShow[$index] = !interviewAdminProcess.interview.positionShow[$index]"><b>Less ...</b></a>
+                        </div>
+                      </td>
+                      <td class="rsas-table-interview-vacancy-field">{{tblTr.vacancy}}</td>
+                      <td>
+                        <div ng-repeat="time_slot in tblTr.time_slots">
+                          <p>
+                            <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8}}</b></p>
+                          </p>
+                          <p>
+                            <p><b>Place: {{time_slot.place}}</b></p>
+                          </p>
+                          <p ng-show="0 < time_slot.interviewees.length"><b>Applicants:</b></p>
+                          <p ng-repeat="interviewee in time_slot.interviewees">
+                            {{interviewee.user.name}}
+                          </p>
+                          <p ng-show="0 < time_slot.time_slot_interviewers.length"><b>Interviewers:</b></p>
+                          <p ng-repeat="time_slot_interviewer in time_slot.time_slot_interviewers">
+                            {{time_slot_interviewer.interviewer.user.sunet_id}}
+                          </p>
+                          <p>
+                            <button ng-show="tblTr.permissions.schedule_interviewer.show && tblTr.interviewer_can_schedule" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleInterviewer(tblTr, time_slot);">Schedule Interviewers</button>
+                            <button ng-show="tblTr.permissions.schedule_applicant.show" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleApplicant(tblTr, time_slot);">Schedule Applicants</button>
+                          </p>
+                        </div>
+                      </td>
+                      <td class="rsas-table-dropdown-field">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right">
+                            <li ng-show="tblTr.permissions.interview_setting.show">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.setting(tblTr);">
+                                <button class="btn_li">Setting</button>
+                              </a>
+                            </li>
+                            <li ng-show="tblTr.permissions.interview_position.show">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.position(tblTr);">
+                                <button class="btn_li">Position</button>
+                              </a>
+                            </li>
+                            <li ng-show="tblTr.permissions.interview_time_slot.show && ((tblTr.only_interviewer && tblTr.interviewer_can_edit) || (!tblTr.only_interviewer))">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.timeSlot(tblTr);">
+                                <button class="btn_li">Time Slot</button>
+                              </a>
+                            </li>
+                            <li ng-show="tblTr.permissions.select_interviewer.show">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.interviewer(tblTr);">
+                                <button class="btn_li">Select Interviewers</button>
+                              </a>
+                            </li>
+                            <li ng-show="tblTr.permissions.select_applicant.show">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.selectApplicant(tblTr);">
+                                <button class="btn_li">Select Applicants</button>
+                              </a>
+                            </li>
+                            <li ng-show="tblTr.permissions.interview_delete.show">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.remove(tblTr);">
+                                <button class="btn_li">Delete</button>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pull-left tableRsasPagging">
+                <span>
+                  <pagination ng-model="interviewAdminProcess.interview.tbl.pNow" total-items="interviewAdminProcess.interview.tbl.pTotal" items-per-page="interviewAdminProcess.interview.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="interviewAdminProcess.interview.tbl.pageChange()"></pagination>
+                </span>
+                <span class="tableRsasPageGoToSpan">
+                  <span>
+                    <input ng-model="interviewAdminProcess.interview.tbl.goPage" type="text" class="form-control" maxlength="4">
+                  </span>
+                  <span>
+                     <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.interview.tbl.goToPage()" ng-disabled="interviewAdminProcess.interview.tbl.goPageAble">Go</button>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </tab>
+
+        <!-- applicant list -->
+        <tab select="interviewAdminProcess.tab.applicantListSelect();">
+          <tab-heading>
+            <span class="glyphicon glyphicon-list-alt"></span>Applicant List
+          </tab-heading>
+          <!-- Applicant List -->
+          <!-- option -->
+          <div class="form-group col-md-12 padding-0 rsas-margin-10-0">
+            <div class="col-md-12">
+              <label class="control-label pull-left text-align-left rsas-radio-lable-font" style="margin-right: 10px;">Interview: </label>
+              <select class="form-control" width="300" style="width: 300px; display: inline;" ng-model="interviewAdminProcess.applicantList.interviewSelect" ng-options="interview.name for interview in interviewAdminProcess.applicantList.round.interviews" ng-change="interviewAdminProcess.applicantList.init();"></select>
+              <button class="btn btn-primary" style="margin-bottom: 3px;" ng-show="interviewAdminProcess.applicantList.interviewSelect" ng-click="interviewAdminProcess.applicantList.emailScheduled.click();">Email Scheduled</button>
+              <button class="btn btn-primary" style="margin-bottom: 3px;" ng-show="interviewAdminProcess.applicantList.interviewSelect" ng-click="interviewAdminProcess.applicantList.emailAllApplicant.click();">Email Selected</button>
+              <div style="margin-top: 10px;">
+                <form method="post" action="/download_pdfs/interview_scheduled_applicants_pdf">
+                  <button class="btn btn-primary" style="margin-bottom: 3px;" ng-click="interviewAdminProcess.applicantList.downloadPdf.click();">Download Scheduled Applicant's PDFs</button>
+                  <div ng-show='false'>
+                    <input type="hidden" name="interviewId" value="{{interviewAdminProcess.applicantList.interviewSelect.id}}">
+                    <input type="checkbox" name="systemFormCheck" ng-model="interviewAdminProcess.applicantList.downloadPdf.systemFormCheck" ng-init="interviewAdminProcess.applicantList.downloadPdf.systemFormCheck=true" />
+                    <label class="" style="margin-right: 10px;">System Forms</label>
+                    <input type="checkbox" name="attachableFormsCheck" ng-model="interviewAdminProcess.applicantList.downloadPdf.attachableFormsCheck" ng-init="interviewAdminProcess.applicantList.downloadPdf.attachableFormsCheck=true" />
+                    <label class="" style="margin-right: 10px;">Attachable Forms</label>
+                    <input type="checkbox" name="recommendationsFormCheck" ng-model="interviewAdminProcess.applicantList.downloadPdf.recommendationsFormCheck" ng-init="interviewAdminProcess.applicantList.downloadPdf.recommendationsFormCheck=true" />
+                    <label class="" style="margin-right: 10px;">Recommendations</label>
+                    <input type="checkbox" name="transcriptsFormCheck" ng-model="interviewAdminProcess.applicantList.downloadPdf.transcriptsFormCheck" ng-init="interviewAdminProcess.applicantList.downloadPdf.transcriptsFormCheck=true" />
+                    <label class="" style="margin-right: 10px;">Transcripts</label>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <hr />
+
+          <div class="col-md-12 form-group rsas-margin-10-0" ng-show="interviewAdminProcess.isManager" ng-init="interviewAdminProcess.applicantList.radioApplicantType=1">
+            <input class="" type="radio" ng-model="interviewAdminProcess.applicantList.radioApplicantType" value="0" ng-click="interviewAdminProcess.applicantList.radioApplicantTypeClick(0);">
+            <label class="">All</label>
+            <input class="" style="margin-left: 15px;" type="radio" ng-model="interviewAdminProcess.applicantList.radioApplicantType" value="1" ng-click="interviewAdminProcess.applicantList.radioApplicantTypeClick(1);">
+            <label class="">List of Applicants for Selected Position(s)</label>
+            <input class="" style="margin-left: 15px;"type="radio" ng-model="interviewAdminProcess.applicantList.radioApplicantType" value="2" ng-click="interviewAdminProcess.applicantList.radioApplicantTypeClick(2);">
+            <label class="">List of All of My Applicants</label>
+          </div>
+          <!-- list -->
+          <div class="col-md-12 padding-0">
+            <div class="panel tableRsasPanel">
+              <div class="panel-heading">
+                <span>
+                  <label>applicant list</label>
+                </span>
+                <span class="tableRsasFloatRight">
+                  <label>Total:{{interviewAdminProcess.applicantList.tbl.pTotal}}</label>
+                </span>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover tableRsas">
+                  <thead>
+                    <tr>
+                      <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in interviewAdminProcess.applicantList.tbl.header" ng-click="interviewAdminProcess.applicantList.tbl.headerClick(header)">
+                        {{header[0]}}
+                        <img ng-show="header[1] && header[0]==interviewAdminProcess.applicantList.tbl.orderBy" ng-src="/saas/img/{{interviewAdminProcess.applicantList.tbl.img[interviewAdminProcess.applicantList.tbl.sortOrder]}}.png">
+                        <img ng-show="header[1] && header[0]!=interviewAdminProcess.applicantList.tbl.orderBy" ng-src="/saas/img/{{interviewAdminProcess.applicantList.tbl.img[2]}}.png">
+                      </th>
+                      <th><span class="glyphicon glyphicon-cog"></span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="applicant in interviewAdminProcess.applicantList.tbl.show | orderBy:'user.name'">
+                      <td>
+                        {{applicant.name}}
+                        <p ng-switch="applicant.rd_flag_color">
+                          <button class="rd-flag-button-sm green-bgcolor" ng-switch-when="green"></button>
+                          <button class="rd-flag-button-sm yellow-bgcolor" ng-switch-when="yellow"></button>
+                          <button class="rd-flag-button-sm orange-bgcolor" ng-switch-when="orange"></button>
+                          <button class="rd-flag-button-sm red-bgcolor" ng-switch-when="red"></button>
+                        </p>
+                        <p>
+                          <span ng-repeat="tag in applicant.applicant_tags" class="rsas-element-arrangement">{{tag}} </span>
+                        </p>
+                      </td>
+                      <td style="min-width: 222px;">
+                        <accordion close-others="false">
+                          <accordion-group is-open="systems.open">
+                            <accordion-heading>
+                              <span class="pt">System Forms</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': systems.open, 'glyphicon-chevron-right': !systems.open}"></i>
+                            </accordion-heading>
+                            <div ng-repeat="system_form in applicant.system_forms">
+                              <span>
+                                <a class="pt btn_li box_hover" data-target="#interviewAdminProcessApplicantFormShow" ng-click="interviewAdminProcess.applicantList.application.form.userFormShow(system_form)" data-toggle="modal">
+                                  {{system_form.form_name}}
+                                </a>
+                              </span>
+                            </div>
+                          </accordion-group>
+                          <accordion-group is-open="applications.open">
+                            <accordion-heading>
+                              <span class="pt">Attachable Forms</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': applications.open, 'glyphicon-chevron-right': !applications.open}"></i>
+                            </accordion-heading>
+                            <div ng-repeat="application_form in applicant.application_forms">
+                              <span>
+                                <a class="pt btn_li box_hover" data-target="#interviewAdminProcessApplicantFormShow" ng-click="interviewAdminProcess.applicantList.application.form.userFormShow(application_form)" data-toggle="modal">
+                                  {{application_form.form_name}}
+                                </a>
+                              </span>
+                            </div>
+                          </accordion-group>
+                          <accordion-group is-open="recommendations.open">
+                            <accordion-heading>
+                                <span class="pt">Recommendations</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': recommendations.open, 'glyphicon-chevron-right': !recommendations.open}"></i>
+                            </accordion-heading>
+                            <div ng-repeat="recommendation_form in applicant.recommendation_forms">
+                              <span>
+                                <a class="pt btn_li box_hover" data-target="#interviewAdminProcessApplicantFormShow" ng-click="interviewAdminProcess.applicantList.application.form.recommendationFormShow(recommendation_form)" data-toggle="modal">
+                                  {{recommendation_form.form_title}}
+                                </a>
+                                by {{recommendation_form.referee}}
+                              </span>
+                            </div>
+                          </accordion-group>
+                          <accordion-group ng-if="'Staff'==$root.current_user.status" is-open="transcripts.open">
+                            <accordion-heading>
+                                <span class="pt">Transcripts</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': transcripts.open, 'glyphicon-chevron-right': !transcripts.open}"></i>
+                            </accordion-heading>
+                            <div>
+                              <span>
+                                <a class="pt btn_li box_hover" data-target="#interviewAdminProcessApplicantTranscriptShow" ng-click="interviewAdminProcess.applicantList.application.form.transcriptFormShow(applicant.id)" data-toggle="modal">
+                                  Transcript
+                                </a>
+                              </span>
+                            </div>
+                          </accordion-group>
+
+                        </accordion>
+                      </td>
+                      <td><span ng-show="applicant.check" class="glyphicon glyphicon-ok"></span></td>
+                      <td>
+                        <div ng-repeat="time_slot in applicant.time_slots">
+                          <p>
+                            {{time_slot.t_start | datetimeFormatUTC2ZoneSub8}}
+                          </p>
+                        </div>
+                      </td>
+                      <td class="rsas-table-dropdown-field">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                              <a ng-click="interviewAdminProcess.applicantListDropdownClick.email(applicant);">
+                                <button class="btn_li">Email</button>
+                              </a>
+                            </li>
+                            <li ng-show="interviewAdminProcess.isManager">
+                              <a ng-click="interviewAdminProcess.applicantListDropdownClick.evaluate(applicant, interviewAdminProcess.applicantList.timeSlot)">
+                                <button class="btn_li">Write Review</button>
+                              </a>
+                            </li>
+                            <li ng-show="interviewAdminProcess.isManager">
+                              <a ng-click="interviewAdminProcess.applicantListDropdownClick.review(applicant);">
+                                <button class="btn_li">Review</button>
+                              </a>
+                            </li>
+                            <li>
+                              <a ng-click="interviewAdminProcess.applicantListDropdownClick.tags(applicant);">
+                                <button class="btn_li">Set Tags</button>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pull-left tableRsasPagging">
+                <span>
+                  <pagination ng-model="interviewAdminProcess.applicantList.tbl.pNow" total-items="interviewAdminProcess.applicantList.tbl.pTotal" items-per-page="interviewAdminProcess.applicantList.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="interviewAdminProcess.applicantList.tbl.pageChange()"></pagination>
+                </span>
+                <span class="tableRsasPageGoToSpan">
+                  <span>
+                    <input ng-model="interviewAdminProcess.applicantList.tbl.goPage" type="text" class="form-control" maxlength="4">
+                  </span>
+                  <span>
+                     <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.applicantList.tbl.goToPage()" ng-disabled="interviewAdminProcess.applicantList.tbl.goPageAble">Go</button>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </tab>
+
+
+        <!-- My Interview -->
+        <tab select="interviewAdminProcess.tab.myInterviewSelect();">
+          <tab-heading>
+            <span class="glyphicon glyphicon-list-alt"></span>My Interviews
+          </tab-heading>
+
+          <div class="col-md-12 padding-0">
+            <div class="panel tableRsasPanel">
+              <div class="panel-heading">
+                <span>
+                  <label>Interviews</label>
+                </span>
+                <span class="tableRsasFloatRight">
+                  <label>Total:{{interviewAdminProcess.myInterview.tbl.pTotal}}</label>
+                </span>
+              </div>
+              <div class="table-responsive">
+                <div class="panel-body">
+                  <div class="toolBarRsas">
+                    <span class="pull-left tableRsasSearch">
+                      <span>
+                        <input ng-model="interviewAdminProcess.myInterview.tbl.searchText" type="text" class="form-control">
+                      </span>
+                      <span>
+                        <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.myInterview.tbl.searchClick(interviewAdminProcess.myInterview.tbl);">Search</button>
+                      </span>
+                    </span>
+                    <span class="tableRsasFloatRight">
+                      <select class="form-control" ng-model="interviewAdminProcess.myInterview.tbl.perPage" ng-change="interviewAdminProcess.myInterview.tbl.setDataAndRequest();">
+                        <option value=25>25</option>
+                        <option value=50>50</option>
+                        <option value=100>100</option>
+                        <option value=0>ALL</option>
+                      </select>
+                    </span>
+                  </div>
+                </div>
+                <table class="table table-bordered table-hover tableRsas">
+                  <thead>
+                    <tr>
+                      <th ng-class="{tableRsasThHead:header[1]}" ng-repeat="header in interviewAdminProcess.myInterview.tbl.header" ng-click="interviewAdminProcess.myInterview.tbl.headerClick(header)">
+                        {{header[0]}}
+                        <img ng-show="header[1] && header[0]==interviewAdminProcess.myInterview.tbl.orderBy" ng-src="/saas/img/{{interviewAdminProcess.myInterview.tbl.img[interviewAdminProcess.myInterview.tbl.sortOrder]}}.png">
+                        <img ng-show="header[1] && header[0]!=interviewAdminProcess.myInterview.tbl.orderBy" ng-src="/saas/img/{{interviewAdminProcess.myInterview.tbl.img[2]}}.png">
+                      </th>
+                      <th><span class="glyphicon glyphicon-cog"></span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="tblTr in interviewAdminProcess.myInterview.tbl.show">
+                      <td>{{tblTr.name}}</td>
+                      <td class="rsas-table-position-name-field" ng-init="interviewAdminProcess.myInterview.positionShow[$index]=false; interviewAdminProcess.myInterview.positionShowHideNum = 3">
+                        <!-- <button ng-click="interviewAdminProcess.myInterview.positionShow[$index] = !interviewAdminProcess.myInterview.positionShow[$index]" ng-init="interviewAdminProcess.myInterview.positionShow[$index]=false; interviewAdminProcess.myInterview.positionShowHideNum = 3">show/hide All</button> -->
+                        <div ng-repeat="positions_in_interview in tblTr.positions_in_interviews | orderBy:'position.name'">
+                          <p ng-show="interviewAdminProcess.myInterview.positionShowHideNum > $index || (interviewAdminProcess.myInterview.positionShow[$parent.$index] && interviewAdminProcess.myInterview.positionShowHideNum <= $index)">
+                            {{positions_in_interview.position.name}}
+                          </p>
+                        </div>
+                        <div ng-show="interviewAdminProcess.myInterview.positionShowHideNum < tblTr.positions_in_interviews.length">
+                          <a href='' ng-show="!interviewAdminProcess.myInterview.positionShow[$index]" ng-click="interviewAdminProcess.myInterview.positionShow[$index] = !interviewAdminProcess.myInterview.positionShow[$index]"><b>More ...</b></a>
+                          <a href='' ng-show="interviewAdminProcess.myInterview.positionShow[$index]" ng-click="interviewAdminProcess.myInterview.positionShow[$index] = !interviewAdminProcess.myInterview.positionShow[$index]"><b>Less ...</b></a>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="rsas-table-manager-my-interview-timeslot-field" ng-repeat="time_slot in tblTr.time_slots">
+                          <span ng-if="!interviewAdminProcess.myInterview.timeSlot.isOvertime(time_slot.t_end)" class="rsas-div-left">
+                            <input type="checkbox" class="largeCeckBox" ng-model="time_slot.check" ng-change="interviewAdminProcess.myInterview.timeSlot.change(time_slot, tblTr.interviewers);" ng-disabled="!tblTr.interviewer_can_schedule" />
+                          </span>
+                          <span class="rsas-div-left">
+                            <p>
+                              <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8}}</b></p>
+                            </p>
+                            <p>
+                              <p><b>Place: {{time_slot.place}}</b></b></p>
+                            </p>
+                            <p ng-show="0 < time_slot.interviewees.length"><b>Applicants:</b></p>
+                            <p ng-repeat="interviewee in time_slot.interviewees">
+                              {{interviewee.user.name}}
+                            </p>
+                            <p ng-show="0 < time_slot.interviewer_users.length"><b>Interviewers:</b></p>
+                            <p ng-repeat="interviewer in time_slot.interviewer_users">
+                              {{interviewer.name}}
+                            </p>
+                          </span>
+                        </div>
+                      </td>
+                      <td class="rsas-table-dropdown-field">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                              <a ng-click="interviewAdminProcess.myInterview.dropdownClick.email(tblTr);">
+                                <button class="btn_li">Email to Applicants (only scheduled)</button>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pull-left tableRsasPagging">
+                <span>
+                  <pagination ng-model="interviewAdminProcess.myInterview.tbl.pNow" total-items="interviewAdminProcess.myInterview.tbl.pTotal" items-per-page="interviewAdminProcess.myInterview.tbl.perPage" max-size="5" rotate="true" boundary-links="true" ng-change="interviewAdminProcess.myInterview.tbl.pageChange()"></pagination>
+                </span>
+                <span class="tableRsasPageGoToSpan">
+                  <span>
+                    <input ng-model="interviewAdminProcess.myInterview.tbl.goPage" type="text" class="form-control" maxlength="4">
+                  </span>
+                  <span>
+                     <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.myInterview.tbl.goToPage()" ng-disabled="interviewAdminProcess.myInterview.tbl.goPageAble">Go</button>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </tab>
+
+
+
+        <!-- Calendar -->
+        <tab select="interviewAdminProcess.calendar.renderCalender(calendarAdminProcess); interviewAdminProcess.tab.calendarSelect();">
+          <tab-heading>
+            <span class="glyphicon glyphicon-calendar"></span>Calendar
+          </tab-heading>
+          <div class="well">
+            <div class="row-fluid">
+              <div class="span8">
+                <div class="btn-toolbar">
+                  <p class="pull-right lead">
+                    Interview
+                  </p>
+                </div>
+                <div class="calendar" ng-model="interviewAdminProcess.calendar.eventSources" calendar="calendarAdminProcess" config="interviewAdminProcess.calendar.uiConfig.calendar" ui-calendar="interviewAdminProcess.calendar.uiConfig.calendar"></div>
+              </div>
+            </div>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+
+  <!-- @alert form series -->
+  <!------------------------------------------------------------------------------->
+
+
+  <div class="modal fade" id="interviewAdminProcessInterviewCreateDiv">
+    <div class="modal-dialog">
+      <div class="modal-content" ng-show="300==interviewAdminProcess.flow">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title">
+              Create:
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Interview name:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.create.noNameCss" type="text" ng-model="interviewAdminProcess.interview.create.name" ng-change="interviewAdminProcess.interview.create.nameOnChange();">
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Applicant vacancy per time slot:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.create.noVacancyCss" type="text" ng-model="interviewAdminProcess.interview.create.vacancy" ng-change="interviewAdminProcess.interview.create.vacancyOnChange();">
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Allow interviewer to edit time slot:</label>
+              <span class="col-md-1">
+                <input class="form-control pull-left" type="checkbox" ng-model="interviewAdminProcess.interview.create.interviewerCanEdit">
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Can schedule interviewer (interviewers can sign up for themselves, too):</label>
+              <span class="col-md-1">
+                <input class="form-control pull-left" type="checkbox" ng-model="interviewAdminProcess.interview.create.interviewerCanSchedule">
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="interviewAdminProcess.interview.create.interviewerCanSchedule">
+              <label class="col-md-4 control-label pull-left text-align-left">Interviewer vacancy per time slot:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.create.noInterviewerVacancyPerTimeSlotCss" type="text" ng-model="interviewAdminProcess.interview.create.interviewerVacancyPerTimeSlot" ng-change="interviewAdminProcess.interview.create.interviewerVacancyPerTimeSlotOnChange();" ng-disabled="!interviewAdminProcess.interview.create.interviewerCanSchedule">
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="interviewAdminProcess.interview.create.interviewerCanSchedule">
+              <label class="col-md-4 control-label pull-left text-align-left">Maximum number of time slots per interviewer:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.create.noMaxNumTimeSlotPerInterviewerCss" type="text" ng-model="interviewAdminProcess.interview.create.maxNumTimeSlotPerInterviewer" ng-change="interviewAdminProcess.interview.create.maxNumTimeSlotPerInterviewerOnChange();" ng-disabled="!interviewAdminProcess.interview.create.interviewerCanSchedule">
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-12 control-label pull-left text-align-left">** Maximum number of time slots per applicant is always one **</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(300,310);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success -->
+      <div ng-show="380==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Create Interview - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="390==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Create Interview - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Create fail.</h2>
+                <h2>Please Check Interview List, and create again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- alert admin edit interview -->
+  <div class="modal fade" id="interviewAdminProcessInterviewEditForm">
+    <div class="modal-dialog">
+      <!-- Edit Interview: set setting -->
+      <div ng-show="500==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Name:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.edit.noNameCss" type="text" ng-model="interviewAdminProcess.interview.edit.interview.name" ng-change="interviewAdminProcess.interview.edit.nameOnChange();">
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Applicant vacancy per time slot:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.edit.noVacancyCss" type="text" ng-model="interviewAdminProcess.interview.edit.interview.vacancy" ng-change="interviewAdminProcess.interview.edit.vacancyOnChange();">
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Allow interviewer to edit time slot:</label>
+              <span class="col-md-1">
+                <input class="form-control pull-left" type="checkbox" ng-model="interviewAdminProcess.interview.edit.interview.interviewer_can_edit">
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Can schedule interviewer (interviewers can sign up for themselves, too):</label>
+              <span class="col-md-1">
+                <input class="form-control pull-left" type="checkbox" ng-model="interviewAdminProcess.interview.edit.interview.interviewer_can_schedule">
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="interviewAdminProcess.interview.edit.interview.interviewer_can_schedule">
+              <label class="col-md-4 control-label pull-left text-align-left">Interviewer vacancy per time slot:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.edit.noInterviewerVacancyPerTimeSlotCss" type="text" ng-model="interviewAdminProcess.interview.edit.interview.interviewer_vacancy" ng-change="interviewAdminProcess.interview.edit.interviewerVacancyPerTimeSlotOnChange();" ng-disabled="!interviewAdminProcess.interview.edit.interview.interviewer_can_schedule">
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="interviewAdminProcess.interview.edit.interview.interviewer_can_schedule">
+              <label class="col-md-4 control-label pull-left text-align-left">Maximum number of time slots per interviewer:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.edit.noMaxNumTimeSlotPerInterviewerCss" type="text" ng-model="interviewAdminProcess.interview.edit.interview.max_time_slot_per_interviewer" ng-change="interviewAdminProcess.interview.edit.maxNumTimeSlotPerInterviewerOnChange();" ng-disabled="!interviewAdminProcess.interview.edit.interview.interviewer_can_schedule">
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-12 control-label pull-left text-align-left">** Maximum number of time slots per applicant is always one **</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(500,510);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Edit Interview: edit success -->
+      <div ng-show="580==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting- Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Edit Interview: edit fail -->
+      <div ng-show="590==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>Please Check Interview List, and Edit again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- alert admin delete interview -->
+  <div class="modal fade" id="interviewAdminProcessInterviewDeleteForm">
+    <div class="modal-dialog">
+      <!-- Delete Interview: check -->
+      <div ng-show="600==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Delete Interview</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h4>Are you sure to <b>Delete</b> this interview?</h4>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2"><h4>Interview:</h4></label>
+              <span class="col-md-10">
+                <h4>{{interviewAdminProcess.interview.remove.interview.name}}</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-danger" type="submit" ng-click="interviewAdminProcess.nextFlow(600, 610)">
+              Sure
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Delete Interview: delete success -->
+      <div ng-show="680==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Delete Interview - Server Message</h4>
+            <h4>{{dt | date:'yyyy-MMM-dd'}}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Delete Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Delete Interview: delete fail -->
+      <div ng-show="690==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Delete Interview - Server Message</h4>
+            <h4>{{dt | date:'yyyy-MMM-dd'}}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Delete Fail</h2>
+                <h2>Please Check Time Slots, Maybe some Time Slots under this Interview.</h2>
+                <h2>Please Check Interview List, and Delete again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- alert admin set interviewer form -->
+  <div class="modal fade" id="interviewAdminProcessSetInterviewerForm">
+    <div class="modal-dialog">
+      <!-- interviewers -->
+      <div ng-show="700==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Select Interviewers
+              <span class="rsas-top-right-corner-save-btn">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.nextFlow(700,710);">
+                  Save
+                </button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label">Filter:</label>
+              <span class="col-md-10">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.interviewer.filterInterviewer">
+              </span>
+            </div>
+            <hr />
+
+            <div class="form-group">
+              <label class="col-md-2 control-label">*Sunet ID:</label>
+              <span class="col-md-5">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.interviewer.newInterviewer.noSunetIdCss" type="text" ng-model="interviewAdminProcess.interview.interviewer.newInterviewer.sunetId"  ng-change="interviewAdminProcess.interview.interviewer.newInterviewer.sunetIdOnChange();" />
+              </span>
+              <span class="col-md-3">
+                <select class="form-control" ng-model="interviewAdminProcess.interview.interviewer.newInterviewer.status" ng-options="option for option in ['Staff', 'Student']"></select>
+              </span>
+              <span class="col-md-2">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.interview.interviewer.addSunetInterviewer();">Add</button>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label">*Email</label>
+              <span class="col-md-10">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.interviewer.newInterviewer.noEmailCss" type="text" ng-model="interviewAdminProcess.interview.interviewer.newInterviewer.email" ng-change="interviewAdminProcess.interview.interviewer.newInterviewer.emailOnChange();" />
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label">*First Name:</label>
+              <span class="col-md-10">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.interviewer.newInterviewer.noFirstNameCss" type="text" ng-model="interviewAdminProcess.interview.interviewer.newInterviewer.firstName" ng-change="interviewAdminProcess.interview.interviewer.newInterviewer.firstNameOnChange();" />
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label">Middle Name:</label>
+              <span class="col-md-10">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.interviewer.newInterviewer.middleName" />
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label">Last Name:</label>
+              <span class="col-md-10">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.interviewer.newInterviewer.lastName" />
+              </span>
+            </div>
+
+            <div class="form-group form-inline" ng-repeat="interviewer in interviewAdminProcess.interview.interviewer.sunetInterviewers | filter:interviewAdminProcess.interview.interviewer.filterInterviewer | orderBy:'sunet_id'">
+              <span class="col-md-2 control-label">
+                <span class="glyphicon glyphicon-trash" style="cursor:pointer;" ng-click="interviewAdminProcess.interview.interviewer.removeSunetInterviewer(interviewer)"></span>
+              </span>
+              <h4 class="col-md-10">
+                <label for="addInterviewerCheckBox{{$index}}" class="control-label">{{interviewer.sunet_id}}</label>
+              </h4>
+            </div>
+
+            <hr />
+
+            <div class="form-group rsas-interview-pop-row" ng-show="0 < interviewAdminProcess.interview.interviewer.interviewers.length && !interviewAdminProcess.interview.interviewer.filterInterviewer">
+              <span class="col-md-2 control-label">
+                <input type="checkbox" id="interviewerAllCheckBox{{$index}}" class="largeCeckBox" ng-model="interviewAdminProcess.interview.interviewer.selectAll" ng-change="interviewAdminProcess.interview.interviewer.selectAllChange();">
+              </span>
+              <p class="col-md-10">
+                <label for="interviewerAllCheckBox{{$index}}" class="control-label">ALL</label>
+              </p>
+            </div>
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="interviewer in interviewAdminProcess.interview.interviewer.interviewers | filter:interviewAdminProcess.interview.interviewer.filterInterviewer | orderBy:'sunet_id'">
+              <span class="col-md-2 control-label">
+                <input ng-model="interviewer.check" type="checkbox" id="addInterviewerCheckBox{{$index}}" class="largeCeckBox" ng-change="interviewAdminProcess.interview.interviewer.checkboxChange(interviewer)">
+              </span>
+              <p class="col-md-10">
+                <label for="addInterviewerCheckBox{{$index}}" class="control-label">{{interviewer.sunet_id}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(700,710);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Success -->
+      <div ng-show="780==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Set Interviewer - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="790==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Set Interviewer - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h3>Set up Fail</h3>
+                <h3>Please Check Interview List, and set again.</h3>
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="0 < interviewAdminProcess.interview.interviewer.not_set_interviewer_user_sunet_ids.length">
+              <div class="col-md-12">
+                <span class="col-md-2"></span>
+                <h3 class="col-md-10">Not yet select interviewer list:</h3>
+              </div>
+              <div class="col-md-12">
+                <span class="col-md-2"></span>
+                <h3 class="col-md-10" ng-repeat="sunet_id in interviewAdminProcess.interview.interviewer.not_set_interviewer_user_sunet_ids | orderBy:'sunet_id'">{{sunet_id}}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- alert admin select applicant form -->
+  <div class="modal fade" id="interviewAdminProcessSetInterviewApplicantForm">
+    <div class="modal-dialog">
+      <!-- interviewers -->
+      <div ng-show="800==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Select Applicants
+              <span class="rsas-top-right-corner-save-btn">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.nextFlow(800,810);">
+                  Save
+                </button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group" ng-show="interviewAdminProcess.isManager">
+              <label class="col-md-2 control-label">Applicant:</label>
+              <span class="col-md-10">
+                <div class="col-md-12">
+                  <span class="col-md-2">
+                    <input class="form-control" type="radio" ng-model="interviewAdminProcess.interview.selectApplicant.radioApplicantType" value="1" ng-change="interviewAdminProcess.interview.selectApplicant.checkSelectAll();">
+                  </span>
+                  <span class="col-md-10">
+                    <label class="control-label rsas-radio-lable-font text-align-left">List of Applicants for Selected Position(s)</label>
+                  </span>
+                </div>
+                <div class="col-md-12">
+                  <span class="col-md-2">
+                    <input class="form-control" type="radio" ng-model="interviewAdminProcess.interview.selectApplicant.radioApplicantType" value="2" ng-change="interviewAdminProcess.interview.selectApplicant.checkSelectAll();">
+                  </span>
+                  <span class="col-md-10">
+                    <label class="control-label rsas-radio-lable-font text-align-left">List of All of My Applicants</label>
+                  </span>
+                </div>
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label">Filter:</label>
+              <span class="col-md-10">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.selectApplicant.applicantFilter">
+              </span>
+            </div>
+            <div class="form-group rsas-interview-pop-row" ng-show="0 < interviewAdminProcess.interview.selectApplicant.applicants.length && !interviewAdminProcess.interview.selectApplicant.applicantFilter">
+              <span class="col-md-2 control-label">
+                <input type="checkbox" id="selectApplicantAllCheckBox{{$index}}" class="largeCeckBox" ng-model="interviewAdminProcess.interview.selectApplicant.selectAll" ng-change="interviewAdminProcess.interview.selectApplicant.selectAllChange()">
+              </span>
+              <p class="col-md-10">
+                <label for="selectApplicantAllCheckBox{{$index}}" class="control-label">ALL</label>
+              </p>
+            </div>
+            <div ng-show="0==applicant.list_type || interviewAdminProcess.interview.selectApplicant.radioApplicantType==applicant.list_type" class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.selectApplicant.applicants | filter:interviewAdminProcess.interview.selectApplicant.applicantFilter | orderBy:'name'">
+              <span class="col-md-2 control-label">
+                <input type="checkbox" id="selectApplicantCheckBox{{$index}}" class="largeCeckBox" ng-model="applicant.check" ng-change="interviewAdminProcess.interview.selectApplicant.checkboxChange(applicant)">
+              </span>
+              <p class="col-md-10">
+                <label for="selectApplicantCheckBox{{$index}}" class="control-label">{{applicant.suid}} : {{applicant.name}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(800,810);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Success -->
+      <div ng-show="880==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Select Applicants - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="890==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Select Applicants - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Select fail</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!------------------------------------------------------------------------------->
+  <!-- alert admin edit time slots -->
+  <div class="modal fade" id="interviewAdminProcessInterviewTimeSlotEditForm">
+    <div class="modal-dialog modal-lg"> <!-- modal-lg -->
+      <!-- Edit time slots: set setting -->
+      <div ng-show="900==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Time Slot
+              <span class="rsas-top-right-corner-save-btn">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.nextFlow(900,910);">
+                  Save
+                </button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group" ng-class="interviewAdminProcess.interview.timeSlot.noTimeListCss">
+              <label class="col-md-12">Time Slot list:</label>
+              <h4 class="col-md-12" ng-show="0 == interviewAdminProcess.interview.timeSlot.timeList.length">Not yet set any time, please add new time to list.</h4>
+              <div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-10">
+                  <ul class="list-group">
+                    <span class="col-md-12 padding-0">
+                      <li class="list-group-item" ng-repeat="time in interviewAdminProcess.interview.timeSlot.timeList">
+                        <button type="button" class="close" ng-click="interviewAdminProcess.interview.timeSlot.removeTimeFormListClick($index)">
+                          &times;
+                        </button>
+                        From <input type="text" width="120" style="width: 120px" class="setDatetimepicker" ng-model="time.t_start_timepicker" ng-init="time.t_start_timepicker=interviewAdminProcess.timeChangeRsasTimeFormat(time.t_start);" ng-change="interviewAdminProcess.interview.timeSlot.timeListOnChange(time.t_start_timepicker, time.t_end_timepicker, $index)">
+                        To <input type="text" width="120" style="width: 120px" class="setDatetimepicker" ng-model="time.t_end_timepicker" ng-init="time.t_end_timepicker=interviewAdminProcess.timeChangeRsasTimeFormat(time.t_end)" ng-change="interviewAdminProcess.interview.timeSlot.timeListOnChange(time.t_start_timepicker, time.t_end_timepicker, $index)">
+                        Place: <input type="text" width="200" style="width: 200px" ng-model="time.place">
+                      </li>
+                      {{interviewAdminProcess.setDatetimepicker();}}
+                    </span>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+            <div class="form-group">
+              <label for="interviewAdminProcessInterviewTimeSlotDuringTime" class="col-md-2 control-label pull-left text-align-left">*Interval (minutes):</label>
+              <span class="col-md-10">
+                <input type="text" class="form-control" ng-class="interviewAdminProcess.interview.timeSlot.noIntervalCss" name="interviewAdminProcessInterviewTimeSlotDuringTime" id="interviewAdminProcessInterviewTimeSlotDuringTime" ng-model="interviewAdminProcess.interview.timeSlot.timepicker.interval" ng-change="interviewAdminProcess.interview.timeSlot.intervalOnChange();">
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="interviewAdminProcessInterviewTimeSlotQuantity" class="col-md-2 control-label pull-left text-align-left">*Quantity:</label>
+              <span class="col-md-10">
+                <input type="text" class="form-control" ng-class="interviewAdminProcess.interview.timeSlot.noQuantityCss" name="interviewAdminProcessInterviewTimeSlotQuantity" id="interviewAdminProcessInterviewTimeSlotQuantity" ng-model="interviewAdminProcess.interview.timeSlot.timepicker.quantity" ng-change="interviewAdminProcess.interview.timeSlot.quantityOnChange();">
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="interviewAdminProcessInterviewTimeSlotStartTimePicker" class="col-md-2 control-label pull-left text-align-left">*Start Time:</label>
+              <span class="col-md-10">
+                <input type="text" class="form-control" ng-class="interviewAdminProcess.interview.timeSlot.noStartTimeCss" name="interviewAdminProcessInterviewTimeSlotStartTimePicker" id="interviewAdminProcessInterviewTimeSlotStartTimePicker" ng-model="interviewAdminProcess.interview.timeSlot.timepicker.start" ng-change="interviewAdminProcess.interview.timeSlot.startTimeOnChange();">
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-2 control-label pull-left text-align-left">*Place:</label>
+              <span class="col-md-10">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.timeSlot.noPlaceCss" type="text" ng-model="interviewAdminProcess.interview.timeSlot.place" ng-change="interviewAdminProcess.interview.timeSlot.placeOnChange();">
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="col-md-12 control-label pull-left text-align-left">** Place will only be set to new time slots **</label>
+            </div>
+            <div class="form-group">
+              <span class="col-md-6">
+                <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.interview.timeSlot.addTimeToListClick();">Add a new time to list</button>
+              </span>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(900,910);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Edit edit success -->
+      <div ng-show="980==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting- Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Edit edit fail -->
+      <div ng-show="990==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>Please Check Interview List, and Edit again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- alert admin set position form -->
+  <div class="modal fade" id="interviewAdminProcessSetPositionForm">
+    <div class="modal-dialog">
+      <!-- positions -->
+      <div ng-show="1000==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Set Position
+              <span class="rsas-top-right-corner-save-btn">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.nextFlow(1000,1010);">
+                  Save
+                </button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label">Filter:</label>
+              <span class="col-md-9">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.position.filterPosition">
+              </span>
+            </div>
+            <div class="form-group rsas-interview-pop-row" ng-show="0 < interviewAdminProcess.interview.position.positions.length && !interviewAdminProcess.interview.position.filterPosition">
+              <span class="col-md-2 control-label">
+                <input type="checkbox" id="positionAllCheckBox{{$index}}" class="largeCeckBox" ng-model="interviewAdminProcess.interview.position.selectAll" ng-change="interviewAdminProcess.interview.position.selectAllChange();">
+              </span>
+              <p class="col-md-10">
+                <label for="positionAllCheckBox{{$index}}" class="control-label">ALL</label>
+              </p>
+            </div>
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="position in interviewAdminProcess.interview.position.positions | filter:interviewAdminProcess.interview.position.filterPosition | orderBy:'name'">
+              <span class="col-md-2 control-label">
+                <input ng-model="position.check" type="checkbox" id="addPositionCheckBox{{$index}}" class="largeCeckBox" ng-change="interviewAdminProcess.interview.position.checkboxChange(position)">
+              </span>
+              <p class="col-md-10">
+                <label for="addPositionCheckBox{{$index}}" class="control-label">{{position.name}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(1000,1010);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Success -->
+      <div ng-show="1080==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Set Position - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="1090==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Set Position - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Set up Fail</h2>
+                <h2>Please Check Interview List, and set again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!------------------------------------------------------------------------------->
+  <!-- alert admin set schedule dropdown setting -->
+  <div class="modal fade" id="interviewAdminProcessInterviewScheduleEditForm">
+    <div class="modal-dialog">
+      <!-- Edit Interview: set setting -->
+      <div ng-show="2000==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Place:</label>
+              <span class="col-md-8">
+                <input class="form-control" ng-class="interviewAdminProcess.interview.schedule.setting.noPlaceCss" type="text" ng-model="interviewAdminProcess.interview.schedule.setting.timeSlot.place" ng-change="interviewAdminProcess.interview.schedule.setting.placeOnChange();">
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(2000,2010);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- success -->
+      <div ng-show="2080==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting- Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- fail -->
+      <div ng-show="2090==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Setting - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Fail</h2>
+                <h2>Please Check and Edit again.</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- alert admin schedule interviewer form -->
+  <div class="modal fade" id="interviewAdminProcessInterviewScheduleInterviewerForm">
+    <div class="modal-dialog">
+      <!-- interviewers -->
+      <div ng-show="2100==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Schedule Interviewers
+              <span class="rsas-top-right-corner-save-btn">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.nextFlow(2100,2110);">
+                  Save
+                </button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label">Filter:</label>
+              <span class="col-md-9">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.schedule.interviewer.filterInterviewer">
+              </span>
+            </div>
+            <div class="form-group" ng-show="interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule">
+              <span class="col-md-1"></span>
+              <h3 class="col-md-10">Interviewer vacancy per time slot: {{interviewAdminProcess.interview.schedule.interview.interviewer_vacancy}}</h3>
+              <span class="col-md-1"></span>
+            </div>
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="interviewer in interviewAdminProcess.interview.schedule.interviewer.interviewers | filter:interviewAdminProcess.interview.schedule.interviewer.filterInterviewer | orderBy:'suid'">
+              <span class="col-md-2 control-label">
+                <input ng-model="interviewer.check" type="checkbox" id="addScheduleInterviewerCheckBox{{$index}}" class="largeCeckBox" ng-change="interviewAdminProcess.interview.schedule.interviewer.checkboxChange(interviewer)" ng-disabled = "interviewAdminProcess.interview.schedule.interviewer.isVacancyFull && !interviewer.check && interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule">
+              </span>
+              <p class="col-md-10">
+                <label for="addScheduleInterviewerCheckBox{{$index}}" class="control-label">{{interviewer.sunet_id}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(2100,2110);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Success -->
+      <div ng-show="2180==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Schedule Interviewers - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="2190==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Schedule Interviewers - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h3>Set Up Failure. Please Check and set again.</h3>
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="0 < interviewAdminProcess.interview.schedule.interviewer.notSetInterviewerUsers.length">
+              <div class="col-md-12 padding-0">
+                <span class="col-md-2"></span>
+                <p class="col-md-10">1. The maximum number of scheduled time slot for this Interviewer is over quota. </p>
+                <span class="col-md-2"></span>
+                <p class="col-md-10">2. These interviewers maybe have scheduling conflict.</p>
+              </div>
+              <div class="col-md-12 padding-0">
+                <span class="col-md-2"></span>
+                <p class="col-md-10">Please schedule another interviewer for this time slot.</p>
+              </div>
+              <div class="col-md-12 padding-0">
+                <span class="col-md-2"></span>
+                <p class="col-md-10" ng-repeat="interviewer in interviewAdminProcess.interview.schedule.interviewer.notSetInterviewerUsers | orderBy:'sunet_id'">{{interviewer.sunet_id}}</p>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- alert admin schedule applicant form -->
+  <div class="modal fade" id="interviewAdminProcessInterviewScheduleApplicantForm">
+    <div class="modal-dialog">
+      <!-- interviewers -->
+      <div ng-show="2200==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Schedule Applicants
+              <span class="rsas-top-right-corner-save-btn">
+                <button class="btn btn-primary form-control" ng-click="interviewAdminProcess.nextFlow(2200,2210);">
+                  Save
+                </button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label">Filter:</label>
+              <span class="col-md-10">
+                <input class="form-control" type="text" ng-model="interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter">
+              </span>
+            </div>
+            <div class="form-group" ng-show="interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule">
+              <span class="col-md-1"></span>
+              <h3 class="col-md-10">Applicant vacancy per time slot: {{interviewAdminProcess.interview.schedule.interview.vacancy}}</h3>
+              <span class="col-md-1"></span>
+            </div>
+            <div class="form-group" ng-show="interviewAdminProcess.interview.schedule.scheduleApplicant.noAllMessage">
+              <span class="col-md-1"></span>
+              <h3 class="col-md-10 rsas-font-text-red">{{interviewAdminProcess.interview.schedule.scheduleApplicant.noAllMessage}}</h3>
+              <span class="col-md-1"></span>
+            </div>
+            <div class="form-group rsas-interview-pop-row" ng-show="0 < interviewAdminProcess.interview.schedule.scheduleApplicant.applicants.length && !interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter">
+              <span class="col-md-2 control-label">
+                <input type="checkbox" id="scheduleApplicantCheckBox{{$index}}" class="largeCeckBox" ng-model="interviewAdminProcess.interview.schedule.scheduleApplicant.selectAll" ng-change="interviewAdminProcess.interview.schedule.scheduleApplicant.selectAllChange(interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule)" />
+              </span>
+              <p class="col-md-10">
+                <label for="scheduleApplicantCheckBox{{$index}}" class="control-label">ALL</label>
+              </p>
+            </div>
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.schedule.scheduleApplicant.applicants | filter:interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter | orderBy:'suid'">
+              <span class="col-md-2 control-label">
+                <input type="checkbox" id="scheduleApplicantCheckBox{{$index}}" class="largeCeckBox" ng-model="applicant.check" ng-change="interviewAdminProcess.interview.schedule.scheduleApplicant.checkboxChange(applicant)" ng-disabled = "interviewAdminProcess.interview.schedule.scheduleApplicant.isVacancyFull && !applicant.check && interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule" />
+              </span>
+              <p class="col-md-10">
+                <label for="scheduleApplicantCheckBox{{$index}}" class="control-label">{{applicant.suid}} : {{applicant.name}}</label>
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(2200,2210);">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Success -->
+      <div ng-show="2280==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Schedule Applicants - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="2290==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Schedule Applicants - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h3>Failed to schedule applicants</h3>
+              </span>
+            </div>
+
+            <div class="form-group" ng-show="0 < interviewAdminProcess.interview.schedule.scheduleApplicant.notSetIntervieweeUsers.length">
+              <div class="col-md-12 padding-0">
+                <span class="col-md-2"></span>
+                <p class="col-md-10">1. The maximum number of time slots per applicant is always one in the interview.</p>
+                <span class="col-md-2"></span>
+                <p class="col-md-10">2. These applicants have been scheduled for a time slot already.</p>
+                <span class="col-md-2"></span>
+                <p class="col-md-10">Please schedule another applicant for this time slot.</p>
+              </div>
+              <div class="col-md-12 padding-0">
+                <span class="col-md-2"></span>
+                <p class="col-md-10" ng-repeat="interviewee in interviewAdminProcess.interview.schedule.scheduleApplicant.notSetIntervieweeUsers | orderBy:'suid'">{{interviewee.suid}} : {{interviewee.name}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Email-->
+  <div class="modal fade" id="interviewAdminProcessEmail">
+    <div class="modal-dialog modal-lg">
+      <form class="modal-content" ng-submit="email.send()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title">Send Email</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel-body">
+            <rsas-email></rsas-email>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-info" type="submit">Send</button>
+          <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Evaluate Interviewee-->
+  <div class="modal fade" id="interviewAdminProcessInterviewApplicantEvaluate">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form ng-submit="interviewAdminProcess.applicantList.evaluate.updateEvaluateForm()">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title">
+              Evaluate
+              <span class="rsas-top-right-corner-save-btn">
+                <button type="submit" class="btn btn-primary">Save</button>
+              </span>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="panel-body">
+              <div ng-repeat="form in interviewAdminProcess.applicantList.evaluate.forms" class="rsas-interview-review-div">
+                <rsas-form></rsas-form>
+                <hr />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Interviewee-->
+  <div class="modal fade" id="interviewAdminProcessInterviewApplicantReview">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <!-- <form> -->
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title">
+              Review
+            </h4>
+          </div>
+          <div class="modal-body" id="interviewAdminProcessInterviewApplicantReviewPdf">
+            <div ng-repeat="form in interviewAdminProcess.applicantList.review.forms" class="rsas-interview-review-div">
+              <div class="rsas-div-right">Reviewer: {{form.reviewer.name}}</div>
+              <rsas-form-show></rsas-form-show>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        <!-- </form> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Set Applicant Tags-->
+  <div class="modal fade" id="interviewAdminProcessInterviewApplicantTag" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="form-horizontal modal-content" ng-submit="interviewAdminProcess.applicantList.tags.updateTags()">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Set Applicant Tags</h4>
+        </div>
+        <div class="modal-body">
+          <tags-input ng-model="interviewAdminProcess.applicantList.tags.tag_list" display-property="name"></tags-input>
+          <div>(Enter multiple tags separated by "," or Enter key.  Minimum 3 chars.)</div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">Save</button>
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- applicant form show -->
+  <div class="modal fade" id="interviewAdminProcessApplicantFormShow">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+          <h4 class="modal-title">{{interviewAdminProcess.applicantList.application.form.forms[0].form_name}}</h4>
+        </div>
+        <div class="modal-body">
+          <div ng-repeat="form in interviewAdminProcess.applicantList.application.form.forms">
+            <rsas-form-show></rsas-form-show>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- applicant transcript show -->
+  <div class="modal fade" id="interviewAdminProcessApplicantTranscriptShow">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <rsas-transcripts></rsas-transcripts>
+        </div>
+        <div class="modal-footer">
+          <a class="btn btn-default" data-dismiss="modal">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- my interview calendar event click -->
+  <!-- sign up -->
+  <div class="modal fade" id="interviewAdminProcessMyInterviewSignUpForm">
+    <div class="modal-dialog">
+      <!-- sign up -->
+      <div class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Sign up time slot</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h4>Are you sure to <b>Sign up</b> this schedule?</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" type="submit" ng-click="interviewAdminProcess.myInterview.timeSlot.signup(interviewAdminProcess.myInterview.timeSlot.timeSlot.id, interviewAdminProcess.myInterview.timeSlot.interviewer.id);">
+              Sure
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- cancel -->
+  <div class="modal fade" id="interviewAdminProcessMyInterviewCancelForm">
+    <div class="modal-dialog">
+      <!-- cancel -->
+      <div class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Cancel time slot</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h4>Do you want to <b>Cancel</b> this schedule?</h4>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-danger" type="submit" ng-click="interviewAdminProcess.myInterview.timeSlot.cancel(interviewAdminProcess.myInterview.timeSlot.timeSlot, interviewAdminProcess.myInterview.timeSlot.interviewer.id);">
+              Sure
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

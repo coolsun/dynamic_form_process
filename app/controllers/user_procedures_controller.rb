@@ -1,0 +1,3 @@
+class UserProceduresController < ApplicationController
+
+end

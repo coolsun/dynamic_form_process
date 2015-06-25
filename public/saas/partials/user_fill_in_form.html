@@ -1,0 +1,16 @@
+<div ng-controller="UserFillInForm">
+  <div ng-repeat="form in forms">
+    <h3 class="alert alert-warning alert-dismissable" ng-click="form.show = !form.show">
+      {{form.form_name}}
+      <span ng-show="form.show" class="glyphicon glyphicon-chevron-down"></span>
+      <span ng-hide="form.show" class="glyphicon glyphicon-chevron-right"></span>
+    </h3>
+    <form ng-submit="submit($index)" ng-show="form.show">
+      <rsas-form></rsas-form>
+      <input class="btn btn-info ng-scope" ng-disabled="!permission_to_active" ng-click="save_form($index)" value="Save for Later" type="button"/>
+      <input class="btn btn-info ng-scope" ng-disabled="!permission_to_active" type="submit" value="Submit" />
+    </form>
+    <hr style="border-color:rgb(190, 190, 190);">
+  </div>
+  <h3 class="alert alert-success alert-dismissable" ng-if="forms.length == 0">No forms need to fill in.</h3>
+</div>

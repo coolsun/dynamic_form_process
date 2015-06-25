@@ -1,0 +1,373 @@
+<!--[if lte IE 8]>
+  <script>
+    alert("Please upgrade to IE9 or above version, or use Chrome, Firefox, Safari instead.");
+  </script>
+<![endif]-->
+<!doctype html>
+<html lang="en" ng-app="rsasApp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Stanford SAAS</title>
+
+    <link rel="shortcut icon" href="/saas/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/saas/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/saas/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="/saas/css/app.css?9909571590281">
+    <link rel="stylesheet" type="text/css" media="screen" href="/saas/css/bootstrap.min.css?9909571590281">
+    <link rel="stylesheet" type="text/css" media="screen" href="/saas/css/font-awesome.min.css?9909571590281">
+    <link rel="stylesheet" type="text/css" media="screen" href="/saas/css/fullcalendar.css?9909571590281">
+    <link rel="stylesheet" type="text/css" media="screen" href="/saas/css/calendar.css?9909571590281">
+    <link rel="stylesheet" type="text/css" media="screen" href="/saas/css/pop_window.css?9909571590281">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+    <link rel="stylesheet" href="/saas/css/form_builder.css?9909571590281">
+    <link rel="stylesheet" href="/saas/css/email_template.css?9909571590281">
+    <link rel="stylesheet" type="text/css" href="/saas/css/tableRsas.css?9909571590281">
+    <link rel="stylesheet" href="/saas/js/plugin/jquery-ui/jquery-ui.css?9909571590281"></script>
+    <link rel="stylesheet" href="/saas/js/plugin/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.min.css?9909571590281"></script>
+    <link rel="stylesheet" href="/saas/js/plugin/angular-multi-select/angular-multi-select.css?9909571590281"></script>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Source+Sans+Pro|Crimson+Text">
+    <link rel="stylesheet" type="text/css" href="/saas/css/for-stanford.css?9909571590281">
+
+    <script data-pace-options='{ "restartOnRequestAfter": true }' src="/saas/js/plugin/pace/pace.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/jquery/jquery-2.1.3.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/jquery-ui/jquery-ui.min.js?9909571590281"></script>
+    <script src="/saas/js/bootstrap/bootstrap.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.min.js?9909571590281"></script>
+
+    <script src="/saas/js/smartwidgets/jarvis.widget.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/sparkline/jquery.sparkline.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/jquery-validate/jquery.validate.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/masked-input/jquery.maskedinput.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/select2/select2.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/msie-fix/jquery.mb.browser.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/fastclick/fastclick.js?9909571590281"></script>
+    <script src="/saas/js/plugin/datatables/jquery.dataTables-cust.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/datatables/media/js/TableTools.min.js?9909571590281"></script>
+    <script src="/saas/js/plugin/datatables/DT_bootstrap.js?9909571590281"></script>
+
+    <script src="/bower_components/angular/angular.js?9909571590281"></script>
+    <script src="/saas/js/plugin/angular-resource/angular-resource.min.js?9909571590281"></script>
+    <script src="/bower_components/angular-sanitize/angular-sanitize.js?9909571590281"></script>
+    <script src="/bower_components/angular-route/angular-route.js?9909571590281"></script>
+    <script src="/bower_components/angular-file-upload/angular-file-upload.js?9909571590281"></script>
+    <script src="/bower_components/es5-shim/es5-sham.js?9909571590281"></script>
+
+    <script src="/saas/js/setting.js?9909571590281"></script>
+
+    <script src="/saas/js/wating_icon.js?9909571590281"></script>
+    <script src="/saas/js/table_rsas.js?9909571590281"></script>
+    <script src="/saas/js/mailer.js?9909571590281"></script>
+    <script src="/saas/js/application.js?9909571590281"></script>
+    <script src="/saas/js/app.js?9909571590281"></script>
+    <script src="/saas/js/filters.js?9909571590281"></script>
+    <script src="/saas/js/directives.js?9909571590281"></script>
+    <script src="/saas/js/plugin/angular-multi-select/angular-multi-select.js?9909571590281"></script>
+
+    <script src="/saas/js/ui-bootstrap-tpls-0.11.0.min.js?9909571590281"></script>
+    <script src="/saas/js/fullcalendar.min.js?9909571590281"></script>
+    <script src="/saas/js/gcal.js?9909571590281"></script>
+
+    <script src="/saas/js/controller/apply_now.js?9909571590281"></script>
+    <script src="/saas/js/controller/calendar.js?9909571590281"></script>
+    <script src="/saas/js/controller/clone.js?9909571590281"></script>
+    <script src="/saas/js/controller/email_template.js?9909571590281"></script>
+    <script src="/saas/js/controller/email_template_list.js?9909571590281"></script>
+    <script src="/saas/js/controller/fill_in_form.js?9909571590281"></script>
+    <script src="/saas/js/controller/form_builder.js?9909571590281"></script>
+    <script src="/saas/js/controller/global.js?9909571590281"></script>
+    <script src="/saas/js/controller/homepage.js?9909571590281"></script>
+    <script src="/saas/js/controller/import.js?9909571590281"></script>
+    <script src="/saas/js/controller/index.js?9909571590281"></script>
+    <script src="/saas/js/controller/interview_admin_process.js?9909571590281"></script>
+    <script src="/saas/js/controller/interview_user_process.js?9909571590281"></script>
+    <script src="/saas/js/controller/invitations.js?9909571590281"></script>
+    <script src="/saas/js/controller/locations.js?9909571590281"></script>
+    <script src="/saas/js/controller/manage_applicant.js?9909571590281"></script>
+    <script src="/saas/js/controller/matching.js?9909571590281"></script>
+    <script src="/saas/js/controller/offers.js?9909571590281"></script>
+    <script src="/saas/js/controller/positions.js?9909571590281"></script>
+    <script src="/saas/js/controller/process.js?9909571590281"></script>
+    <script src="/saas/js/controller/process_select_bar.js?9909571590281"></script>
+    <script src="/saas/js/controller/process_step.js?9909571590281"></script>
+    <script src="/saas/js/controller/ranking.js?9909571590281"></script>
+    <script src="/saas/js/controller/rd_flag.js?9909571590281"></script>
+    <script src="/saas/js/controller/recommendation_form.js?9909571590281"></script>
+    <script src="/saas/js/controller/recommendations.js?9909571590281"></script>
+    <script src="/saas/js/controller/reports.js?9909571590281"></script>
+    <script src="/saas/js/controller/roles.js?9909571590281"></script>
+    <script src="/saas/js/controller/round.js?9909571590281"></script>
+    <script src="/saas/js/controller/select_positions.js?9909571590281"></script>
+    <script src="/saas/js/controller/submit_application.js?9909571590281"></script>
+    <script src="/saas/js/controller/system_messages.js?9909571590281"></script>
+    <script src="/saas/js/controller/user_fill_in_form.js?9909571590281"></script>
+    <script src="/saas/js/controller/users.js?9909571590281"></script>
+    <script src="/saas/js/controller/years.js?9909571590281"></script>
+    <script src="/saas/js/controller/footer.js?9909571590281"></script>
+    <script src="/saas/js/controller/process_select.js?9909571590281"></script>
+
+    <script src="/saas/js/sortable.js?9909571590281"></script>
+    <script src="/saas/js/factory.js?9909571590281"></script>
+    <script src="/saas/js/plugin/checklist-model/checklist-model.js?9909571590281"></script>
+    <script src="/saas/js/plugin/multiselect/multiselect.js?9909571590281"></script>
+
+    <script type="text/javascript" src="/bower_components/tinymce/tinymce.min.js?9909571590281"></script>
+    <script type="text/javascript" src="/saas/js/tinymce.js?9909571590281"></script>
+    <script type="text/javascript" src="/saas/js/plugin/ng-tags-input.min/ng-tags-input.min.js?9909571590281"></script>
+    <link rel="stylesheet" href="/saas/js/plugin/ng-tags-input.min/ng-tags-input.min.css?9909571590281">
+
+
+    <link rel="stylesheet" href="/saas/css/styles.css?9909571590281">
+  </head>
+  <body ng-controller="indexCtrl">
+    <div class="modal fade" id="changeUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Change User</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div>
+                <div class="panel-body">
+                  <multiselect ng-model="userSelectBar.userSelect" options="(user.name + '(' + user.sunet_id+ ')') for user in userSelectBar.useres" change="userSelectBar.changeUser();"></multiselect>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- I'm header. -->
+    <div class="navbar navbar-inverse navbar-static-top all-about-header" >
+      <div class="container">
+
+        <div id="header-left">
+          <a id="home-page-link" ng-href="/saas/index.html#/start/{{$root.current_year.name}}/{{$root.current_process.acronym}}">
+            <span class="caption-word">Stanford</span>
+          </a>
+          <span>Student Affairs Application System</span>
+        </div>
+        <button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+        <div class="collapse navbar-collapse navHeaderCollapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a ng-show="$root.current_user.is_admin" data-target="#changeUser" ng-click="getChangeUserList()" data-toggle="modal">Hello {{$root.current_user.first_name}}</a>
+              <a ng-hide="$root.current_user.is_admin" ng-click="$root.defaultConfirm('Logout', 'Do you want to logout?', logout, '')">Hello {{$root.current_user.first_name}}</a>
+            </li>
+            <li id="showMenuList" ng-show="showMenuList()">
+              <a class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li ng-show="$root.header_permissions.show_menu_clone">
+                  <a id="showMenuList-Clone" href="#/clone">Clone</a>
+                </li>
+                <li ng-show="$root.header_permissions.show_menu_global">
+                  <a id="showMenuList-Global" href="#/global">Global</a>
+                </li>
+                <li ng-show="$root.header_permissions.show_menu_process">
+                  <a id="showMenuList-Process" href="#/process">Process</a>
+                </li>
+                <li ng-show="$root.header_permissions.show_menu_report">
+                  <a id="showMenuList-Report" href="#/reports">Report</a>
+                </li>
+                <li ng-show="$root.header_permissions.show_menu_year">
+                  <a id="showMenuList-Year" href="#/years">Year</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!--Alert-->
+    <div style="position: fixed;  bottom: 40px; right: 10px; z-index: 9000; max-width: 390px;"><alert ng-repeat="alert in $root.alerts" type="{{alert.type}}" close="$root.alerts.splice($index, 1)">{{alert.msg}}</alert></div>
+
+    <!-- I'm content. -->
+    <ng-view ng-if="$root.show_content"></ng-view>
+
+
+    <!-- waiting_icon -->
+    <div id="waiting_icon" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background-image: url(/saas/img/waiting_icon_background.png); clear: both; z-index: 9999; display: none;">
+      <div style="width:130px; margin:0 auto;">
+        <img src="/saas/img/waiting_icon.gif" style="width: 130px; height: 130px; margin: 200px auto;">
+      </div>
+    </div>
+
+    <!-- I'm footer. -->
+    <div ng-include='"/saas/partials/footer.html"'></div>
+
+    <!-- Sign In Modal -->
+    <div class="modal fade" id="sign_in" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-header">
+              <h4>Sign In</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="contact-name" class="col-lg-2 control-label">Name:</label>
+                <div class="col-lg-10">
+                  <select ng-model="user" ng-options="user.name for user in users"></select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+              <button class="btn btn-primary" data-dismiss="modal" ng-click="signIn()">
+                Send
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Error -->
+    <div class="modal fade" id="modalSystemApplyFail" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-header">
+              <h4>System Error</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="contact-name" class="col-lg-2 control-label"></label>
+                <div class="col-lg-10">
+                  <h3>System Error E9800</h3>
+                  <h3>Please check your sunet id can get peoplesoft first.</h3>
+                  <h3>If have other question, please use "Contact Us" to report this issue.</h3>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-default" ng-href="/saas/index.html#/start/{{$root.current_year.name}}/{{$root.current_process.acronym}}">Close</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Error -->
+    <div class="modal fade" id="modalSystemError" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-header">
+              <h4>System Error</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="contact-name" class="col-lg-2 control-label"></label>
+                <div class="col-lg-10">
+                  <h3>System Error E9900</h3>
+                  <h3>Please use "Contact Us" to report this issue.</h3>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-default" ng-href="/saas/index.html#/start/{{$root.current_year.name}}/{{$root.current_process.acronym}}">Close</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Process not start -->
+    <div class="modal fade" id="modalSystemProcessNotStart" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-horizontal">
+            <div class="modal-header">
+              <h4>System Info</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="contact-name" class="col-lg-2 control-label"></label>
+                <div class="col-lg-10">
+                  <h3>This process has not yet started.</h3>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Default dialogs -->
+    <div class="modal fade" id="default_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="form-horizontal modal-content">
+          <div class="modal-body">
+            <h4>{{default_dialog_text}}</h4>
+            <hr />
+            <div style="text-align: center;">
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Default Confirm-->
+    <div class="modal fade" id="defaultConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="modal-content">
+          <div ng-if="default_confirm.title" class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title">{{default_confirm.title}}</h4>
+          </div>
+          <div class="modal-body">
+            <h5 style="line-height: 25px;">{{default_confirm.body}}</h5>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-info" ng-if="default_confirm.confirmDo" ng-click="defaultConfirmDo()">Yes</button>
+            <a class="btn btn-default" data-dismiss="modal" ng-if="default_confirm.confirmDo">No</a>
+            <a class="btn btn-default" data-dismiss="modal" ng-if="!default_confirm.confirmDo">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- System Message-->
+    <div class="modal fade" id="systemMessage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title">System Message</h4>
+          </div>
+          <div class="modal-body">
+            <div ng-bind-html="system_message"></div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

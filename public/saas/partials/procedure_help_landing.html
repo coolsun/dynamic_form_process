@@ -1,0 +1,19 @@
+<h4>General Help</h4>
+<p>Questions and comments related to the selection processes themselves should be directed to the contacts and departments listed below for each specific process.</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Process/Position</th>
+      <th>Department</th>
+      <th>Contact</th>
+    </tr>
+  </thead>
+  <tbody class="help-landing-list">
+    <tr ng-repeat="one_help in all_help">
+      <td ng-bind="one_help.doings" ng-if="!help_edit"></td>
+      <td ng-bind="one_help.department" ng-if="!help_edit"></td>
+      <td ng-bind="one_help.contact" ng-if="!help_edit"></td>
+    </tr>
+  </tbody>
+</table>
+<p>Please submit HelpSU ticket for all other general or technical questions and comments.</p>

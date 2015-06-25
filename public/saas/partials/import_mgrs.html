@@ -1,0 +1,21 @@
+<div class="container" ng-controller="Import">
+  <div class="col-md-9">
+    <h3>Import Manager By Xlsx</h3>
+    <div class="well">
+      <form>
+        <input type="file" nv-file-select uploader="importXlsx('/import/import_mgrs_by_xlsx')" accept=".xlsx" />
+      </form>
+
+      <h4><a href="/examples/import_managers_example.xlsx">Example</a></h4>
+    </div>
+    <div ng-hide="errors.length == 0">
+      <h3>Error:</h3>
+      <table class="table table-striped">
+        <tr ng-repeat="error in errors">
+          <td>{{$index + 1}}</td>
+          <td>{{error}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

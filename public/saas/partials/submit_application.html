@@ -1,0 +1,20 @@
+<div class="container" ng-controller="SubmitApplication">
+  <div class="row">
+    <div class="col-md-10" id="content">
+      <div class="col-lg-12">
+        <div ng-if="$root.applicantApplicationStatus['can_submit']">
+          <div ng-hide="$root.applicantApplicationStatus.submit_application">
+            <h5>When you are ready to officially submit your application materials, be sure to click the "Submit Application" button below.</h5>
+            <button ng-disabled="!$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="submitApplication()">Submit Application</button>
+          </div>
+          <div ng-show="$root.applicantApplicationStatus.submit_application">
+            <h5>Thank you for applying this job. You may cancel your application by clicking the ''Withdraw Application'' button below no later than</h5>
+            <h5>{{$root.applicant_sub_step.t_end | date : 'MM/dd/yyyy hh:mm'}} (application end time).</h5>
+            <button ng-disabled="!$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitApplication()">Withdraw Application</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

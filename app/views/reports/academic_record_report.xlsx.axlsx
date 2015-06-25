@@ -1,0 +1,35 @@
+wb = xlsx_package.workbook
+
+#styles
+#wrap = wb.styles.add_style(:alignment => {wrap_text: true})
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row [
+    "Full Name",
+    "SUNetID",
+    "SUID",
+    "Quarter",
+    "Standing",
+    "EffectDate"
+  ], style: title_style
+  @applicants.each do |applicant|
+    user = applicant.user
+    if user.academic_records
+      user.academic_records.each_with_index do |academic_record|
+        sheet.add_row [
+          user.name,
+          user.sunet_id,
+          user.suid,
+          academic_record["quarter"],
+          academic_record["standing"],
+          academic_record["effectDate"]
+        ]
+      end
+    end
+  end
+
+  #width
+  #sheet.column_widths 30, 10, 15, 20, 30, 22, 17, 17
+end
