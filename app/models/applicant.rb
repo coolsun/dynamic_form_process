@@ -233,7 +233,11 @@ class Applicant < ActiveRecord::Base
       else
         applicant_poitions = ["Only admin or LM can see that."]
       end
-      applicant_interviews = Round.joins(:interviews => :invites).where(:procedure_id => procedure_id, :invites => {:invitee_user_id => applicant.user_id}).pluck(:title)
+
+      applicant_interviews = [];
+      if (['admin', 'RM'].include?(filter_options[:permission]))
+        applicant_interviews = Round.joins(:interviews => :invites).where(:procedure_id => procedure_id, :invites => {:invitee_user_id => applicant.user_id}).pluck(:title)
+      end
 
       applicant_list << {
         :id => applicant.user.id,
