@@ -47,9 +47,9 @@ class RankingController < ApplicationController
 
     procedure_id = params[:current_process_id]
     if is_admin || is_hiring_mgr(procedure_id)
-      location_list = Location.select(:id, :name).where(:procedure_id => procedure_id).as_json
+      location_list = Location.select(:id, :name).where(:procedure_id => procedure_id).order("name asc").as_json
     else
-      location_list = Location.select(:id, :name).where(:procedure_id => procedure_id, :id => current_user_location_mgr_location_ids).as_json
+      location_list = Location.select(:id, :name).where(:procedure_id => procedure_id, :id => current_user_location_mgr_location_ids).order("name asc").as_json
     end
 
     location_ids = location_list.collect{|obj| obj["id"]}

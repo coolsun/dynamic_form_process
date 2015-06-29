@@ -37,7 +37,7 @@
                 <td>{{application.name}}</td>
                 <td>{{application.position_name}}</td>
                 <td>
-                  <span class="glyphicon glyphicon-trash pt" ng-click="removeFromRank($index)"></span>
+                  <span class="glyphicon glyphicon-trash pt" ng-click="removeFromRank(application.id)"></span>
                 </td>
               </tr>
             </tbody>
@@ -54,12 +54,12 @@
               </tr>
             </thead>
             <tbody ui-sortable="sortableOptions" ng-model="mgr_rank_list.disable_rank_applications">
-              <tr ng-repeat="application in mgr_rank_list.disable_rank_applications | orderBy: 'name'">
+              <tr ng-repeat="application in mgr_rank_list.disable_rank_applications">
                 <td>{{application.suid}}</td>
                 <td>{{application.name}}</td>
                 <td>{{application.position_name}}</td>
                 <td>
-                  <a class="pt" ng-click="addBackRank($index)">Add Back To Rank</a>
+                  <a class="pt" ng-click="addBackRank(application.id)">Add Back To Rank</a>
                 </td>
               </tr>
             </tbody>

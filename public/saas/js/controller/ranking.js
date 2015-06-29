@@ -52,16 +52,25 @@ rsasApp.controller('UserRanking', function($scope, $rootScope, $filter, $sce, ra
     $scope.resetNewRank();
   };
 
-  $scope.removeFromRank = function(index){
-    $scope.user_rank_list.disable_rank_applications = $scope.user_rank_list.disable_rank_applications.concat($scope.user_rank_list.rank_applications.splice(index,1));
-    $scope.resetNewRank();
+  $scope.removeFromRank = function(application_id){
+    for(var i=0; i < $scope.user_rank_list.rank_applications.length; i++){
+      if($scope.user_rank_list.rank_applications[i].id == application_id){
+        $scope.user_rank_list.disable_rank_applications = $scope.user_rank_list.disable_rank_applications.concat($scope.user_rank_list.rank_applications.splice(i,1));
+        $scope.resetNewRank();
+        break;
+      }
+    }
   };
 
-  $scope.addBackRank = function(index){
-    $scope.user_rank_list.rank_applications = $scope.user_rank_list.rank_applications.concat($scope.user_rank_list.disable_rank_applications.splice(index,1));
-    $scope.resetNewRank();
+  $scope.addBackRank = function(application_id){
+    for(var i=0; i < $scope.user_rank_list.disable_rank_applications.length; i++){
+      if($scope.user_rank_list.disable_rank_applications[i].id == application_id){
+        $scope.user_rank_list.rank_applications = $scope.user_rank_list.rank_applications.concat($scope.user_rank_list.disable_rank_applications.splice(i,1));
+        $scope.resetNewRank();
+        break;
+      }
+    }
   };
-
   $scope.sortableOptions = {
     handle: '> .Handle',
     stop: function(e, ui) {
@@ -139,14 +148,24 @@ rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankin
     $scope.resetNewRank();
   };
 
-  $scope.removeFromRank = function(index){
-    $scope.mgr_rank_list.disable_rank_applications = $scope.mgr_rank_list.disable_rank_applications.concat($scope.mgr_rank_list.rank_applications.splice(index,1));
-    $scope.resetNewRank();
+  $scope.removeFromRank = function(application_id){
+    for(var i=0; i < $scope.mgr_rank_list.rank_applications.length; i++){
+      if($scope.mgr_rank_list.rank_applications[i].id == application_id){
+        $scope.mgr_rank_list.disable_rank_applications = $scope.mgr_rank_list.disable_rank_applications.concat($scope.mgr_rank_list.rank_applications.splice(i,1));
+        $scope.resetNewRank();
+        break;
+      }
+    }
   };
 
-  $scope.addBackRank = function(index){
-    $scope.mgr_rank_list.rank_applications = $scope.mgr_rank_list.rank_applications.concat($scope.mgr_rank_list.disable_rank_applications.splice(index,1));
-    $scope.resetNewRank();
+  $scope.addBackRank = function(application_id){
+    for(var i=0; i < $scope.mgr_rank_list.disable_rank_applications.length; i++){
+      if($scope.mgr_rank_list.disable_rank_applications[i].id == application_id){
+        $scope.mgr_rank_list.rank_applications = $scope.mgr_rank_list.rank_applications.concat($scope.mgr_rank_list.disable_rank_applications.splice(i,1));
+        $scope.resetNewRank();
+        break;
+      }
+    }
   };
 
   $scope.sortableOptions = {

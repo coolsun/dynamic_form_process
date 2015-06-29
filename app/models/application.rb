@@ -48,7 +48,7 @@ class Application < ActiveRecord::Base
         :position_name => application.position.name
       } if application.user.applicants.detect{|obj| obj.procedure_id == procedure_id.to_i}.submit_and_not_disqualify
     end
-    Application.includes(:user => :applicants, :position => [:location, :role]).references(:user).where(:offered => "wait", :position_id => position_ids, :disable_mgr_rank => true).each do |application|
+    Application.includes(:user => :applicants, :position => [:location, :role]).references(:user).where(:offered => "wait", :position_id => position_ids, :disable_mgr_rank => true).order("users.first_name asc").each do |application|
       mgr_rank_list[:disable_rank_applications] << {
         :id => application.id,
         :suid => application.user.suid,
@@ -74,7 +74,7 @@ class Application < ActiveRecord::Base
       }
     end
 
-    Application.includes(:position => [:location, :role]).where(:positions => {:procedure_id => procedure_id}, :user_id => user_id, :offered => "wait", :disable_user_rank => true).each do |application|
+    Application.includes(:position => [:location, :role]).where(:positions => {:procedure_id => procedure_id}, :user_id => user_id, :offered => "wait", :disable_user_rank => true).order("locations.name asc").each do |application|
       user_rank_list[:disable_rank_applications] << {
         :id => application.id,
         :rank => application.user_rank,
