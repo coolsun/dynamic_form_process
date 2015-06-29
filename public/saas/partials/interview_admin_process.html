@@ -100,7 +100,7 @@
                           </p>
                           <p ng-show="0 < time_slot.time_slot_interviewers.length"><b>Interviewers:</b></p>
                           <p ng-repeat="time_slot_interviewer in time_slot.time_slot_interviewers">
-                            {{time_slot_interviewer.interviewer.user.sunet_id}}
+                            {{time_slot_interviewer.interviewer.user.name}}
                           </p>
                           <p>
                             <button ng-show="tblTr.permissions.schedule_interviewer.show && tblTr.interviewer_can_schedule" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleInterviewer(tblTr, time_slot);">Schedule Interviewers</button>
@@ -1036,7 +1036,7 @@
                 <label for="selectApplicantAllCheckBox{{$index}}" class="control-label">ALL</label>
               </p>
             </div>
-            <div ng-show="0==applicant.list_type || interviewAdminProcess.interview.selectApplicant.radioApplicantType==applicant.list_type" class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.selectApplicant.applicants | filter:interviewAdminProcess.interview.selectApplicant.applicantFilter | orderBy:'name'">
+            <div ng-show="0==applicant.list_type || interviewAdminProcess.interview.selectApplicant.radioApplicantType==applicant.list_type" class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.selectApplicant.applicants | filter:interviewAdminProcess.interview.selectApplicant.applicantFilter | orderBy:'last_name'">
               <span class="col-md-2 control-label">
                 <input type="checkbox" id="selectApplicantCheckBox{{$index}}" class="largeCeckBox" ng-model="applicant.check" ng-change="interviewAdminProcess.interview.selectApplicant.checkboxChange(applicant)">
               </span>
@@ -1570,7 +1570,7 @@
                 <label for="scheduleApplicantCheckBox{{$index}}" class="control-label">ALL</label>
               </p>
             </div>
-            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.schedule.scheduleApplicant.applicants | filter:interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter | orderBy:'suid'">
+            <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.schedule.scheduleApplicant.applicants | filter:interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter | orderBy:'last_name'">
               <span class="col-md-2 control-label">
                 <input type="checkbox" id="scheduleApplicantCheckBox{{$index}}" class="largeCeckBox" ng-model="applicant.check" ng-change="interviewAdminProcess.interview.schedule.scheduleApplicant.checkboxChange(applicant)" ng-disabled = "interviewAdminProcess.interview.schedule.scheduleApplicant.isVacancyFull && !applicant.check && interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule" />
               </span>
