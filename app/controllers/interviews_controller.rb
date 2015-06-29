@@ -1196,8 +1196,6 @@ class InterviewsController < ApplicationController
     end
     #########################################################################################
 
-    logger.info("@@@@@@@ applicant_list : #{applicant_list}");
-
     render :json => {
       :success => success,
       :applicant_list => applicant_list
