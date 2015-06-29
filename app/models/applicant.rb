@@ -287,7 +287,7 @@ class Applicant < ActiveRecord::Base
     user = User.find_by_id(self.user_id)
     Transcript.get_grades(user)
     user_peoplesoft = PeoplesoftDetail.where(:user_id => user.id).first
-    if user_peoplesoft && Time.now() - user_peoplesoft.updated_at > 1.day
+    if user_peoplesoft && (Rails.env == "production" || STANFORD68) && Time.now() - user_peoplesoft.updated_at > 1.day
       client = PeoplesoftDetail.get_people_soft(user.sunet_id)
       message = client.get();
       if (message)
