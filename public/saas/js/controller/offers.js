@@ -362,7 +362,10 @@ rsasApp.controller('UserOffers',function($scope, $rootScope, $sce, waitingIcon, 
         $scope.selected = true;
         if(data.success_html.length > 0){
           $scope.success_html = data.success_html;
-          $("#success_dialog").modal('show');
+          if($rootScope.current_process.name != 'House Staff Selection') {
+            $("#success_dialog").modal('show');
+          }
+          $scope.current_applicant.offer_msg = data.offer.offer_msg;
         }
         angular.forEach($scope.offers, function(offer){
           if($scope.current_applicant.position_name != offer.position_name) {
