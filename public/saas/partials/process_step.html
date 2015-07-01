@@ -7,7 +7,7 @@
       <ul class="list-group" ng-model="process_steps" ui-sortable="sortableOptions" style="min-width: 268px;border-right: 5px solid #8c1515;">
         <li class="list-group-item list-group-item-success rsas-process-step-title-li-div" ng-show="process_step.permission.show" ng-class="{'disabled':!process_step.enabled}" ng-repeat="process_step in process_steps">
           <span class="process-step-text rsas-process-step-title-font">
-            {{process_step.name}}
+            <a style="cursor: pointer;" ng-click="changeStep(process_step)">{{process_step.name}}</a>
           </span>
           <span class="pull-right" style="width: 49px;">
             <span class="pull-right">
@@ -28,7 +28,9 @@
           <ul class="list-group rsas-process-sub-step-title-ul-div" ng-model="process_step.procedure_sub_steps" ui-sortable="sortableOptions">
             <li class="list-group-item rsas-process-sub-step-title-li-div" ng-show="sub_step.permission.show" ng-repeat="sub_step in process_step.procedure_sub_steps" ng-class="{'disabled':!sub_step.enabled,'list-group-item-danger':isCurrentSubStepClassShow('id',sub_step.id), 'list-group-item-info':!isCurrentSubStepClassShow('id',sub_step.id)}">
               <span style="width: 175px; display: inline-block;">
-                <span class="rsas-process-sub-step-title-font">{{sub_step.name}}</span>
+                <span class="rsas-process-sub-step-title-font">
+                  <a style="cursor: pointer;" ng-click="changeSubStep(process_step, sub_step)">{{sub_step.name}}</a>
+                </span>
               </span>
               <span class="pull-right" style="/*width: 49px;*/">
                 <span class="pull-right">
