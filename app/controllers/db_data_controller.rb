@@ -11,20 +11,6 @@ class DbDataController < ApplicationController
     render :text => "Done"
   end
 
-  def insert_post_match_position_notification
-    title = "Post Match Position update : [[Positions]]"
-    content = "<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p><span lang=\"EN-US\">Dear [[FirstName]], <br /> <br /> [[ApplicantName]] has applied for the following position: [[Positions]]. Please visit<span class=\"apple-converted-space\">&nbsp;</span></span><span lang=\"EN-US\"><a href=\"http://saas.stanford.edu/\" target=\"_blank\">http://saas.stanford.edu</a></span><span lang=\"EN-US\">&nbsp;to view the applicant's materials.<br /> <br /> </span><span lang=\"EN-US\"><br /> Sincerely Yours,</span></p>\n<p><span lang=\"EN-US\">Stanford University</span></p>\n</body>\n</html>"
-    email_type = "post_match_position_notification"
-    is_active = true
-
-    EmailTemplate.create(:title  => title, :content  => content, :email_type  => email_type, :procedure_id  => 0, :is_active  => is_active)
-    Procedure.all.each do |procedure|
-      EmailTemplate.create(:title  => title, :content  => content, :email_type  => email_type, :procedure_id  => procedure.id, :is_active  => is_active)
-    end
-
-    render :text => "Done"
-  end
-
   def update_application_disqualify_to_wait
     Application.where(:offered => "disqualify").update_all(:offered => "wait")
     render :text => "Done"

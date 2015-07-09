@@ -36,22 +36,6 @@ class ApplicationsController < ApplicationController
       end
       if permission_to_active
         success, msg, new_create_position_ids = Application.update_positions_select(current_user.id, procedure_id, params[:add_ids] || [], params[:delete_ids] || [])
-        if success && params[:sub_step] == "post_offer_invitations" && params[:add_ids].present?
-
-          procedure = Procedure.find_by_id(procedure_id)
-          email_template = EmailTemplate.where(:email_type => "post_match_position_notification", :procedure_id => procedure.id, :is_active => true).first
-          step = ProcedureSubStep.joins(:procedure_step).where(:identify_name => "post_offer_invitations", :procedure_steps => {:procedure_id => procedure.id}).first
-
-          Position.where(:id => new_create_position_ids).each do |position|
-            recipient_users = position.location_mgr_users
-            recipient_users.each do |recipient_user|
-              applicant_user = current_user
-              subject = EmailTemplate.replace_keyworld(email_template.title, procedure, [position], step, recipient_user, nil, applicant_user)
-              content = EmailTemplate.replace_keyworld(email_template.content, procedure, [position], step, recipient_user, nil, applicant_user)
-              StanfordMailer.send_shipped(recipient_user.email, subject, content, [], [])
-            end
-          end
-        end
         render :json => {:success => success, :msg => msg}
       else
         render :json => {:success => false, :msg => permission_message}

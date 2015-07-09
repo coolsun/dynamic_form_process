@@ -35,7 +35,6 @@ rsasApp.controller('EmailTemplateList',
         {email_type:"offer_email", name: "Edit Offer email", pop_text: "Applicants receive this email after manager offered them jobs."},
         // About post match
         {email_type:"post_match_invitation", name: "Edit Post Match Invitation email", pop_text: "Applicants receive this email after managers send them Post Match invitation."},
-        {email_type:"post_match_position_notification", name: "Edit Post Match position notification email", pop_text: "Location managers receive this email once the applicant in the post-match step selects a location associated with them."},
       ];
 
       angular.forEach($scope.email_templates, function(email_template){
