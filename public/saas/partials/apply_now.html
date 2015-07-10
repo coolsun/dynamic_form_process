@@ -11,7 +11,7 @@
           >
             <div ng-click="changeStep(process_step)">
               <span class="process-step-text rsas-process-step-title-font">
-                {{process_step.name}}
+                <a>{{process_step.name}}</a>
               </span>
               <span ng-click="process_step.time_to_show = !process_step.time_to_show;$event.stopPropagation()" class="pt glyphicon glyphicon-time"></span>
               <span ng-class="{'arrow':isCurrentStepClassShow('id', process_step.id)}" style="right: -1px"></span>
@@ -29,7 +29,7 @@
               		}"
               >
                 <span>
-                  {{sub_step.name}}
+                  <a>{{sub_step.name}}</a>
                   <span ng-if="process_step.name == 'Application'">
                     <span ng-show="sub_step.identify_name == 'fill_in_form'">
                       {{$root.applicantApplicationStatus['form_progress']}}

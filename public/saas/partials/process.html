@@ -15,12 +15,14 @@
         <div class="panel-body">
           <div class="toolBarRsas">
             <span class="pull-left tableRsasSearch">
-              <span>
-                <input ng-model="processTable.tbl.searchText" type="text" class="form-control">
-              </span>
-              <span>
-                <button class="btn tableRsasBtn" ng-click="processTable.tbl.searchClick(processTable.tbl);">Search</button>
-              </span>
+              <form ng-submit="processTable.tbl.searchClick(processTable.tbl);">
+                <span>
+                  <input ng-model="processTable.tbl.searchText" type="text" class="form-control">
+                </span>
+                <span>
+                  <input type="submit" class="btn tableRsasBtn" value="Search">
+                </span>
+              </form>
             </span>
             <span class="tableRsasFloatRight">
               <select class="form-control" ng-model="processTable.tbl.perPage" ng-change="processTable.tbl.setDataAndRequest();">

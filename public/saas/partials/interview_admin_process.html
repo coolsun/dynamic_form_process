@@ -42,12 +42,14 @@
                 <div class="panel-body">
                   <div class="toolBarRsas">
                     <span class="pull-left tableRsasSearch">
-                      <span>
-                        <input ng-model="interviewAdminProcess.interview.tbl.searchText" type="text" class="form-control">
-                      </span>
-                      <span>
-                        <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.interview.tbl.searchClick(interviewAdminProcess.interview.tbl);">Search</button>
-                      </span>
+                      <form ng-submit="interviewAdminProcess.interview.tbl.searchClick(interviewAdminProcess.interview.tbl);">
+                        <span>
+                          <input ng-model="interviewAdminProcess.interview.tbl.searchText" type="text" class="form-control">
+                        </span>
+                        <span>
+                          <input type="submit" class="btn tableRsasBtn" value="Search">
+                        </span>
+                      </form>
                     </span>
                     <span class="tableRsasFloatRight">
                       <select class="form-control" ng-model="interviewAdminProcess.interview.tbl.perPage" ng-change="interviewAdminProcess.interview.tbl.setDataAndRequest();">
@@ -379,12 +381,14 @@
                 <div class="panel-body">
                   <div class="toolBarRsas">
                     <span class="pull-left tableRsasSearch">
-                      <span>
-                        <input ng-model="interviewAdminProcess.myInterview.tbl.searchText" type="text" class="form-control">
-                      </span>
-                      <span>
-                        <button class="btn tableRsasBtn" ng-click="interviewAdminProcess.myInterview.tbl.searchClick(interviewAdminProcess.myInterview.tbl);">Search</button>
-                      </span>
+                      <form ng-submit="interviewAdminProcess.myInterview.tbl.searchClick(interviewAdminProcess.myInterview.tbl);">
+                        <span>
+                          <input ng-model="interviewAdminProcess.myInterview.tbl.searchText" type="text" class="form-control">
+                        </span>
+                        <span>
+                          <input type="submit" class="btn tableRsasBtn" value="Search">
+                        </span>
+                      </form>
                     </span>
                     <span class="tableRsasFloatRight">
                       <select class="form-control" ng-model="interviewAdminProcess.myInterview.tbl.perPage" ng-change="interviewAdminProcess.myInterview.tbl.setDataAndRequest();">

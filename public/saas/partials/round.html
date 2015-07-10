@@ -81,12 +81,14 @@
         <div class="panel-body">
           <div class="toolBarRsas">
             <span class="pull-left tableRsasSearch">
-              <span>
-                <input ng-model="round.tbl.searchText" type="text" class="form-control">
-              </span>
-              <span>
-                <button class="btn tableRsasBtn" ng-click="round.tbl.searchClick(round.tbl);">Search</button>
-              </span>
+              <form ng-submit="round.tbl.searchClick(round.tbl);">
+                <span>
+                  <input ng-model="round.tbl.searchText" type="text" class="form-control">
+                </span>
+                <span>
+                  <input type="submit" class="btn tableRsasBtn" value="Search">
+                </span>
+              </form>
             </span>
             <span class="tableRsasFloatRight">
               <select class="form-control" ng-model="round.tbl.perPage" ng-change="round.tbl.setDataAndRequest();">
