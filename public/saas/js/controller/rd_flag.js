@@ -1,15 +1,17 @@
 rsasApp.controller('rdFlag',
   function($scope, $rootScope, $location, waitingIcon, rdFlagFactory) {
     // Main program
+    $scope.keyword = $location.search().keyword;
     $scope.getApplicantList = function(){
       waitingIcon.open();
-      rdFlagFactory.getApplicantList($rootScope.current_process.id, $rootScope.current_year.id, $location.search().page)
+      rdFlagFactory.getApplicantList($rootScope.current_process.id, $rootScope.current_year.id, $location.search().page, $scope.keyword)
       .success(function(data){
         if(data.success) {
           //console.log(data.applicant_list);
           $scope.applicant_list = data.applicant_list;
-  
-          $scope.current_path = data.current_host_url + $location.path();
+
+          $scope.current_path = data.current_host_url + $location.path() + "?keyword=" + $scope.keyword;
+
           $scope.page_num_list = data.page_num_list;
           $scope.current_page = data.current_page;
           $scope.switch_page = data.current_page;

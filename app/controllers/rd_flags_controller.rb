@@ -8,6 +8,8 @@ class RdFlagsController < ApplicationController
     applicants = Applicant.includes(:user => :rd_records).references(:user => :rd_records)
                           .where(:procedure_id => params[:current_process_id])
                           .where.not(:rd_records => {:id => nil})
+                          .order("last_name asc")
+
     applicant_list = applicants.as_json({
       :include => {
         :user => {
@@ -21,6 +23,8 @@ class RdFlagsController < ApplicationController
         }
       }
     })
+
+    applicant_list = applicant_list.select { |applicant| applicant["user"]["name"].include? params[:keyword] } if params[:keyword].present?
 
     page = params[:page] ? params[:page].to_i : 1 # If there is no params[:page] return 1
     applicant_per_page = 25 # Set the applicant number per page

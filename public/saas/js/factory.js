@@ -2080,14 +2080,15 @@ factoryModule.factory('rdFlagFactory', function($http){
     var urlBase = JSON_URL + "/rd_flags";
     var rdFlagFactory = {};
 
-    rdFlagFactory.getApplicantList = function(current_process_id, current_year_id, page) {
+    rdFlagFactory.getApplicantList = function(current_process_id, current_year_id, page, keyword) {
       return $http({
         url : urlBase,
         method : "GET",
         params : {
           "current_process_id" : current_process_id,
           "current_year_id" : current_year_id,
-          "page" : page
+          "page" : page,
+          "keyword" : keyword
         }
       });
     };

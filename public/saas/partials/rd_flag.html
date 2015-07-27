@@ -1,20 +1,26 @@
 <div ng-controller="rdFlag">
   <h3>Set the RD flag each applicant in this process.</h3>
   <!-- Tips and informations -->
-  <p><i>Click the color button to set. </i></p>
+
+  <form ng-submit="getApplicantList()" class="col-md-12" style="padding: 0px; margin-bottom: 10px;">
+    <div class="col-md-3" style="padding: 0px;"><input type="text" ng-model="keyword" class="form-control"></div>
+    <div class="col-md-3" style="padding: 0px;"><input type="submit" value="Search" class="btn tableRsasBtn"></div>
+  </form>
+
   <!-- Page list up, the same one down -->
-  <p class="text-center">
-    <a class="btn btn-default" href="{{current_path + '?page=' + 1}}">First</a>
-    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page - 1) <= 0 ? 1 : (current_page - 1))}}">Previous</a>
+  <p>
+    <i>Click the color button to set. </i>
+    <a class="btn btn-default" href="{{current_path + '&page=' + 1}}">First</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + ((current_page - 1) <= 0 ? 1 : (current_page - 1))}}">Previous</a>
     <a ng-repeat="page_num in page_num_list"
        ng-hide="page_num < current_page - 4 || page_num > current_page + 4"
        class="btn btn-default"
        ng-class="{'btn-dark-red': current_page == page_num}"
-       href="{{current_path + '?page=' + page_num}}">{{page_num}}</a>
-    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page + 1) > page_num_list[page_num_list.length - 1] ? page_num_list[page_num_list.length - 1] : (current_page + 1))}}">Next</a>
-    <a class="btn btn-default" href="{{current_path + '?page=' + page_num_list[page_num_list.length - 1]}}">Last</a>
+       href="{{current_path + '&page=' + page_num}}">{{page_num}}</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + ((current_page + 1) > page_num_list[page_num_list.length - 1] ? page_num_list[page_num_list.length - 1] : (current_page + 1))}}">Next</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + page_num_list[page_num_list.length - 1]}}">Last</a>
     <input type="text" min="1" max="{{page_num_list[page_num_list.length - 1]}}" class="form-control" ng-model="switch_page" style="display: inline; padding-left: 7px; width: 40px; height: 34px; vertical-align: middle;">
-    <a class="btn btn-default btn-dark-red" ng-href="{{current_path + '?page=' + switch_page}}">Go</a>
+    <a class="btn btn-default btn-dark-red" ng-href="{{current_path + '&page=' + switch_page}}">Go</a>
   </p>
   <!-- Applicant list -->
   <div ng-repeat="applicant_data in applicant_list" ng-init="applicant_data.wait_ajax = false" ng-hide="applicant_data.user.rd_records.length == 0" class="well">
@@ -59,17 +65,17 @@
   </div>
   <!-- Page list down, the same one up -->
   <p class="text-center">
-    <a class="btn btn-default" href="{{current_path + '?page=' + 1}}">First</a>
-    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page - 1) <= 0 ? 1 : (current_page - 1))}}">Previous</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + 1}}">First</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + ((current_page - 1) <= 0 ? 1 : (current_page - 1))}}">Previous</a>
     <a ng-repeat="page_num in page_num_list"
        ng-hide="page_num < current_page - 4 || page_num > current_page + 4"
        class="btn btn-default"
        ng-class="{'btn-dark-red': current_page == page_num}"
-       href="{{current_path + '?page=' + page_num}}">{{page_num}}</a>
-    <a class="btn btn-default" href="{{current_path + '?page=' + ((current_page + 1) > page_num_list[page_num_list.length - 1] ? page_num_list[page_num_list.length - 1] : (current_page + 1))}}">Next</a>
-    <a class="btn btn-default" href="{{current_path + '?page=' + page_num_list[page_num_list.length - 1]}}">Last</a>
+       href="{{current_path + '&page=' + page_num}}">{{page_num}}</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + ((current_page + 1) > page_num_list[page_num_list.length - 1] ? page_num_list[page_num_list.length - 1] : (current_page + 1))}}">Next</a>
+    <a class="btn btn-default" href="{{current_path + '&page=' + page_num_list[page_num_list.length - 1]}}">Last</a>
     <input type="text" min="1" max="{{page_num_list[page_num_list.length - 1]}}" class="form-control" ng-model="switch_page" style="display: inline; padding-left: 7px; width: 40px; height: 34px; vertical-align: middle;">
-    <a class="btn btn-default btn-dark-red" ng-href="{{current_path + '?page=' + switch_page}}">Go</a>
+    <a class="btn btn-default btn-dark-red" ng-href="{{current_path + '&page=' + switch_page}}">Go</a>
   </p>
   <!-- The pop window to set the rd flag of involved student -->
   <div class="modal fade" id="flag-others" role="dialog">
