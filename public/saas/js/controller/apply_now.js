@@ -233,25 +233,29 @@ applyNowModule.controller('ApplyNow',
     };
 
     $scope.changeStep = function(step){
-      $rootScope.isRunNowProcess = false;
-      $rootScope.current_sub_step = null;
-      $rootScope.current_step = null;
-      $scope.processSubStepURL = [];
-      var url = "/" + $routeParams.urlProcessYear + "/" + $routeParams.urlProcessAcronym + "/apply_now/" + step.url_acronym;
-      $location.path(url);
-    };
-
-    $scope.changeSubStep = function(step, sub_step){
-      if($scope.checkSubmittid(step, sub_step)){
+      if($rootScope.applicant_step != step){
         $rootScope.isRunNowProcess = false;
         $rootScope.current_sub_step = null;
         $rootScope.current_step = null;
         $scope.processSubStepURL = [];
-        var url = "/" + $routeParams.urlProcessYear + "/" + $routeParams.urlProcessAcronym + "/apply_now/" + step.url_acronym + "/" + sub_step.url_acronym;
+        var url = "/" + $routeParams.urlProcessYear + "/" + $routeParams.urlProcessAcronym + "/apply_now/" + step.url_acronym;
         $location.path(url);
       }
-      else{
-        $rootScope.defaultConfirm(step.name + " - Server Message", "You have not yet submitted your application.", null, null);
+    };
+
+    $scope.changeSubStep = function(step, sub_step){
+      if($rootScope.applicant_sub_step != sub_step) {
+        if($scope.checkSubmittid(step, sub_step)){
+          $rootScope.isRunNowProcess = false;
+          $rootScope.current_sub_step = null;
+          $rootScope.current_step = null;
+          $scope.processSubStepURL = [];
+          var url = "/" + $routeParams.urlProcessYear + "/" + $routeParams.urlProcessAcronym + "/apply_now/" + step.url_acronym + "/" + sub_step.url_acronym;
+          $location.path(url);
+        }
+        else{
+          $rootScope.defaultConfirm(step.name + " - Server Message", "You have not yet submitted your application.", null, null);
+        }
       }
     };
 

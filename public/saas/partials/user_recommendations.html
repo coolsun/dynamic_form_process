@@ -1,6 +1,7 @@
 <div ng-controller="UserRecommendations">
   <div class="well" ng-bind-html="requirementHTML"></div>
   <div class="well" ng-show="recommendation_emails.length == 0"><h5>You have not received any recommendation yet.</h5></div>
+  <h5 ng-show="error_msg.length > 0" style="font-weight: bolder; color: red;">{{error_msg}}</h5>
   <div class="panel panel-primary" ng-hide="recommendation_emails.length == 0">
     <div class="panel-heading">
       Recommendation

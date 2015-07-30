@@ -3,27 +3,78 @@ class RecommendationRecordsController < ApplicationController
   def index
     procedure_id = params[:current_process_id]
     permission_to_show, permission_to_active, permission_message = check_user_permission("Applicant Recommendation")
-    records = RecommendationRecord.where(:user_id => params[:user_id], :procedure_id => procedure_id).order(:created_at => :asc)
+
+    
+    records = RecommendationRecord.where(
+      :user_id => params[:user_id],
+      :procedure_id => procedure_id
+    ).order(:created_at => :asc)
     settings = RecommendationSetting.where(:procedure_id => procedure_id)
 
-    recommendation_forms = Form.where(:procedure_id => procedure_id, :form_type => 'Recommender', :display => true).select(:id, :form_name)
+    recommendation_forms = Form.where(
+      :procedure_id => procedure_id,
+      :form_type => 'Recommender',
+      :display => true
+    ).select(:id, :form_name)
 
-    render :json => {:records => records, :settings => settings, :recommendation_forms => recommendation_forms, :permission_to_active => permission_to_active}
+    position_selected_count = Application.joins(:position).where(
+      :user_id => params[:user_id],
+      #:offered => "wait",
+      :positions => {
+        :procedure_id => procedure_id
+      }
+    ).count
+    #position_selected_count = 0 # test no position selected
+
+    render :json => {
+      :success => false,
+      :records => records,
+      :settings => settings,
+      :recommendation_forms => recommendation_forms,
+      :permission_to_active => false,
+      :msg => "Select a position at least."
+    } and return if position_selected_count == 0
+
+    render :json => {
+      :success => true,
+      :records => records,
+      :settings => settings,
+      :recommendation_forms => recommendation_forms,
+      :permission_to_active => permission_to_active
+    }
   end
 
   def create
     permission_to_show, permission_to_active, permission_message = check_user_permission("Applicant Recommendation")
-    records = RecommendationRecord.where(:user_id => params[:user_id], :procedure_id => params[:procedure_id]).order(:created_at => :asc)
-    render :json => {:success => false, :msg => permission_message, :records => records} and return if !permission_to_active
-    render :json => {:success => false, :msg => "Please fill in all the required informations (*) without any blank.", :records => records} and return if !(params[:name] && params[:title] && params[:relationship] && params[:email])
+    records = RecommendationRecord.where(
+      :user_id => params[:user_id],
+      :procedure_id => params[:procedure_id]
+    ).order(:created_at => :asc)
+
+    render :json => {
+      :success => false,
+      :msg => permission_message,
+      :records => records
+    } and return if !permission_to_active
+
+    render :json => {
+      :success => false,
+      :msg => "Please fill in all the required informations (*) without any blank.",
+      :records => records
+    } and return if !(params[:name] && params[:title] && params[:relationship] && params[:email])
 
     duplicate_email_record = RecommendationRecord.where(
-                               :user_id => params[:user_id],
-                               :procedure_id => params[:procedure_id],
-                               :email => params[:email],
-                               :recommendation_form_id => params[:recommendation_form_id])
-                             .first
-    render :json => {:success => false, :msg => "Warning: the same email and form has been sent again!", :records => records} and return if duplicate_email_record
+      :user_id => params[:user_id],
+      :procedure_id => params[:procedure_id],
+      :email => params[:email],
+      :recommendation_form_id => params[:recommendation_form_id]
+    ).first
+
+    render :json => {
+      :success => false,
+      :msg => "Warning: the same email and form has been sent again!",
+      :records => records
+    } and return if duplicate_email_record
 
     last_record = RecommendationRecord.create(
       :user_id => params[:user_id],
@@ -38,26 +89,30 @@ class RecommendationRecordsController < ApplicationController
     render :json => {:success => false, :msg => "Request delivery failed", :records => records} and return if !last_record
 
     recommendation_invite_email_temp = EmailTemplate.where(
-                                         :procedure_id => params[:procedure_id],
-                                         :email_type => "invite_recommender",
-                                         :is_active => true)
-                                       .select(:title, :content).first
+      :procedure_id => params[:procedure_id],
+      :email_type => "invite_recommender",
+      :is_active => true
+    ).select(:title, :content).first
+
     recommendation_invite_email_temp = EmailTemplate.where(
-                                         :procedure_id => params[:procedure_id],
-                                         :email_type => "invite_recommender")
-                                       .select(:title, :content).first if !recommendation_invite_email_temp
+      :procedure_id => params[:procedure_id],
+      :email_type => "invite_recommender"
+    ).select(:title, :content).first if !recommendation_invite_email_temp
+
     sent_to_recommender = replace_email_word(recommendation_invite_email_temp.title, recommendation_invite_email_temp.content, last_record)
     StanfordMailer.send_shipped(last_record.email, sent_to_recommender[:title], sent_to_recommender[:content])
 
     applicant_send_email_temp = EmailTemplate.where(
-                                  :procedure_id => params[:procedure_id],
-                                  :email_type => "notice_applicant_send",
-                                  :is_active => true)
-                                .select(:title, :content).first
+      :procedure_id => params[:procedure_id],
+      :email_type => "notice_applicant_send",
+      :is_active => true
+    ).select(:title, :content).first
+
     applicant_send_email_temp = EmailTemplate.where(
-                                  :procedure_id => params[:procedure_id],
-                                  :email_type => "notice_applicant_send")
-                                .select(:title, :content).first if !applicant_send_email_temp
+      :procedure_id => params[:procedure_id],
+      :email_type => "notice_applicant_send"
+    ).select(:title, :content).first if !applicant_send_email_temp
+
     sent_to_applicant = replace_email_word(applicant_send_email_temp.title, applicant_send_email_temp.content, last_record)
     user_email = User.where(:id => params[:user_id]).first.email
     StanfordMailer.send_shipped(user_email, sent_to_applicant[:title], sent_to_applicant[:content])
@@ -75,15 +130,18 @@ class RecommendationRecordsController < ApplicationController
 
   def send_reminder_email
     reminder_record = RecommendationRecord.where(:id => params[:recommendation_record_id]).first
+
     remind_email_temp = EmailTemplate.where(
-                          :procedure_id => reminder_record.procedure_id,
-                          :email_type => "remind_recommender",
-                          :is_active => true)
-                        .select(:title, :content).first
+      :procedure_id => reminder_record.procedure_id,
+      :email_type => "remind_recommender",
+      :is_active => true
+    ).select(:title, :content).first
+
     remind_email_temp = EmailTemplate.where(
-                          :procedure_id => reminder_record.procedure_id,
-                          :email_type => "remind_recommender")
-                        .select(:title, :content).first if !remind_email_temp
+      :procedure_id => reminder_record.procedure_id,
+      :email_type => "remind_recommender"
+    ).select(:title, :content).first if !remind_email_temp
+
     sent_to_recommender = replace_email_word(remind_email_temp.title, remind_email_temp.content, reminder_record)
     StanfordMailer.send_shipped(reminder_record.email, sent_to_recommender[:title], sent_to_recommender[:content])
 

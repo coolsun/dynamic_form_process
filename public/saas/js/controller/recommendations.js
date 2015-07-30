@@ -66,7 +66,12 @@ function($scope, $location, $sce, $rootScope, waitingIcon, recommendationRecordF
       $scope.recommendation = findObj(data.settings, "procedure_id", $scope.current_process_id);
       $scope.recommendation_forms = data.recommendation_forms;
       $scope.requirementHTML = $sce.trustAsHtml($scope.recommendation.requirement);
-      console.log("Get record and setting success.");
+      if(data.success) {
+        console.log("Get record and setting success.");
+      } else {
+        $scope.error_msg = data.msg;
+        console.log(data.msg);
+      }
     })
     .error(function(data){
       console.log("Fail to get record and setting.");
