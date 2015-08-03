@@ -49,7 +49,7 @@ rsasApp.controller('EmailTemplateList',
     };
 
     angular.element(document).ready(function(){
-      if($rootScope.isRunNowProcess){
+      if($rootScope.isRunNowProcess || $location.path().indexOf("global") != -1){
         $scope.emailTemplateList();
       }
     });
