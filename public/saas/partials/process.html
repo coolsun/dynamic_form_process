@@ -101,7 +101,7 @@
                         <button class="btn_li">Edit</button>
                       </a>
                     </li>
-                    <li ng-show="permission_to_active">
+                    <li ng-show="permission_to_active && !tblTr.status">
                       <a ng-click="remove($index)">
                         <button class="btn_li">Delete</button>
                       </a>
