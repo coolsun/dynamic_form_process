@@ -66,7 +66,7 @@
                       </a>
                     </li>
                     <li>
-                      <a ng-click="$root.defaultConfirm('Delete User', 'Are you sure to delete this User?', deleteUser, [$index, this.tblTr.id])"
+                      <a ng-click="$root.defaultConfirm('Delete User', 'Are you sure to delete this user? Once you delete this user, you will not be able to select this user as a manager.', deleteUser, [$index, this.tblTr.id])"
                          ng-if="$root.current_user.is_admin || !tblTr.is_admin"
                       >
                         <button class="btn_li">Delete</button>
