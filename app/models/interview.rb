@@ -49,10 +49,13 @@ class Interview < ActiveRecord::Base
     order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
     search_condition = RsasTools.get_where_search_condition(search_field, table_params.us_search_text);
 
+    round_obj = Round.find_by_id(i_round_id);
+    b_do = (round_obj.procedure_id == table_params.i_procedure_id);
+
     interviews = [];
-    if (b_senior_manager)
+    if (b_senior_manager && b_do)
       include_list = [
-                      :round,
+                      #:round,
 
                       :time_slots => [
 
@@ -69,14 +72,17 @@ class Interview < ActiveRecord::Base
 
 
       interviews = Interview.includes(include_list)
-                            .where(:rounds => {:procedure_id => table_params.i_procedure_id})
-                            .where(:rounds => {:id => i_round_id})
+                            .where(:round_id => i_round_id)
                             .where(search_condition)
                             .order(order_condition)
                             .order("interviews.id ASC")
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
+
+
+                            #.where(:rounds => {:procedure_id => table_params.i_procedure_id})
+                            #.where(:rounds => {:id => i_round_id})
 
     else
     end
@@ -144,7 +150,10 @@ class Interview < ActiveRecord::Base
     order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
     search_condition = RsasTools.get_where_search_condition(search_field, table_params.us_search_text);
 
+
     round_obj = Round.find_by_id(i_round_id);
+    b_do = (round_obj.procedure_id == table_params.i_procedure_id);
+
     user_obj = User.find_by_id(i_user_id);
     result = Interview.get_mgr_interviews(round_obj, user_obj);
 
@@ -153,9 +162,9 @@ class Interview < ActiveRecord::Base
 
     interviews = [];
     if (b_senior_manager)
-    else
+    elsif (b_do)
       include_list = [
-                      :round,
+                      #:round,
                       :time_slots => [
                       ],
                       :positions_in_interviews => [
@@ -169,8 +178,7 @@ class Interview < ActiveRecord::Base
                      ];  # :procedure
 
       interviews = Interview.includes(include_list)
-                            .where(:rounds => {:procedure_id => table_params.i_procedure_id})
-                            .where(:rounds => {:id => i_round_id})
+                            .where(:round_id => i_round_id)
                             .where(search_condition)
                             .where(:interviews => {:id => view_interview_ids})
                             .order(order_condition)
@@ -178,6 +186,10 @@ class Interview < ActiveRecord::Base
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
+
+
+                            #.where(:rounds => {:procedure_id => table_params.i_procedure_id})
+                            #.where(:rounds => {:id => i_round_id})
     end
 
     interviews_list = interviews.as_json({
