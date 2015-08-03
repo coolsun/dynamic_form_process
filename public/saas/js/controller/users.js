@@ -121,6 +121,34 @@ rsasApp.controller('Users',
       });
     };
 
+    $scope.setRemoveUserConfirm = function(user_id){
+      $rootScope.defaultConfirm(
+        'Remove User',
+        "You will remove all the data of this user, including the manager's setting in other processes for this user and the user's application. Are you sure to remove this user?",
+        $scope.removeUser,
+        user_id
+      );
+    };
+
+    $scope.removeUser = function(user_id) {
+      waitingIcon.open();
+      userFactory.removeUser(user_id, $rootScope.current_year.id, $rootScope.current_process.id)
+      .success(function(data){
+        if(data.success){
+          $rootScope.rsasAlert({type: 'success', msg: data.msg});
+          $scope.reloadTable();
+        }
+        else{
+          $rootScope.rsasAlert({type: 'danger', msg: data.msg});
+        }
+        waitingIcon.close();
+      })
+      .error(function(data){
+        $rootScope.rsasAlert({type: 'danger', msg: "Failed to remove the user."});
+        waitingIcon.close();
+      });
+    };
+
     $scope.reloadTable = function(){
       $scope.userTable.tbl.searchClick($scope.userTable.tbl);
     };

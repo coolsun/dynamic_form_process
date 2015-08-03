@@ -46,15 +46,15 @@
           </thead>
           <tbody>
             <tr ng-repeat="tblTr in userTable.tbl.show">
-              <td>{{tblTr.name}}</td>
-              <td>{{tblTr.sunet_id}}</td>
-              <td>{{tblTr.status}}</td>
-              <td style="text-align: center;"><span ng-if="tblTr.is_admin" class="glyphicon glyphicon-ok"></span></td>
-              <td><div ng-repeat='procedure in tblTr.procedures'>● {{procedure.name}}</div></td>
-              <td><div ng-repeat='location in tblTr.locations'>● {{location.name}} - {{location.procedure_name}}</div></td>
-              <td><div ng-repeat='role in tblTr.roles'>● {{role.name}} - {{role.procedure_name}}</div></td>
-              <td style="text-align: center;"><span ng-if="tblTr.is_interviewer" class="glyphicon glyphicon-ok"></span></td>
-              <td>
+              <td width="6%">{{tblTr.name}}</td>
+              <td width="8%">{{tblTr.sunet_id}}</td>
+              <td width="7%">{{tblTr.status}}</td>
+              <td width="7%" style="text-align: center;"><span ng-if="tblTr.is_admin" class="glyphicon glyphicon-ok"></span></td>
+              <td width="20%"><div ng-repeat='procedure in tblTr.procedures'>● {{procedure.name}}</div></td>
+              <td width="20%"><div ng-repeat='location in tblTr.locations'>● {{location.name}} - {{location.procedure_name}}</div></td>
+              <td width="20%"><div ng-repeat='role in tblTr.roles'>● {{role.name}} - {{role.procedure_name}}</div></td>
+              <td width="7%" style="text-align: center;"><span ng-if="tblTr.is_interviewer" class="glyphicon glyphicon-ok"></span></td>
+              <td width="5%">
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!$root.current_user.is_admin && tblTr.is_admin">
                     <span class="glyphicon glyphicon-chevron-down"></span>
@@ -70,6 +70,11 @@
                          ng-if="$root.current_user.is_admin || !tblTr.is_admin"
                       >
                         <button class="btn_li">Delete</button>
+                      </a>
+                    </li>
+                    <li>
+                      <a ng-click="setRemoveUserConfirm(this.tblTr.id)" ng-if="$root.current_user.is_admin || !tblTr.is_admin">
+                        <button class="btn_li">Remove User</button>
                       </a>
                     </li>
                     <li ng-if="$root.current_user.is_admin">

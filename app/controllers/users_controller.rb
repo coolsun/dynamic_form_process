@@ -52,10 +52,6 @@ class UsersController < ApplicationController
     permission_to_show, permission_to_active, permission_message = check_user_permission("Process User")
     render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
 
-    if @user.sunet_id != params[:user][:sunet_id] && @user.applicants.present?
-      render :json => {:success => false, :msg => "This user is an applicant so SUNetID can not be changed."} and return
-    end
-
     if @user.update(update_user_params)
       i_procedure_id = params[:current_process_id].to_i;
       i_user_id = @user.id;
@@ -91,6 +87,29 @@ class UsersController < ApplicationController
     else
       render :json => {:success => false, :msg => "Failed to delete the user."}
     end
+  end
+
+  def remove_user
+    permission_to_show, permission_to_active, permission_message = check_user_permission("Process User")
+    render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
+
+    user = User.find_by_id(params[:user_id])
+    if user.is_admin
+      render :json => {
+        :success => false,
+        :msg => "You are not able to delete admins. If you really want to delete this admin, please go to ''Edit'' to cancel his/her admin permission first and try again."
+      } and return
+    end
+
+    user.destroy
+    if user.errors.any?
+      render :json => {:success => false, :msg => get_error_messages(user)}
+    elsif user
+      render :json => {:success => true, :msg => "The user has been removed successfully."}
+    else
+      render :json => {:success => false, :msg => "Failed to remove the user."}
+    end
+
   end
 
   def logout

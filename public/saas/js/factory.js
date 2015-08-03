@@ -120,6 +120,17 @@ factoryModule.factory('userFactory', function($http){
         }
       });
     };
+    userFactory.removeUser = function(id, current_year_id, current_process_id){
+      return $http({
+        url: urlBase + "/remove_user",
+        method: "GET",
+        params: {
+          "user_id": id,
+          "current_year_id": current_year_id,
+          "current_process_id": current_process_id
+        }
+      });
+    };
     userFactory.changeUser = function(id, current_year_id, current_process_id){
       return $http({
         url: urlBase + "/get_user_authority",

@@ -142,6 +142,7 @@ Rails.application.routes.draw do
 
   resources :users do
     collection do
+      get :remove_user
       get :get_user_authority
       get :get_user_all
       get :logout
