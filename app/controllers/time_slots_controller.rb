@@ -4,67 +4,6 @@ class TimeSlotsController < ApplicationController
 
 ####################################################################################################
   def create
-=begin
-    error_code = 'xSYS00000';
-    success = true;
-    #######################################################
-    # need check connect usr is admin which access to manage
-    #######################################################
-    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: TimeSlotsController create, params: #{params}");
-
-    #########################################################################
-    # _us__ need check;
-    #########################################################################
-    #us_interviewer_user_ids_add = params[:interviewerAdd];
-    us_place = params[:place];
-    #i_vacancy = params[:vacancy].to_i;
-    #i_position_id = params[:position][:id].to_i;
-    us_time_list = params[:timeList];
-    i_interview_id = params[:interviewId].to_i;
-
-
-    time_list = [];
-    us_time_list.each do |time|
-      time_parse_start = Time.parse(time[:start]);
-      time_parse_end = Time.parse(time[:end]);
-      t_start = Time.utc(time_parse_start.year, time_parse_start.month, time_parse_start.day, time_parse_start.hour, time_parse_start.min);
-      t_end = Time.utc(time_parse_end.year, time_parse_end.month, time_parse_end.day, time_parse_end.hour, time_parse_end.min);
-
-      time_list << {
-        :start => t_start,
-        :end => t_end
-      };
-    end
-
-    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: TimeSlotsController create, time_list: #{time_list}");
-
-    i_time_slot_ids = [];
-    error_time_list = [];
-
-    logger.info("time_list #{time_list}");
-    time_list.each do |time|
-      time_slot = TimeSlot.create(:interview_id => i_interview_id, :place => us_place, :t_start => time[:start], :t_end => time[:end]);
-      logger.info("# #{Time.now} IP:#{request.remote_ip}, action: TimeSlotsController create, time_slot #{time_slot.to_json}");
-      if (!time_slot[:id].is_a?(Integer))
-        error_code = 'xDBI00006';
-        logger.info("# #{Time.now} IP:#{request.remote_ip},  action: TimeSlotsController create, time_slot creat fail, error_code: #{error_code}");
-        error_time_list << time;
-        success = false;
-      else
-        i_time_slot_ids << time_slot[:id];
-      end
-    end
-
-    logger.info("i_interview_ids : #{i_time_slot_ids}");
-    logger.info("error_time_list : #{error_time_list}")
-    #logger.info("i_interviewer_user_ids_add : #{i_interviewer_user_ids_add}");
-
-    render :json => {
-      :success => success,
-      :error_time_list => error_time_list,
-      #:error_interviewers => error_interviewers
-    };
-=end
   end # def create
 
 ####################################################################################################
@@ -121,35 +60,6 @@ class TimeSlotsController < ApplicationController
 
 
 ####################################################################################################
-=begin
-  def admin_get_time_slots
-    table_params = rsas_table_params();
-    response = [];
-
-    i_interview_id = params[:interviewId].to_i;
-
-    if (0 < i_interview_id)
-      data = TimeSlot.admin_get_time_slots(table_params, i_interview_id);
-
-      response = {
-        :now => data[:now],
-        :total => data[:total],
-        :show => data[:show],
-      };
-    else
-      response = {};
-    end
-
-
-    #logger.info(response);
-
-    render :json => response;
-
-  end # def admin_get_time_slots
-=end
-
-
-####################################################################################################
   def get_interviewers
     #######################################################
     # need check connect usr is admin which access to manage
@@ -190,12 +100,6 @@ class TimeSlotsController < ApplicationController
         user_hash[:check] = b_is_interviewer;
         interviewers << user_hash;
 
-        #interviewers << {
-        #  :id => user.id,
-        #  :name => user.name,
-        #  :suid => user.suid,
-        #  :check => b_is_interviewer
-        #}
       end
 
     end
@@ -353,15 +257,6 @@ class TimeSlotsController < ApplicationController
       Interview.email_at_mgr_schedule_interviewer(i_schedule_success_user_ids, time_slot, manager_emails);
     end
 
-=begin
-    not_set_interviewer_users = [];
-    if (not_set_interviewer_ids.present?)
-      not_set_interviewer_users = User.joins(:interviewers)
-                                      .where(:interviewers => {:id => not_set_interviewer_ids});
-
-      success = false;
-    end
-=end
 
     success = (not_set_interviewer_users.present?)? false : success;
 
@@ -512,18 +407,6 @@ class TimeSlotsController < ApplicationController
     if (i_schedule_success_user_ids.present?)
       Interview.email_at_mgr_schedule_applicant(i_schedule_success_user_ids, time_slot, manager_emails);
     end
-
-=begin
-    not_set_interviewee_users = [];
-    if (not_set_interviewee_user_ids.present?)
-      not_set_interviewee_users = User.where(:id => not_set_interviewee_user_ids);
-      not_set_interviewee_users = not_set_interviewee_users.as_json(
-        :methods => :name
-      );
-
-      success = false;
-    end
-=end
 
     success = (not_set_interviewee_users.present?)? false : success;
 

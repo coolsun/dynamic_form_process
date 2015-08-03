@@ -16,21 +16,6 @@ class InterviewsController < ApplicationController
     #######################################################
     logger.info("# #{Time.now} IP:#{request.remote_ip}, action: InterviewsController create, params: #{params}");
 
-    #########################################################################
-    # _us__ need check;
-    #########################################################################
-=begin
-        roundId: roundId,
-        name: name,
-        place: place,
-        vacancy: vacancy,
-        allowInterviewerEdit: allowInterviewerEdit,
-        canScheduleInterviewer: canScheduleInterviewer,
-        interviewerVacancy: interviewerVacancy,
-        maxTimeSlotPerInterviewer: maxTimeSlotPerInterviewer,
-        timeList: timeList,
-        positionIds: positionIds
-=end
 
     i_round_id = params[:roundId].to_i;
     us_name = params[:name];
@@ -45,16 +30,6 @@ class InterviewsController < ApplicationController
     us_positions = params[:positionIds];
     time_list = [];
     i_position_ids = [];
-
-    #i_interviewer_user_ids_add = [];
-    #if (!us_interviewer_user_ids_add.nil? && 0 < us_interviewer_user_ids_add.length)
-    #  i_interviewer_user_ids_add = RsasTools.arr_attr_to_int(us_interviewer_user_ids_add);
-    #end
-
-    #t_start = Time.utc(time_parse_start.year, time_parse_start.month, time_parse_start.day, time_parse_start.hour, time_parse_start.min);
-    #t_end = Time.utc(time_parse_end.year, time_parse_end.month, time_parse_end.day, time_parse_end.hour, time_parse_end.min);
-    #logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview create, start time UTC: #{t_start}");
-    #logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview create, end time UTC: #{t_end}");
 
 
     round = Round.find_by_id(i_round_id);
@@ -72,7 +47,6 @@ class InterviewsController < ApplicationController
       );
 
 
-      #i_interview_id = Interview.add_interview(i_position_id, i_vacancy, us_place, t_start, t_end);
       logger.info("# #{Time.now} IP:#{request.remote_ip}, action: InterviewsController create, interview: #{interview.to_json}");
 
       i_time_slot_ids = [];
@@ -129,27 +103,6 @@ class InterviewsController < ApplicationController
     end
 
 
-
-=begin
-    if (0 < i_interviewer_user_ids_add.length)
-      error_interviewers = [];
-      i_interviewer_user_ids_add.each do |user_id|
-        i_interviewer_id = Interviewer.add_interviewer(user_id, i_interview_id);
-        logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview create, i_interviewer_id #{i_interviewer_id}");
-        if (!i_interviewer_id.is_a?(Integer))
-          logger.info("# #{Time.now} IP:#{request.remote_ip},  action: interview create, i_interviewer_id is not Integer, user_id: #{user_id}");
-          error_interviewers << user_id;
-        end
-      end
-
-      if (0 < error_interviewers.length)
-        error_code = 'xDBI00002';
-        logger.info("# #{Time.now} IP:#{request.remote_ip},  action: interview create, error_interviewers #{error_interviewers}, error_code: #{error_code}");
-      end
-    end
-=end
-
-
     render :json => {
       :success => success,
       :eCode => error_code
@@ -166,25 +119,7 @@ class InterviewsController < ApplicationController
     logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview update, params: #{params}");
 
 
-=begin
-
-    var postData = {
-      name: name,
-      vacancy: vacancy,
-      interviewerCanEdit: interviewerCanEdit,
-      interviewerCanSchedule: interviewerCanSchedule,
-      interviewerVacancy: interviewerVacancy,
-      maxTimeSlotPerInterviewer: maxTimeSlotPerInterviewer,
-      oneTimeSlotPerApplicant: oneTimeSlotPerApplicant
-    };
-
-=end
-
-    #us_place = params[:place];
     i_interview_id = params[:id].to_i;
-    #i_position_id = params[:position][:id].to_i;
-    #time_parse_start = Time.parse(params[:time][:start]);
-    #time_parse_end = Time.parse(params[:time][:end]);
     i_vacancy = params[:vacancy].to_i;
     us_name = params[:name];
     b_interviewer_can_edit = params[:interviewerCanEdit];
@@ -194,23 +129,6 @@ class InterviewsController < ApplicationController
     b_one_time_slot_per_applicant = params[:oneTimeSlotPerApplicant];
     us_time_list = params[:timeList];
     us_positions = params[:positionIds];
-
-
-    #us_interviewer_user_ids_add = params[:interviewerAdd];
-    #us_interviewer_user_ids_remove = params[:interviewerRemove];
-
-    #i_interviewer_user_ids_add = [];
-    #i_interviewer_user_ids_remove = [];
-    #if (!us_interviewer_user_ids_add.nil? && 0 < us_interviewer_user_ids_add.length)
-    #  i_interviewer_user_ids_add = RsasTools.arr_attr_to_int(us_interviewer_user_ids_add);
-    #end
-
-    #if (!us_interviewer_user_ids_remove.nil? && 0 < us_interviewer_user_ids_remove.length)
-    #  i_interviewer_user_ids_remove = RsasTools.arr_attr_to_int(us_interviewer_user_ids_remove);
-    #end
-
-    #t_start = Time.utc(time_parse_start.year, time_parse_start.month, time_parse_start.day, time_parse_start.hour, time_parse_start.min);
-    #t_end = Time.utc(time_parse_end.year, time_parse_end.month, time_parse_end.day, time_parse_end.hour, time_parse_end.min);
 
     update_data = {
       :vacancy => i_vacancy,
@@ -229,31 +147,6 @@ class InterviewsController < ApplicationController
       success = false;
       logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview update, interview:#{params[:id]} update fail, error_code: #{error_code}");
     end
-=begin
-    if (i_interviewer_user_ids_remove.length)
-      i_interviewer_user_ids_remove.each do |i_user_id|
-        interviewer = Interviewer.where(:interview_id => i_interview_id, :user_id => i_user_id).first
-        if (interviewer and interviewer.destroy)
-          logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview update, Interviewer:#{interviewer[:id]} delete success");
-        else
-          logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview update, Interviewer: interview_id=#{i_interview_id}, user_id=#{i_user_id},  delete fail");
-        end
-      end
-    end
-
-    logger.info("##i_interviewer_user_ids_add.length #{i_interviewer_user_ids_add.length}");
-
-    if (i_interviewer_user_ids_add.length)
-      i_interviewer_user_ids_add.each do |i_user_id|
-        interviewer = Interviewer.add_interviewer(i_user_id, i_interview_id);
-        if (!interviewer.is_a?(Integer))
-          logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview update, Interviewer:#{interviewer[:id]} create success");
-        else
-          logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview update, Interviewer: interview_id=#{i_interview_id}, user_id=#{i_user_id},  create fail");
-        end
-      end
-    end
-=end
 
     render :json => {
       :success => success,
@@ -567,7 +460,6 @@ class InterviewsController < ApplicationController
     success = true;
 
     i_interview_id = params[:interviewId].to_i;
-    #us_place = params[:place];
     us_time_slot_remove_ids = params[:timeSlotRemoveIds];
     us_time_list = params[:timeList];
 
@@ -623,12 +515,6 @@ class InterviewsController < ApplicationController
     response = [];
 
     i_round_id = params[:roundId].to_i;
-
-    #time_parse_start = Time.parse(params[:start]);
-    #time_parse_end = Time.parse(params[:end]);
-
-    #t_start = time_parse_start;
-    #t_end = time_parse_end;
 
     round = Round.find_by_id(i_round_id);
 
@@ -708,8 +594,6 @@ class InterviewsController < ApplicationController
       response = interviews_list;
     end
 
-    #logger.info("response: #{response}");
-
     render :json => response;
   end
 
@@ -755,10 +639,6 @@ class InterviewsController < ApplicationController
         :now => data[:now],
         :total => data[:total],
         :show => data[:show],
-        # :permission_to_show => permission_to_show,
-        # :permission_to_active => permission_to_active
-        # :permission_to_show => permission_to_show,
-        # :permission_to_active => permission_to_active
         :create_permission => create_permission_to_show
       };
     end
@@ -802,8 +682,6 @@ class InterviewsController < ApplicationController
         :now => data[:now],
         :total => data[:total],
         :show => data[:show],
-        #:permission_to_show => permission_to_show,
-        #:permission_to_active => permission_to_active
       };
     end
 
@@ -925,26 +803,13 @@ class InterviewsController < ApplicationController
 
       include_list = [:interviews => [:interviewers]];
       if (0 == i_round_id)
-=begin
-        rounds = Round.all;
-        rounds.each do |round|
 
-          round = round.includes(include_list)
-                       .references(include_list)
-                       .where(:interviewers => {:user_id => i_user_id});
-
-          round_interviews << round.get_round_interviews;
-        end
-=end
       else
         if (is_hiring_mgr(i_procedure_id) || is_admin())
           round = Round.includes(include_list)
                         .references(include_list)
                         .find_by_id(i_round_id);
-=begin
-        elsif (1)
-          manage_interview
-=end
+
         else
           round = Round.includes(include_list)
                         .references(include_list)
@@ -981,9 +846,7 @@ class InterviewsController < ApplicationController
     json_round = round.as_json();
     json_round["permission"] = permission;
 
-    #logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4");
-    #logger.info("round: #{json_round.to_json}");
-    #logger.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4");
+
     response = json_round;
 
     render :json => response;
@@ -1001,7 +864,7 @@ class InterviewsController < ApplicationController
     position_ids_in_interview = PositionsInInterview.where(:interview_id => i_interview_id).pluck(:position_id);
 
     positions = [];
-    #procedure_positions = [];
+
     under_manage_location_positions = [];
     under_manage_role_positions = [];
 
@@ -1412,17 +1275,6 @@ class InterviewsController < ApplicationController
                                                .where(:disabled => false)
                                                .where(show_for_std_interviewers_condition);
 
-
-#=end
-=begin
-    interview_form_join_list = [:form];
-    interview_forms = InterviewEvaluate.joins(interview_form_join_list)
-                                        .where(:interviewee_user_id => i_user_id)
-                                        .where(:interview_id => i_interview_id)
-                                        .where(:forms => {:display => true});
-=end
-
-
     user_hash = user.as_json();
 
     user_hash[:name] = user.name;
@@ -1491,30 +1343,7 @@ class InterviewsController < ApplicationController
     #######################################################
     # need check connect usr is stenford
     #######################################################
-    #permission_to_show, permission_to_active, permission_message = check_user_permission("Applicant Interview")
 
-=begin
-    table_params = rsas_table_params();
-    i_user_id = session[:user_id].to_i;
-    i_procedure_id = table_params.i_procedure_id;
-
-    response = [];
-
-    if (0 < i_procedure_id)
-      data = Interview.user_get_process_interviews(table_params, i_user_id);
-    else
-      data = Interview.user_get_reserved_interviews(table_params, i_user_id);
-    end
-    response = {
-      :now => data[:now],
-      :total => data[:total],
-      :show => data[:show],
-      :permission_to_active => permission_to_active
-    };
-
-    #logger.info(response);;
-    render :json => response;
-=end
 
 
     table_params = rsas_table_params();
@@ -1540,8 +1369,6 @@ class InterviewsController < ApplicationController
 ####################################################################################################
   def user_process_calendar_view
     logger.info("# #{Time.now} IP:#{request.remote_ip}, action: InterviewsController user_process_calendar_view, params: #{params}");
-
-    # permission_to_show, permission_to_active, permission_message = check_user_permission("Applicant Interview")
 
     i_user_id = session[:user_id].to_i;
     Interview.set_attr_user_id(i_user_id);
@@ -1582,17 +1409,6 @@ class InterviewsController < ApplicationController
       interviews_as_json = interviews.as_json({
         :methods => :applied,
         :include => [
-=begin
-          {
-            :positions_in_interviews => {
-              :include => [
-                :position => {
-                  :methods => :name
-                }
-              ]
-            }
-          },
-=end
           {
             :time_slots => {
               :include => [

@@ -55,24 +55,8 @@ class Interview < ActiveRecord::Base
                       :round,
 
                       :time_slots => [
-=begin
-                        {
-                          :interviewees => :user
-                        },
-                        {
-                          :time_slot_interviewers => [
-                            :interviewer => [
-                              :user
-                            ]
-                          ]
-                        }
-=end
+
                       ],
-=begin
-                      :interviewers => [
-                        :user
-                      ],
-=end
                       :positions_in_interviews => [
                         {
                           :position => [
@@ -94,12 +78,6 @@ class Interview < ActiveRecord::Base
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
 
-                            #.references(include_list)
-                            # .where("procedures.id" => table_params.i_procedure_id)
-                            # .where("positions.procedure_id" => table_params.i_procedure_id)
-                            # .where("locations.procedure_id" => table_params.i_procedure_id)
-                            # .where("roles.procedure_id" => table_params.i_procedure_id)
-                            #.order("time_slots.t_start ASC")
     else
     end
 
@@ -179,24 +157,7 @@ class Interview < ActiveRecord::Base
       include_list = [
                       :round,
                       :time_slots => [
-=begin
-                        {
-                          :interviewees => :user
-                        },
-                        {
-                          :time_slot_interviewers => [
-                            :interviewer => [
-                              :user
-                            ]
-                          ]
-                        }
-=end
                       ],
-=begin
-                      :interviewers => [
-                        :user
-                      ],
-=end
                       :positions_in_interviews => [
                         {
                           :position => [
@@ -217,16 +178,7 @@ class Interview < ActiveRecord::Base
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
-                            #
-                            #.references(include_list)
-                            # .where("procedures.id" => table_params.i_procedure_id)
-                            # .where("positions.procedure_id" => table_params.i_procedure_id)
-                            # .where("locations.procedure_id" => table_params.i_procedure_id)
-                            # .where("roles.procedure_id" => table_params.i_procedure_id)
-                            #.order("time_slots.t_start ASC")
     end
-
-    #Kaminari.paginate_array(my_array_object).page(table_params.i_page).per(table_params.i_page_count)
 
     interviews_list = interviews.as_json({
       :include => [
