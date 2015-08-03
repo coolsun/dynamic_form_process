@@ -74,6 +74,10 @@ class ProceduresController < ApplicationController
     render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
     @procedure = Procedure.find_by_id(params[:id])
 
+    if @procedure.status
+      render :json => {:success => false, :msg => "You can not delete this procss when its status is ''true''. Please go to ''Setting'' to turn the status to ''false'', and try to delete again."} and return
+    end
+
     if @procedure.destroy
       render :json => {:success => true, :msg => "The process has been deleted successfully."}
     else
