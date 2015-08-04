@@ -158,6 +158,7 @@ class DownloadPdfsController < ApplicationController
         obj["transcripts"] = transcripts;
       end
 
+=begin
       s_forms = []
       system_forms.each do |form|
         form.schema = Form.data_binding(form.schema, form.user_id, session[:user_id])
@@ -167,6 +168,8 @@ class DownloadPdfsController < ApplicationController
       recommendation_forms.each do |form|
         r_forms << RecommendationForm.schema_add_name_relationship(form)
       end
+=end
+
 
       forms = (system_forms + attachable_forms + recommendation_forms)
 
