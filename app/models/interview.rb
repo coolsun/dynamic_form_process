@@ -46,7 +46,7 @@ class Interview < ActiveRecord::Base
 
     search_field = ['roles.name', 'locations.name', 'positions.tag', 'interviews.name'];
 
-    order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
+    #order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
     search_condition = RsasTools.get_where_search_condition(search_field, table_params.us_search_text);
 
     round_obj = Round.find_by_id(i_round_id);
@@ -55,11 +55,7 @@ class Interview < ActiveRecord::Base
     interviews = [];
     if (b_senior_manager && b_do)
       include_list = [
-                      #:round,
-
-                      :time_slots => [
-
-                      ],
+                      :time_slots,
                       :positions_in_interviews => [
                         {
                           :position => [
@@ -72,10 +68,8 @@ class Interview < ActiveRecord::Base
 
 
       interviews = Interview.includes(include_list)
-                            .where(:round_id => i_round_id)
+                            .where(:interviews => {:round_id => i_round_id})
                             .where(search_condition)
-                            .order(order_condition)
-                            .order("interviews.id ASC")
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
@@ -84,13 +78,12 @@ class Interview < ActiveRecord::Base
                             #.where(:rounds => {:procedure_id => table_params.i_procedure_id})
                             #.where(:rounds => {:id => i_round_id})
 
-    else
+                            #.order("interviews.id ASC")
     end
 
 
     interviews_list = interviews.as_json({
       :include => [
-        #:round,
         {
           :time_slots => {
             :include => [
@@ -147,7 +140,7 @@ class Interview < ActiveRecord::Base
 
     search_field = ['roles.name', 'locations.name', 'positions.tag', 'interviews.name'];
 
-    order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
+    #order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
     search_condition = RsasTools.get_where_search_condition(search_field, table_params.us_search_text);
 
 
@@ -162,9 +155,9 @@ class Interview < ActiveRecord::Base
 
     interviews = [];
     if (b_senior_manager)
+
     elsif (b_do)
       include_list = [
-                      #:round,
                       :time_slots => [
                       ],
                       :positions_in_interviews => [
@@ -181,8 +174,6 @@ class Interview < ActiveRecord::Base
                             .where(:round_id => i_round_id)
                             .where(search_condition)
                             .where(:interviews => {:id => view_interview_ids})
-                            .order(order_condition)
-                            .order("interviews.id ASC")
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
@@ -194,7 +185,6 @@ class Interview < ActiveRecord::Base
 
     interviews_list = interviews.as_json({
       :include => [
-        #:round,
         {
           :time_slots => {
             :include => [
@@ -325,9 +315,9 @@ class Interview < ActiveRecord::Base
 
     search_field = ['roles.name', 'locations.name', 'positions.tag', 'interviews.name'];
 
-    order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
+    #order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
     include_list = [
-                    :round,
+                    #:round,
                     :interviewers,
                     :time_slots => [
                       :time_slot_interviewers,
@@ -344,19 +334,23 @@ class Interview < ActiveRecord::Base
                       }
                     ]
                    ];  # :procedure
+
+
+    round_obj = Round.find_by_id(i_round_id);
+    b_do = (round_obj.procedure_id == table_params.i_procedure_id);
+
+
     search_condition = RsasTools.get_where_search_condition(search_field, table_params.us_search_text);
-    interviews = nil;
+    interviews = [];
     #i_interview_total = 0;
 
     #if (0 < table_params.i_procedure_id)
+    if (b_do)
       interviews = Interview.includes(include_list)
                             .references(include_list)
-                            .where(:rounds => {:procedure_id => table_params.i_procedure_id})
-                            .where(:rounds => {:id => i_round_id})
+                            .where(:round_id => i_round_id)
                             .where(:interviewers => {:user_id => i_user_id})
                             .where(search_condition)
-                            .order(order_condition)
-                            .order("interviews.id ASC")
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
@@ -365,7 +359,13 @@ class Interview < ActiveRecord::Base
                             # .where("locations.procedure_id" => table_params.i_procedure_id)
                             # .where("roles.procedure_id" => table_params.i_procedure_id)
                             # .order("time_slots.t_start ASC")
+                            # .order(order_condition)
+                            # .order("interviews.id ASC")
                             # .where("interviews.id IN (SELECT DISTINCT(INTERVIEW_ID) FROM POSITIONS_IN_INTERVIEWS)")
+    end
+
+
+
 
     interviews_list = interviews.as_json({
       :include => [

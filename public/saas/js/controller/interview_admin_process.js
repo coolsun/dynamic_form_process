@@ -28,7 +28,7 @@ interviewAdminProcessApp
 
   $scope.interviewAdminProcess.interview.tblHasInit = false;
   $scope.interviewAdminProcess.interview.tbl = new CTableRsas('interviewAdminProcess.interview.tbl', JSON_URL + '/interviews/admin_get_interviews');
-  $scope.interviewAdminProcess.interview.tbl.setHeader(['Interview', 1], ['Position', 0], ['Vacancy', 0], ['Time Slots', 0]/*, ['Interviewers', 0]*/);
+  $scope.interviewAdminProcess.interview.tbl.setHeader(['Interview', 0], ['Position', 0], ['Vacancy', 0], ['Time Slots', 0]/*, ['Interviewers', 0]*/);
 
   $scope.interviewAdminProcess.interview.dropdownClick = {};
   $scope.interviewAdminProcess.interview.scheduleDropdownClick = {};
@@ -93,7 +93,7 @@ interviewAdminProcessApp
   $scope.interviewAdminProcess.myInterview = {};
   $scope.interviewAdminProcess.myInterview.tblHasInit = false;
   $scope.interviewAdminProcess.myInterview.tbl = new CTableRsas('interviewAdminProcess.myInterview.tbl', JSON_URL + '/interviews/admin_get_my_interviews');
-  $scope.interviewAdminProcess.myInterview.tbl.setHeader(['Interview', 1], ['Position', 0], ['Time Slots', 0]);
+  $scope.interviewAdminProcess.myInterview.tbl.setHeader(['Interview', 0], ['Position', 0], ['Time Slots', 0]);
   $scope.interviewAdminProcess.myInterview.positionShow = [];
   $scope.interviewAdminProcess.myInterview.timeSlot = {};
   $scope.interviewAdminProcess.myInterview.email = {};
