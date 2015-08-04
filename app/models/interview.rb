@@ -315,7 +315,7 @@ class Interview < ActiveRecord::Base
 
     search_field = ['roles.name', 'locations.name', 'positions.tag', 'interviews.name'];
 
-    #order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
+    order_condition = table_params.us_order_by.blank? ? 'interviews.name ASC' : ("%s %s" % [field_map[table_params.us_order_by], table_params.s_asc_or_desc]);
     include_list = [
                     #:round,
                     :interviewers,
@@ -351,6 +351,7 @@ class Interview < ActiveRecord::Base
                             .where(:round_id => i_round_id)
                             .where(:interviewers => {:user_id => i_user_id})
                             .where(search_condition)
+                            .order(order_condition)
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
