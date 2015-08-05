@@ -41,8 +41,11 @@ class PostOfferController < ApplicationController
     begin
       position_id = params[:position_id]
       if params[:email_info][:recipients]
-        recipients = params[:email_info][:recipients].collect{|obj| obj[:email]}
-        user_ids = User.where(:email => params[:email_info][:recipients].collect{|obj| obj[:email]}).pluck(:id)   #match user email
+        input_emails = params[:email_info][:recipients].collect{|obj| obj[:email]}
+        not_match_emails = input_emails - User.where(:year_id => params[:current_year_id],:email => input_emails).pluck(:email)
+        render :json => {:success => false, :msg => "The email #{not_match_emails.join(", ")} can't be sent successfully since it doesn't exist in the database."} and return if not_match_emails.present?
+
+        user_ids = User.where(:year_id => params[:current_year_id],:email => input_emails).pluck(:id)   #match user email
         recipients = []
         user_ids.each do |user_id|
           applicant = Application.includes(:user).where(:position_id => params[:position_id], :user_id => user_id).first
