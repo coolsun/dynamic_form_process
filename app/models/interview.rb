@@ -355,6 +355,8 @@ class Interview < ActiveRecord::Base
                             .order("time_slots.t_start ASC")
                             .page(table_params.i_page)
                             .per(table_params.i_page_count);
+
+
                             # .where("procedures.id" => table_params.i_procedure_id)
                             # .where("positions.procedure_id" => table_params.i_procedure_id)
                             # .where("locations.procedure_id" => table_params.i_procedure_id)

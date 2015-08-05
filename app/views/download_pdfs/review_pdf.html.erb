@@ -1,0 +1,155 @@
+<%= stylesheet_link_tag '/saas/css/app' %>
+<%= stylesheet_link_tag '/saas/css/bootstrap.min' %>
+<%= stylesheet_link_tag '/saas/css/calendar' %>
+<%= stylesheet_link_tag '/saas/css/email_template' %>
+<%= stylesheet_link_tag '/saas/css/font-awesome.min' %>
+<%= stylesheet_link_tag '/saas/css/for-stanford' %>
+<%= stylesheet_link_tag '/saas/css/form_builder' %>
+<%= stylesheet_link_tag '/saas/css/fullcalendar' %>
+<%= stylesheet_link_tag '/saas/css/pop_window' %>
+<%= stylesheet_link_tag '/saas/css/styles' %>
+<%= stylesheet_link_tag '/saas/css/tableRsas' %>
+
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF <br />
+
+<%= @interview_evaluate_forms %>
+
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF <br />
+
+<div class="container">
+  <div class="col-md-9" style="float: none; margin: 0 auto;">
+    <% @applicants.each_with_index do |applicant, applicant_index| %>
+      <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: break-all;" class="ng-binding"><%= applicant["name"] %></h1>
+      <% applicant["forms"].each_with_index do |form, form_index| %>
+        <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding"><%= form["form_name"] %></h4>
+        <% form["blocks"].each do |block| %>
+          <table style="width: 100%; table-layout: fixed;">
+            <tr>
+              <% block.column.times.each do |column| %>
+                <td valign="top">
+                <% block.items.each do |item| %>
+                  <% if column == item.column %>
+                    <div style="margin: 5px;">
+                      <% if item.ps %>
+                        <h5><%= item.description %></h5>
+                        <%= item.value ? item.value.html_safe : "<br />".html_safe %>
+                      <% elsif item.type == 'name' %>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <% item.option.each do |part_of_name|%>
+                          <span>
+                            <%= part_of_name["key"] %>
+                            <%= text_field_tag item.description, part_of_name["value"], :size => 10 %>
+                          </span>
+                        <% end %>
+                      <% elsif item.type == 'date' %>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <span>
+                          MM <%= text_field_tag item.description, item.option[0]["value"], :size => 10 %>
+                          DD <%= text_field_tag item.description, item.option[1]["value"], :size => 10 %>
+                          YYYY <%= text_field_tag item.description, item.option[2]["value"], :size => 10 %>
+                        </span>
+                      <% elsif item.type == 'description' %>
+                        <span><%= item.description.html_safe %></span>
+                      <% elsif item.type == 'file' %>
+                        <h5><%= item.description %></h5>
+                        <% item.files.each do |file| %>
+                          <div>
+                            <%= link_to(file.original_filename, ((STANFORD68 || (Rails.env == "production")) ? HOST_SSL_URL : HOST_URL) + file.file_path) %>
+                          </div>
+                        <% end %>
+                      <% elsif item.type == 'text' || item.type == 'email' %>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <div style="border: 1px solid; width: 100%; min-height: 39px; resize: none; word-wrap: break-word; word-break: break-all; padding: 5px;">
+                          <%= item.value ? item.value.html_safe : "" %>
+                        </div>
+                      <% elsif item.type == 'textarea' %>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <div style="border: 1px solid; width: 100%; min-height: 200px; resize: none; word-wrap: break-word; word-break: break-all; padding: 5px;">
+                          <%= item.value ? item.value.html_safe : "" %>
+                        </div>
+                      <% elsif item.type == 'radio' %>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <% t = SecureRandom.hex + DateTime.now.strftime('%Q') %>
+                        <% item.options.each do |option| %>
+                          <span>
+                            <% if option == "<br \/>" %>
+                              <br />
+                            <% else %>
+                              <label style="margin-bottom: 10px;">
+                                <%= radio_button_tag item.description + t, option, item.select ? item.select.include?(option) : false %>
+                                <%= option %>
+                              </label>
+                            <% end %>
+                          </span>
+                        <% end %>
+                      <% elsif item.type == 'checkbox'%>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <% t = SecureRandom.hex + DateTime.now.strftime('%Q') %>
+                        <% item.options.each do |option| %>
+                          <span>
+                            <% if option == "<br \/>" %>
+                              <br />
+                            <% else %>
+                              <label style="margin-bottom: 10px;">
+                                <%= check_box_tag option + t, 'yes', item.select ? item.select.include?(option) : false %>
+                                <%= option %>
+                              </label>
+                            <% end %>
+                          </span>
+                        <% end %>
+                      <% elsif item.type == 'select' %>
+                        <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
+                        <%= item.select ? "<span class='rsas-element-arrangement'>#{item.select}</span>".html_safe : "<br />".html_safe %>
+                      <% elsif item.type == 'multi-select' %>
+                        <h5><%= item.description %></h5>
+                        <% if !item.select || item.select.blank? %>
+                          <%= "<br />".html_safe %>
+                        <% else %>
+                          <% item.select.each do |option| %>
+                            <span class="rsas-element-arrangement"><%= option %></span>
+                          <% end %>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                <% end %>
+                </td>
+              <% end %>
+            </tr>
+          </table>
+        <% end %>
+        <% if @applicants.length > (applicant_index + 1) || (@applicants.length == (applicant_index + 1) && (applicant["forms"].length != (form_index + 1) || (applicant["forms"].length == (form_index + 1) && applicant["transcripts"]))) %>
+          <div style="display:block; clear:both; page-break-after:always;"></div>
+        <% end %>
+      <% end %>
+      <% if applicant["transcripts"] %>
+        <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding">Transcripts</h4>
+        <table style="width: 100%; table-layout: fixed; font-size: 12px; text-align: left;" class="table">
+          <thead>
+            <tr style="border-top:1px solid gray;">
+              <th style="width: 20%;">Term</th>
+              <th>Career</th>
+              <th style="width: 40%;">Class</th>
+              <th>Grade</th>
+              <th>Units Earned</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% applicant["transcripts"].each do |grade| %>
+              <tr style="border-top:1px solid gray;">
+                <td><%= grade[:term] %></td>
+                <td><%= grade[:career] %></td>
+                <td><%= grade[:grade_class] %></td>
+                <td><%= grade[:grade] %></td>
+                <td><%= grade[:unit] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <% if @applicants.length > (applicant_index + 1) %>
+          <div style="display:block; clear:both; page-break-after:always;"></div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

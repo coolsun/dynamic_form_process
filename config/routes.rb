@@ -340,6 +340,7 @@ Rails.application.routes.draw do
       get  :pdf_form
       post :pdf_form
       post :interview_scheduled_applicants_pdf
+      get :review_pdf
     end
   end
 
