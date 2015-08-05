@@ -353,7 +353,6 @@ interviewAdminProcessApp
 
   $scope.interviewAdminProcess.applicantList.tbl.successDo = function(data)
   {
-    console.log("applicantList.tbl.successDo", data);
   };
 
 
@@ -2492,14 +2491,6 @@ interviewAdminProcessApp
     });
   };
 
-  $scope.interviewAdminProcess.applicantList.review.pdf = function()
-  {
-    var reviewHtml = $("#interviewAdminProcessInterviewApplicantReviewPdf").html();
-
-    reviewHtml.replace('class="rsas-interview-review-div"', 'style="border-width: 3px; border-style: solid; padding: 10px;"');
-
-    $scope.interviewAdminProcess.applicantList.review.html = reviewHtml;
-  };
 
   $scope.interviewAdminProcess.applicantList.comment.init = function(applicant)
   {

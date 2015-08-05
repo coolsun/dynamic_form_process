@@ -1721,6 +1721,12 @@
             <h4 class="modal-title">
               Review
             </h4>
+            <form method="post" action="/download_pdfs/review_pdf" style="display: inline">
+              <input type="hidden" name="interviewee_id" value="{{interviewAdminProcess.applicantList.review.applicant.id}}">
+              <input type="hidden" name="current_process_id" value="{{$root.current_process.id}}">
+              <input type="hidden" name="interview_id" value="{{interviewAdminProcess.applicantList.interview.id}}">
+              <input class="btn btn-info" type="submit" value="Download Review">
+            </form>
           </div>
           <div class="modal-body" id="interviewAdminProcessInterviewApplicantReviewPdf">
             <div ng-repeat="form in interviewAdminProcess.applicantList.review.forms" class="rsas-interview-review-div">
