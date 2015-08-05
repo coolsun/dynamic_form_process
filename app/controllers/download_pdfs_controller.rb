@@ -290,7 +290,7 @@ class DownloadPdfsController < ApplicationController
 
     end
 
-=begin
+#=begin
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/review_pdf.html.erb'),
       :footer => {:center => '[page] / [topage]'}
@@ -299,7 +299,7 @@ class DownloadPdfsController < ApplicationController
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
     s_file_name = ("review_$s_%s_%s_%s.pdf" % [s_interviewee_name, s_interview_name, s_time]);
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
-=end
+#=end
 
   end
 
