@@ -99,34 +99,8 @@ class Applicant < ActiveRecord::Base
     applicant_list = []
     forms_and_questions_hash = {}
 
-    filter_where_condition = {}
-    filter_where_not_condition = {}
+    filter_where_condition, filter_where_not_condition = self.applicant_list_setting_where_condition(filter_options, procedure_id)
 
-    if filter_options[:locations].present?
-      filter_where_condition[:locations] = {:id => filter_options[:locations]}
-    end
-    if filter_options[:roles].present?
-      filter_where_condition[:roles] = {:id => filter_options[:roles]}
-    end
-    if filter_options[:interviews].present?
-      filter_where_condition[:interviews] = {:id => filter_options[:interviews]}
-    end
-    if filter_options[:status] == 'Submitted'
-      filter_where_not_condition[:application_submit_at] = nil
-    elsif filter_options[:status] == 'Not submitted'
-      filter_where_condition[:application_submit_at] = nil
-    elsif filter_options[:status] == 'Offered'
-      filter_where_condition[:applications] = {:offered => ["offered", "post_offered"]}
-    elsif filter_options[:status] == 'Un-offered'
-      offered_user_ids = Application.includes(:position).where(:offered => ["offered", "post_offered"], :positions => {:procedure_id => procedure_id}).pluck(:user_id)
-      filter_where_not_condition[:users] = {:id => offered_user_ids}
-    elsif filter_options[:status] == 'Accepted'
-      filter_where_condition[:applications] = {:offer_accept => "accepted"}
-    elsif filter_options[:status] == 'Unaccepted'
-      filter_where_not_condition[:applications] = {:offer_accept => "accepted"}
-    elsif filter_options[:status] == 'Disqualify'
-      filter_where_condition[:disqualify] = 1
-    end
     # LM can not see disqualify applicants and not submit applicant
     if filter_options[:permission] == 'LM' # means only LM
       filter_where_not_condition[:disqualify] = 1
@@ -263,6 +237,38 @@ class Applicant < ActiveRecord::Base
     end
 
     return applicant_list, applicants.total_count, forms_and_questions_hash
+  end
+
+  def self.applicant_list_setting_where_condition(filter_options, procedure_id)
+    filter_where_condition = {}
+    filter_where_not_condition = {}
+
+    if filter_options[:locations].present?
+      filter_where_condition[:locations] = {:id => filter_options[:locations]}
+    end
+    if filter_options[:roles].present?
+      filter_where_condition[:roles] = {:id => filter_options[:roles]}
+    end
+    if filter_options[:interviews].present?
+      filter_where_condition[:interviews] = {:id => filter_options[:interviews]}
+    end
+    if filter_options[:status] == 'Submitted'
+      filter_where_not_condition[:application_submit_at] = nil
+    elsif filter_options[:status] == 'Not submitted'
+      filter_where_condition[:application_submit_at] = nil
+    elsif filter_options[:status] == 'Offered'
+      filter_where_condition[:applications] = {:offered => ["offered", "post_offered"]}
+    elsif filter_options[:status] == 'Un-offered'
+      offered_user_ids = Application.includes(:position).where(:offered => ["offered", "post_offered"], :positions => {:procedure_id => procedure_id}).pluck(:user_id)
+      filter_where_not_condition[:users] = {:id => offered_user_ids}
+    elsif filter_options[:status] == 'Accepted'
+      filter_where_condition[:applications] = {:offer_accept => "accepted"}
+    elsif filter_options[:status] == 'Unaccepted'
+      filter_where_not_condition[:applications] = {:offer_accept => "accepted"}
+    elsif filter_options[:status] == 'Disqualify'
+      filter_where_condition[:disqualify] = 1
+    end
+    return filter_where_condition, filter_where_not_condition
   end
 
   def self.is_application_sumbit(user_id, procedure_id)

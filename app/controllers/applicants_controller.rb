@@ -462,30 +462,7 @@ class ApplicantsController < ApplicationController
 
     status_list = ['All', 'Submitted', 'Offered', 'Un-offered', 'Accepted', 'Unaccepted']
 
-    if is_admin || is_hiring_mgr(procedure_id)
-      position_ids = Position.where(:procedure_id => procedure_id).pluck(:id)
-      location_ids = Location.where(:procedure_id => procedure_id).pluck(:id)
-      role_ids     = Role.where(:procedure_id => procedure_id).pluck(:id)
-      permission = 'admin'
-    else
-      location_ids = Location.where(:procedure_id => procedure_id, :id => current_user_location_mgr_location_ids).pluck(:id)
-      role_ids = Role.where(:procedure_id => procedure_id, :id => current_user_role_mgr_role_ids).pluck(:id)
-      if location_ids.blank? && role_ids.present?
-        position_ids = Position.where(:role_id => role_ids).pluck(:id)
-        location_ids = Position.where(:role_id => role_ids).pluck(:location_id)
-        permission = 'RM'
-      elsif role_ids.blank? && location_ids.present?
-        position_ids = Position.where(:location_id => location_ids).pluck(:id)
-        role_ids = Position.where(:location_id => location_ids).pluck(:role_id)
-        permission = 'LM'
-      else
-        positions = Position.where("role_id in (?) OR location_id in (?)", role_ids, location_ids)
-        position_ids = positions.pluck(:id)
-        location_ids = positions.pluck(:location_id)
-        role_ids     = positions.pluck(:role_id)
-        permission = 'RMLM'
-      end
-    end
+    position_ids, location_ids, role_ids, permission = user_can_see_position_location_role_ids(procedure_id)
 
     if params[:sub_step] == "manage_available_applicants"
       position_ids = Position.where(:procedure_id => procedure_id).pluck(:id)
@@ -681,6 +658,8 @@ class ApplicantsController < ApplicationController
     params[:status] = 'Un-offered'  if params[:sub_step] == "manage_available_applicants"
     status = params[:status] || 'All'  # 'All', 'Submitted', 'Not submitted', 'Offered', 'Accepted', 'Unaccepted'
 
+    position_ids, location_ids, role_ids, permission = user_can_see_position_location_role_ids(procedure_id)
+
     filter_options = {
       :locations => locations,
       :roles => roles,
@@ -691,37 +670,8 @@ class ApplicantsController < ApplicationController
 
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
     search_condition = RsasTools.get_where_search_condition(search_fields, params[:searchText])
-    applicant_list = []
-    forms_and_questions_hash = {}
 
-    filter_where_condition = {}
-    filter_where_not_condition = {}
-
-    if filter_options[:locations].present?
-      filter_where_condition[:locations] = {:id => filter_options[:locations]}
-    end
-    if filter_options[:roles].present?
-      filter_where_condition[:roles] = {:id => filter_options[:roles]}
-    end
-    if filter_options[:interviews].present?
-      filter_where_condition[:interviews] = {:id => filter_options[:interviews]}
-    end
-    if filter_options[:status] == 'Submitted'
-      filter_where_not_condition[:application_submit_at] = nil
-    elsif filter_options[:status] == 'Not submitted'
-      filter_where_condition[:application_submit_at] = nil
-    elsif filter_options[:status] == 'Offered'
-      filter_where_condition[:applications] = {:offered => ["offered", "post_offered"]}
-    elsif filter_options[:status] == 'Un-offered'
-      offered_user_ids = Application.includes(:position).where(:offered => ["offered", "post_offered"], :positions => {:procedure_id => procedure_id}).pluck(:user_id)
-      filter_where_not_condition[:users] = {:id => offered_user_ids}
-    elsif filter_options[:status] == 'Accepted'
-      filter_where_condition[:applications] = {:offer_accept => "accepted"}
-    elsif filter_options[:status] == 'Unaccepted'
-      filter_where_not_condition[:applications] = {:offer_accept => "accepted"}
-    elsif filter_options[:status] == 'Disqualify'
-      filter_where_condition[:disqualify] = 1
-    end
+    filter_where_condition, filter_where_not_condition = Applicant.applicant_list_setting_where_condition(filter_options, procedure_id)
 
     if filter_options[:question_filters].present?
       question_filters_user_ids = FormInput.question_filters_user_ids(filter_options[:question_filters], procedure_id)
@@ -764,9 +714,9 @@ class ApplicantsController < ApplicationController
       logger.info " == query_detail['question'] #{query_detail['question'].as_json} =="
     end
 
-    @titles = ["Name", "SUNet Id", "SUID", "Status"] + questions
+    @titles = ["Name", "SUNet Id", "SUID", "Status", "Interview(selected)", "Location", "Role"] + questions
     @data_types = [nil, nil , :string, nil]
-    user_record = []
+    @user_record = []
 
     applicants = Applicant.includes(:user).where(:user_id => user_ids, :procedure_id => procedure_id)
     applicants.each do |applicant|
@@ -786,9 +736,25 @@ class ApplicantsController < ApplicationController
         answers << query_value
       end
 
-      user_record << [user_data.name, user_data.sunet_id, user_data.suid, applicant.status] + answers
+      if (['admin', 'RM'].include?(permission))
+        round_titles = Round.joins(:interviews => :invites).where(:procedure_id => procedure_id, :invites => {:invitee_user_id => applicant.user_id}).pluck(:title).join(", ")
+      else
+        round_titles = ""
+      end
+      applicant_poitions = []
+      if permission == 'admin'
+        applicant_select_poitions  = Position.includes(:applications).where(:procedure_id => procedure_id, :applications => {:user_id => applicant.user_id})
+        applicant_select_locations = Location.where(:id => applicant_select_poitions.pluck(:location_id)).pluck(:name).join(", ")
+        applicant_select_roles     = Role.where(:id => applicant_select_poitions.pluck(:role_id)).pluck(:name).join(", ")
+      elsif ['LM', 'RMLM'].include?(permission)
+        applicant_select_poition_ids = Position.includes(:applications).where(:applications => {:user_id => applicant.user_id, :position_id => position_ids})
+        applicant_select_locations   = Location.where(:id => applicant_select_poitions.pluck(:location_id)).pluck(:name).join(", ")
+        applicant_select_roles       = Role.where(:id => applicant_select_poitions.pluck(:role_id)).pluck(:name).join(", ")
+      else
+        applicant_poitions = ["Only admin or LM can see that."]
+      end
+      @user_record << [user_data.name, user_data.sunet_id, user_data.suid, applicant.status, round_titles, applicant_select_locations, applicant_select_roles] + answers
     end
-    @user_record = user_record
 
     respond_to do |format|
       format.xlsx {
@@ -796,5 +762,35 @@ class ApplicantsController < ApplicationController
       }
     end
   end
+
+  private
+
+    def user_can_see_position_location_role_ids(procedure_id)
+      if is_admin || is_hiring_mgr(procedure_id)
+        position_ids = Position.where(:procedure_id => procedure_id).pluck(:id)
+        location_ids = Location.where(:procedure_id => procedure_id).pluck(:id)
+        role_ids     = Role.where(:procedure_id => procedure_id).pluck(:id)
+        permission = 'admin'
+      else
+        location_ids = Location.where(:procedure_id => procedure_id, :id => current_user_location_mgr_location_ids).pluck(:id)
+        role_ids = Role.where(:procedure_id => procedure_id, :id => current_user_role_mgr_role_ids).pluck(:id)
+        if location_ids.blank? && role_ids.present?
+          position_ids = Position.where(:role_id => role_ids).pluck(:id)
+          location_ids = Position.where(:role_id => role_ids).pluck(:location_id)
+          permission = 'RM'
+        elsif role_ids.blank? && location_ids.present?
+          position_ids = Position.where(:location_id => location_ids).pluck(:id)
+          role_ids = Position.where(:location_id => location_ids).pluck(:role_id)
+          permission = 'LM'
+        else
+          positions = Position.where("role_id in (?) OR location_id in (?)", role_ids, location_ids)
+          position_ids = positions.pluck(:id)
+          location_ids = positions.pluck(:location_id)
+          role_ids     = positions.pluck(:role_id)
+          permission = 'RMLM'
+        end
+      end
+      return position_ids, location_ids, role_ids, permission
+    end
 
 end
