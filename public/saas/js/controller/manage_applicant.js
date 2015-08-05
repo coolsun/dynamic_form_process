@@ -47,7 +47,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
 
     $scope.applicationFormTable = {};
     $scope.applicationFormTable.tbl = new CTableRsas('applicationFormTable.tbl', JSON_URL + '/applicants/applicant_list');
-    $scope.applicationFormTable.tbl.setHeader(['Name', 1], ['Email', 1], ['Application', 0], ['Status', 0], ['Interview (Selected)', 0], ['Position ', 0]);
+    $scope.applicationFormTable.tbl.setHeader(['First Name', 1], ['Last Name', 1], ['Email', 1], ['Application', 0], ['Status', 0], ['Interview (Selected)', 0], ['Position ', 0]);
     $scope.applicationFormTable.tbl.setDataAndRequest = function(){
       interviews = pluck_array($scope.applicationFormTable.tbl.interviews, "id");
       locations = pluck_array($scope.applicationFormTable.tbl.locations, "id");
@@ -85,6 +85,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       $scope.force_submit_permission_show = data.permissions.force_submit.show;
       $scope.is_staff = ($rootScope.current_user.status == 'Staff');
       $scope.forms_and_questions = data.forms_and_questions;
+      $scope.email.editAll();
     };
 
     angular.element(document).ready(function () {

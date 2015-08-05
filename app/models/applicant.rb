@@ -94,7 +94,7 @@ class Applicant < ActiveRecord::Base
     order_by_hash = {'Name' => 'lower(users.first_name)', 'Email' => 'users.email', 'Submitted' => 'applicants.application_submit_at'}
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
     search_condition = RsasTools.get_where_search_condition(search_fields, table_params.us_search_text)
-    order_condition = table_params.us_order_by.present? ? "#{order_by_hash[table_params.us_order_by]} #{table_params.s_asc_or_desc}" : "users.first_name asc"
+    order_condition = table_params.us_order_by.present? ? "#{order_by_hash[table_params.us_order_by]} #{table_params.s_asc_or_desc}" : "users.last_name asc"
     procedure_id = table_params.i_procedure_id
     applicant_list = []
     forms_and_questions_hash = {}
@@ -243,6 +243,8 @@ class Applicant < ActiveRecord::Base
         :id => applicant.user.id,
         :rd_flag_color => display_rd_flag_button ? applicant.rd_flag_color : nil,
         :disqualify => applicant.disqualify,
+        :first_name => applicant.user.first_name,
+        :last_name => applicant.user.last_name,
         :name => applicant.user.name,
         :email => applicant.user.email,
         :submited => applicant.try(:application_submit_at) ? "Y" : "N",

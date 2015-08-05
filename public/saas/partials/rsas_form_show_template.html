@@ -37,14 +37,14 @@
           </div>
           <div ng-if="item.type=='textarea'">
             <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
-            <pre style="width: 100%; min-height: 200px; resize: none; word-wrap: break-word; word-break: break-all; white-space: pre-wrap;" ng-model="item.value" ng-bind="item.value"></pre>
+            <pre style="width: 100%; min-height: 200px; resize: none; word-wrap: break-word; word-break: normal; white-space: pre-wrap;" ng-model="item.value" ng-bind="item.value"></pre>
           </div>
           <div ng-if="item.type=='description'">
             <span ng-bind-html="to_html(item.description)"></span>
           </div>
           <div ng-if="item.type=='text'||item.type=='password'">
             <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
-            <pre style="width: 100%; min-height: 39px; resize: none; word-wrap: break-word; word-break: break-all; white-space: pre-wrap;" ng-model="item.value" ng-bind="item.value"></pre>
+            <pre style="width: 100%; min-height: 39px; resize: none; word-wrap: break-word; word-break: normal; white-space: pre-wrap;" ng-model="item.value" ng-bind="item.value"></pre>
           </div>
           <div ng-if="item.type=='radio'">
             <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
