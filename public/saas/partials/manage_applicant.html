@@ -113,7 +113,7 @@
               </div>
               <div class="modal-body" id="htmlStringToPrint">
                 <div ng-repeat="applicant_and_its_forms in every_applicant_and_its_forms" style="padding: 10px; margin-bottom: 10px">
-                  <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: break-all;">{{applicant_and_its_forms.applicant_name}}</h1>
+                  <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;">{{applicant_and_its_forms.applicant_name}}</h1>
                   <div ng-repeat="form in applicant_and_its_forms.all_forms_about_applicant">
                     <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow">{{form.form_name}}</h4>
                     <rsas-form-show></rsas-form-show>
@@ -225,7 +225,7 @@
                     </span>
                   </div>
                   <div style="float: left; width: 100%; margin: 5px 0px;">
-                    <button class="btn btn-info" href="#editEmail" ng-click="email.editAll()" data-toggle="modal">Email All Applicants</button>
+                    <button class="btn btn-info" href="#editEmail" ng-click="applicationFormTable.tbl.perPage = 0; applicationFormTable.tbl.setDataAndRequest();" data-toggle="modal">Email All Applicants</button>
                     <button class="btn btn-info" data-target="#selectFormTypes" data-toggle="modal">View/Download Forms for Filter Applicants</button>
                     <button class="btn btn-info" ng-click="downloadUploadFiles()">Download All Uploaded Files</button>
 
@@ -238,7 +238,7 @@
                       <input type="hidden" name="interviews" value="{{applicationFormTable.tbl.interviews}}">
                       <input type="hidden" name="searchText" value="{{applicationFormTable.tbl.searchText}}">
                       <input type="hidden" name="sub_step" value="{{$root.current_sub_step.identify_name}}">
-                      <button class="btn btn-info"  ng-disabled="form_question_filters.length == 0">Download Filter Report</button>
+                      <button class="btn btn-info">Download Filter Report</button>
                     </form>
 
                     <button class="btn btn-success" href="#formFilter" data-toggle="modal">Form Filter</button>
@@ -285,12 +285,15 @@
                     <tr ng-repeat="tblTr in applicationFormTable.tbl.show">
                       <td style="word-break: normal;">
                         <img src="/saas/img/delete.png" title="Disqualify" style="position: absolute; width: 5%" ng-show="tblTr.disqualify">
-                        {{tblTr.name}}
+                        {{tblTr.first_name}}
                         <p ng-switch="tblTr.rd_flag_color">
                           <button class="rd-flag-button-sm green-bgcolor" title="RD Flag: Green" ng-switch-when="green"></button>
                           <button class="rd-flag-button-sm yellow-bgcolor" title="RD Flag: Yellow" ng-switch-when="yellow"></button>
                           <button class="rd-flag-button-sm red-bgcolor" title="RD Flag: Red" ng-switch-when="red"></button>
                         </p>
+                      </td>
+                      <td style="word-break: normal;">
+                        {{tblTr.last_name}}
                       </td>
                       <td>{{tblTr.email}}</td>
                       <td style="width: 25%;" ng-show="!see_applicant_forms.show"></td>

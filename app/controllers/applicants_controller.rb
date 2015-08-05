@@ -748,8 +748,6 @@ class ApplicantsController < ApplicationController
                   .where(filter_match_question_applicants)
                   .where(search_condition)
 
-    query_details = JSON.parse(params[:form_question_filters])
-
     format_form_type = {
       "System Forms" => "System",
       "Attachable Forms" => "Application",
@@ -760,8 +758,10 @@ class ApplicantsController < ApplicationController
     logger.info "== user_ids #{user_ids} =="
 
     questions = []
+    query_details = filter_options[:question_filters]
     query_details.each do |query_detail|
       questions << query_detail["question"]
+      logger.info " == query_detail['question'] #{query_detail['question'].as_json} =="
     end
 
     @titles = ["Name", "SUNet Id", "SUID", "Status"] + questions
