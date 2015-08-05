@@ -1,8 +1,8 @@
 <div ng-controller="RsasEmail">
   <div class="col-lg-12">
-    <div style="width: 100%">
+    <div style="width: 100%;">
       <h5>To : </h5>
-      <span ng-repeat="recipient in $parent.rsas_email.recipients">
+      <span ng-repeat="recipient in $parent.rsas_email.recipients | limitTo: mail_to_show_limit">
         <span class="rsas-element-arrangement" popover="{{recipient.email}}" popover-trigger="mouseenter">
           <span>{{recipient.name}} </span>
           <span ng-show="$parent.rsas_email.show_email"> ({{recipient.email}}) </span>
@@ -10,6 +10,7 @@
         </span>
       </span>
     </div>
+    <a ng-hide="$parent.rsas_email.recipients.length <= 25" ng-click="mail_to_show_hide()" ng-init="mail_to_show_limit = 25; mail_to_show_btn_text = 'More'" class="btn btn-info">{{mail_to_show_btn_text}}...</a>
     <div style="width: 100%">
       <h5>Cc : </h5>
       <span ng-repeat="cc in $parent.rsas_email.cc">

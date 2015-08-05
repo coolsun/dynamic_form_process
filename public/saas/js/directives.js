@@ -57,6 +57,17 @@ directiveModule
     $scope.$parent.rsas_email.recipients.splice(index, 1);
   };
 
+  $scope.mail_to_show_hide = function() {
+    if($scope.mail_to_show_limit == 25) {
+      $scope.mail_to_show_limit = 9999;
+      $scope.mail_to_show_btn_text = 'Less';
+    }
+    else{
+      $scope.mail_to_show_limit = 25;
+      $scope.mail_to_show_btn_text = 'More';
+    }
+  };
+
 })
 .directive('rsasEmail', function(){
     return{
