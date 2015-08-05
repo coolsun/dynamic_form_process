@@ -28,7 +28,7 @@ class DownloadPdfsController < ApplicationController
     @applicants = []
     JSON.parse(params[:selected_forms]).each do |applicant|
       obj = {}
-      logger.info "applicant #{applicant.to_json}"
+      logger.info "== applicant #{applicant.to_json} =="
       obj["name"] = applicant["name"]
       obj["forms"] = []
 
@@ -80,6 +80,7 @@ class DownloadPdfsController < ApplicationController
         @applicants << obj
       end
     end
+    @applicants.sort! { |a, b| a["name"].downcase <=> b["name"].downcase }
 #=begin
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/pdf_form.html.erb'),

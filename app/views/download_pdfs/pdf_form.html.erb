@@ -13,7 +13,7 @@
 <div class="container">
   <div class="col-md-9" style="float: none; margin: 0 auto;">
     <% @applicants.each_with_index do |applicant, applicant_index| %>
-      <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: break-all;" class="ng-binding"><%= applicant["name"] %></h1>
+      <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;" class="ng-binding"><%= applicant["name"] %></h1>
       <% applicant["forms"].each_with_index do |form, form_index| %>
         <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding"><%= form["form_name"] %></h4>
         <% form["blocks"].each do |block| %>
@@ -53,12 +53,12 @@
                         <% end %>
                       <% elsif item.type == 'text' || item.type == 'email' %>
                         <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
-                        <div style="border: 1px solid; width: 100%; min-height: 39px; resize: none; word-wrap: break-word; word-break: break-all; padding: 5px;">
+                        <div style="border: 1px solid; width: 100%; min-height: 39px; resize: none; word-wrap: break-word; word-break: normal; padding: 5px;">
                           <%= item.value ? item.value.html_safe : "" %>
                         </div>
                       <% elsif item.type == 'textarea' %>
                         <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
-                        <div style="border: 1px solid; width: 100%; min-height: 200px; resize: none; word-wrap: break-word; word-break: break-all; padding: 5px;">
+                        <div style="border: 1px solid; width: 100%; min-height: 200px; resize: none; word-wrap: break-word; word-break: normal; padding: 5px;">
                           <%= item.value ? item.value.html_safe : "" %>
                         </div>
                       <% elsif item.type == 'radio' %>
