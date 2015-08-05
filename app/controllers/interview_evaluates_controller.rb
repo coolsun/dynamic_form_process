@@ -78,7 +78,7 @@ class InterviewEvaluatesController < ApplicationController
 
     @interview_evaluate_forms = [];
 
-    if interviewee && interview
+    if interviewee && interview && procedure
       forms = Form.where(:procedure_id => procedure.id, :display => true, :form_type => "Interview").order(:rank)
       forms.each do |form|
         interview_evaluates = InterviewEvaluate.includes(:interview_evaluate_form, :reviewer).where(:interview_id => interview.id, :interviewee_user_id => interviewee.id, :form_id => form.id).order(:id);

@@ -217,23 +217,23 @@ class DownloadPdfsController < ApplicationController
 
 
   def review_pdf
-    #interviewee = User.find_by_id(params[:interviewee_id]) if params[:interviewee_id]
-    #procedure = Procedure.find_by_id(params[:current_process_id]) if params[:current_process_id]
-    #interview = Interview.find_by_id(params[:interview_id]) if params[:interview_id]
+    interviewee = User.find_by_id(params[:interviewee_id]) if params[:interviewee_id]
+    procedure = Procedure.find_by_id(params[:current_process_id]) if params[:current_process_id]
+    interview = Interview.find_by_id(params[:interview_id]) if params[:interview_id]
 
 
 
     # Parameters: {"interviewee_id"=>10634, "interview_id"=>10537, "current_year_id"=>1, "current_process_id"=>7, "interview_evaluate"=>{"interview_id"=>10537}}
 
-    interviewee = User.find_by_id(10634)
-    procedure = Procedure.find_by_id(7)
-    interview = Interview.find_by_id(10537)
+    #interviewee = User.find_by_id(10634)
+    #procedure = Procedure.find_by_id(7)
+    #interview = Interview.find_by_id(10537)
 
     @applicants = [];
     @interview_evaluate_forms = [];
 
 
-    if interviewee && interview
+    if interviewee && interview && procedure
       forms = Form.where(:procedure_id => procedure.id, :display => true, :form_type => "Interview").order(:rank)
 
       forms.each do |form|
