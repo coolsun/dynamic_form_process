@@ -106,6 +106,7 @@ class Applicant < ActiveRecord::Base
       filter_where_not_condition[:disqualify] = 1
       filter_where_not_condition[:application_submit_at] = nil
     end
+
     if filter_options[:question_filters].present?
       question_filters_user_ids = FormInput.question_filters_user_ids(filter_options[:question_filters], procedure_id)
       logger.info "== question_filters_user_ids #{question_filters_user_ids} =="
@@ -123,6 +124,7 @@ class Applicant < ActiveRecord::Base
     else
       filter_match_question_applicants = ""
     end
+
     applicants = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
                     .where(:procedure_id => procedure_id)
                     .where(filter_where_condition)

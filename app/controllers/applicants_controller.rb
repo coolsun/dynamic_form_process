@@ -647,18 +647,14 @@ class ApplicantsController < ApplicationController
   def download_answer_xls_file
     procedure_id = params[:current_process_id]
 
-    position_ids = Position.where(:procedure_id => procedure_id).pluck(:id)
-    location_ids = Location.where(:procedure_id => procedure_id).pluck(:id)
-    role_ids     = Role.where(:procedure_id => procedure_id).pluck(:id)
+    position_ids, location_ids, role_ids, permission = user_can_see_position_location_role_ids(procedure_id)
 
-    locations  = params[:locations].present?  ? JSON.parse(params[:locations]).collect {|obj| obj["id"]}  : location_ids
-    roles      = params[:roles].present?      ? JSON.parse(params[:roles]).collect {|obj| obj["id"]}      : role_ids
-    interviews = params[:interviews].present? ? JSON.parse(params[:interviews]).collect {|obj| obj["id"]} : []
+    locations  = params[:locations] != "[]" && params[:locations].present?  ? JSON.parse(params[:locations]).collect {|obj| obj["id"]}  : location_ids
+    roles      = params[:roles] != "[]" && params[:roles].present?      ? JSON.parse(params[:roles]).collect {|obj| obj["id"]}      : role_ids
+    interviews = params[:interviews] != "[]" && params[:interviews].present? ? JSON.parse(params[:interviews]).collect {|obj| obj["id"]} : []
 
     params[:status] = 'Un-offered'  if params[:sub_step] == "manage_available_applicants"
     status = params[:status] || 'All'  # 'All', 'Submitted', 'Not submitted', 'Offered', 'Accepted', 'Unaccepted'
-
-    position_ids, location_ids, role_ids, permission = user_can_see_position_location_role_ids(procedure_id)
 
     filter_options = {
       :locations => locations,
@@ -671,7 +667,19 @@ class ApplicantsController < ApplicationController
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
     search_condition = RsasTools.get_where_search_condition(search_fields, params[:searchText])
 
+    logger.warn "== permission        #{permission} =="
+    logger.warn "== roles             #{roles} =="
+    logger.warn "== locations         #{locations} =="
+    logger.warn "== position_ids      #{position_ids} =="
+    logger.info "== question_filters  #{filter_options[:question_filters]}=="
+
     filter_where_condition, filter_where_not_condition = Applicant.applicant_list_setting_where_condition(filter_options, procedure_id)
+
+    # LM can not see disqualify applicants and not submit applicant
+    if permission == 'LM' # means only LM
+      filter_where_not_condition[:disqualify] = 1
+      filter_where_not_condition[:application_submit_at] = nil
+    end
 
     if filter_options[:question_filters].present?
       question_filters_user_ids = FormInput.question_filters_user_ids(filter_options[:question_filters], procedure_id)
@@ -741,6 +749,7 @@ class ApplicantsController < ApplicationController
       else
         round_titles = ""
       end
+
       applicant_poitions = []
       if permission == 'admin'
         applicant_select_poitions  = Position.includes(:applications).where(:procedure_id => procedure_id, :applications => {:user_id => applicant.user_id})
@@ -759,8 +768,9 @@ class ApplicantsController < ApplicationController
           applicant_select_locations = applicant_select_roles = ""
         end
       else
-        applicant_poitions = ["Only admin or LM can see that."]
+        applicant_select_locations = applicant_select_roles = "Only admin or LM can see that."
       end
+
       @user_record << [user_data.name, user_data.sunet_id, user_data.suid, applicant.status, round_titles, applicant_select_locations, applicant_select_roles] + answers
     end
 
