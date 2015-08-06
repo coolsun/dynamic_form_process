@@ -185,7 +185,7 @@
               <button class="btn btn-primary" style="margin-bottom: 3px;" ng-show="interviewAdminProcess.applicantList.interviewSelect" ng-click="interviewAdminProcess.applicantList.emailAllApplicant.click();">Email Selected</button>
               <div style="margin-top: 10px;">
                 <form method="post" action="/download_pdfs/interview_scheduled_applicants_pdf">
-                  <button class="btn btn-primary" style="margin-bottom: 3px;" ng-click="interviewAdminProcess.applicantList.downloadPdf.click();">Download Scheduled Applicant's PDFs</button>
+                  <button class="btn btn-primary" style="margin-bottom: 3px;">Download Scheduled Applicant's PDFs</button>
                   <div ng-show='false'>
                     <input type="hidden" name="interviewId" value="{{interviewAdminProcess.applicantList.interviewSelect.id}}">
                     <input type="checkbox" name="systemFormCheck" ng-model="interviewAdminProcess.applicantList.downloadPdf.systemFormCheck" ng-init="interviewAdminProcess.applicantList.downloadPdf.systemFormCheck=true" />
@@ -199,6 +199,10 @@
                   </div>
                 </form>
               </div>
+              <div>
+                <button class="btn btn-primary" style="margin-bottom: 3px;" ng-click="alert('AAAAAAAAAAAA');">Download Scheduled Applicant List</button>
+              </div>
+
             </div>
           </div>
           <hr />

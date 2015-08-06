@@ -87,7 +87,6 @@ interviewAdminProcessApp
   $scope.interviewAdminProcess.applicantList.application.form = {};
   $scope.interviewAdminProcess.applicantList.emailScheduled = {};
   $scope.interviewAdminProcess.applicantList.emailAllApplicant = {};
-  $scope.interviewAdminProcess.applicantList.downloadPdf = {};
 
 
   $scope.interviewAdminProcess.myInterview = {};
@@ -2294,11 +2293,6 @@ interviewAdminProcessApp
     var applicant = $scope.interviewAdminProcess.applicantList.evaluate.applicant;
     $("#interviewAdminProcessInterviewApplicantEvaluate").modal('toggle');
     $scope.interviewAdminProcess.applicantList.evaluate.getEvaluateForms(applicant);
-  };
-
-  $scope.interviewAdminProcess.applicantList.downloadPdf.click = function()
-  {
-
   };
 
   $scope.set_uploader = function(form_id) {
