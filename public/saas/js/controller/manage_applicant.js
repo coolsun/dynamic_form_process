@@ -345,9 +345,11 @@ adminEditApplicantModule.controller('AdminApplicationForm',
 
     $scope.email.editAll = function(){
       $scope.email.init();
-      $scope.applicationFormTable.tbl.show.forEach(function(applicant){
-        $scope.rsas_email.recipients.push({name:applicant.name, email:applicant.email});
-      });
+      if($scope.applicationFormTable.tbl.show) {
+        $scope.applicationFormTable.tbl.show.forEach(function(applicant){
+          $scope.rsas_email.recipients.push({name:applicant.name, email:applicant.email});
+        });
+      }
     };
 
     $scope.email.send = function(){
