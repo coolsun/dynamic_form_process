@@ -744,12 +744,20 @@ class ApplicantsController < ApplicationController
       applicant_poitions = []
       if permission == 'admin'
         applicant_select_poitions  = Position.includes(:applications).where(:procedure_id => procedure_id, :applications => {:user_id => applicant.user_id})
-        applicant_select_locations = Location.where(:id => applicant_select_poitions.pluck(:location_id)).pluck(:name).join(", ")
-        applicant_select_roles     = Role.where(:id => applicant_select_poitions.pluck(:role_id)).pluck(:name).join(", ")
+        if applicant_select_poitions.present?
+          applicant_select_locations = Location.where(:id => applicant_select_poitions.pluck(:location_id)).pluck(:name).join(", ")
+          applicant_select_roles     = Role.where(:id => applicant_select_poitions.pluck(:role_id)).pluck(:name).join(", ")
+        else
+          applicant_select_locations = applicant_select_roles = ""
+        end
       elsif ['LM', 'RMLM'].include?(permission)
-        applicant_select_poition_ids = Position.includes(:applications).where(:applications => {:user_id => applicant.user_id, :position_id => position_ids})
-        applicant_select_locations   = Location.where(:id => applicant_select_poitions.pluck(:location_id)).pluck(:name).join(", ")
-        applicant_select_roles       = Role.where(:id => applicant_select_poitions.pluck(:role_id)).pluck(:name).join(", ")
+        applicant_select_poitions = Position.includes(:applications).where(:applications => {:user_id => applicant.user_id, :position_id => position_ids})
+        if applicant_select_poitions.present?
+          applicant_select_locations = Location.where(:id => applicant_select_poitions.pluck(:location_id)).pluck(:name).join(", ")
+          applicant_select_roles     = Role.where(:id => applicant_select_poitions.pluck(:role_id)).pluck(:name).join(", ")
+        else
+          applicant_select_locations = applicant_select_roles = ""
+        end
       else
         applicant_poitions = ["Only admin or LM can see that."]
       end
