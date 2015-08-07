@@ -28,6 +28,7 @@ rsasApp.controller('Offers', function($scope, $rootScope, CTableRsas, offerFacto
     if(data.success){
       $scope.permission_to_active = data.permission_to_active;
       $scope.show_import_offer_page = data.show_import_offer_page;
+      $scope.show_change_offered_response = data.show_change_offered_response;
       $scope.location_list = data.location_list;
       $scope.role_list = data.role_list;
     }
@@ -291,6 +292,49 @@ rsasApp.controller('Offers', function($scope, $rootScope, CTableRsas, offerFacto
       $rootScope.rsasAlert({type: 'danger', msg: "Email delivery failure"});
       waitingIcon.close();
       $("#editEmail").modal('toggle');
+    });
+    $scope.quick_send = false;
+  };
+
+  $scope.getOfferedResponseApplicants = function(position_id){
+    $scope.change_offered_response = {};
+    waitingIcon.open();
+    offerFactory.getOfferedResponseApplicants(position_id, $rootScope.current_year.id, $rootScope.current_process.id)
+    .success(function (data) {
+      if(data.success){
+        $scope.change_offered_response.applications = data.applications;
+      }
+      else{
+        $rootScope.rsasAlert({type: 'danger', msg: data.msg});
+      }
+      waitingIcon.close();
+    })
+    .error(function (data) {
+      $rootScope.rsasAlert({type: 'danger', msg: "There was a problem to get the list."});
+      waitingIcon.close();
+      $("#ChangeOfferedResponse").modal('hide');
+    });
+
+  };
+
+  $scope.updateOfferedResponse = function(){
+    waitingIcon.open();
+    offerFactory.updateOfferedResponse($scope.change_offered_response.applications, $rootScope.current_year.id, $rootScope.current_process.id)
+    .success(function (data) {
+      if(data.success){
+        $rootScope.rsasAlert({type: 'success', msg: data.msg});
+        $scope.reloadTable();
+      }
+      else{
+        $rootScope.rsasAlert({type: 'danger', msg: data.msg});
+      }
+      waitingIcon.close();
+      $("#ChangeOfferedResponse").modal('hide');
+    })
+    .error(function (data) {
+      $rootScope.rsasAlert({type: 'danger', msg: "There was a problem to update the response."});
+      waitingIcon.close();
+      $("#ChangeOfferedResponse").modal('hide');
     });
     $scope.quick_send = false;
   };

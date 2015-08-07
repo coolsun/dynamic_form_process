@@ -299,6 +299,8 @@ Rails.application.routes.draw do
       post :offer_confirm
       post :quick_send_offer_list
       post :quick_send_offer
+      get  :get_offered_response_applicants
+      post :update_offered_response
     end
   end
 

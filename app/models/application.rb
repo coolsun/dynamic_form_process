@@ -4,8 +4,6 @@ class Application < ActiveRecord::Base
   belongs_to :user;
   belongs_to :position;
 
-  #before_destroy :destroy_interviewee
-
   def ranked_mgr
     return User.find_by_id(self.mgr_ranked_user_id)
   end
@@ -132,52 +130,20 @@ class Application < ActiveRecord::Base
     return pre_offer_fail_list, application_ids
   end
 
-  private
-    def destroy_interviewee
-      return 0;
-      i_application_id = self.id;
-      i_user_id = self.user_id;
-      i_position_id = self.position_id;
+  def self.get_offered_response_applicants(position_id)
+    applicants = []
 
-      interview_join_list = [
-        :positions_in_interviews,
-        :invites
-      ];
-
-      position_join_list = [
-        :positions_in_interviews,
-        :applications
-      ];
-
-      interviewee_join_list = [
-        :time_slot
-      ]
-
-      interviews = Interview.joins(interview_join_list)
-                            .where(:positions_in_interviews => {:position_id => i_position_id})
-                            .where(:invites => {:invitee_user_id => i_user_id});
-
-      interviews.each do |interview|
-        i_interview_id = interview.id;
-
-        i_count_position = Position.joins(position_join_list)
-                                   .where(:positions_in_interviews => {:interview_id => i_interview_id})
-                                   .where(:applications => {:user_id => i_user_id})
-                                   .where.not(:applications => {:id => i_application_id})
-                                   .count;
-
-        if (0 == i_count_position)
-          Invites.where(:interview_id => i_interview_id)
-                 .where(:invitee_user_id => i_user_id)
-                 .destory;
-
-          interviewees = Interviewee.join(interviewee_join_list)
-                                    .where(:time_slots => {:interview_id => i_interview_id})
-                                    .where(:interviewees => {:user_id => i_user_id});
-          interviewees.destory;
-        end
-      end
+    Application.where(:position_id => position_id, :offered => "offered").each do |application|
+      applicants << {
+        :application_id => application.id,
+        :applicant_name => application.user.name,
+        :offer_accept => application.offer_accept.present? ? application.offer_accept : "not_select"
+      }
     end
+
+    return applicants
+  end
+
 end
 
 

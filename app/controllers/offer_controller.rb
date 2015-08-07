@@ -34,6 +34,7 @@ class OfferController < ApplicationController
       :show => offer_list,
       :permission_to_active => permission_to_active,
       :show_import_offer_page => check_user_permission("import_pre_offered_applicants_by_xlsx")[0],
+      :show_change_offered_response => check_user_permission("change_offered_response")[0],
       :location_list => location_list,
       :role_list => role_list,
     }
@@ -400,6 +401,30 @@ class OfferController < ApplicationController
       logger.error "#{e.message} : #{e.backtrace}"
       render :json => {:success => false, :msg => "Email delivery failed."}
     end
+  end
+
+  def get_offered_response_applicants
+    permission_to_show, permission_to_active, permission_message = check_user_permission("change_offered_response")
+    render :json => {:success => false, :msg => permission_message} and return if !permission_to_show
+
+    applications = Application.get_offered_response_applicants(params[:position_id])
+    render :json => {
+      :success => true,
+      :applications => applications
+    }
+  end
+
+  def update_offered_response
+    permission_to_show, permission_to_active, permission_message = check_user_permission("change_offered_response")
+    render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
+
+    params[:applications].each do |input_application|
+      application = Application.find_by_id(input_application[:application_id])
+      offer_accept = input_application[:offer_accept] == "not_select" ? nil : input_application[:offer_accept]
+      application.update(:offer_accept => offer_accept)
+    end if params[:applications]
+
+    render :json => {:success => true, :msg => "The response has been updated successfully."}
   end
 
 end

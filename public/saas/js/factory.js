@@ -1688,7 +1688,28 @@ factoryModule.factory('offerFactory', function($http){
           }
       });
     };
-
+    offerFactory.getOfferedResponseApplicants = function(position_id, current_year_id, current_process_id){
+      return $http({
+          url: urlBase + '/get_offered_response_applicants',
+          method: "get",
+          params: {
+            "position_id": position_id,
+            "current_year_id": current_year_id,
+            "current_process_id": current_process_id
+          }
+      });
+    };
+    offerFactory.updateOfferedResponse = function(applications, current_year_id, current_process_id){
+      return $http({
+          url: urlBase + '/update_offered_response',
+          method: "POST",
+          data: {
+            "applications": applications,
+            "current_year_id": current_year_id,
+            "current_process_id": current_process_id
+          }
+      });
+    };
     return offerFactory;
 });
 

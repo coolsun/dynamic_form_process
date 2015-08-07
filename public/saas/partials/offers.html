@@ -99,6 +99,11 @@
                               <button class="btn_li">Send Offers</button>
                             </a>
                           </li>
+                          <li ng-show="show_change_offered_response">
+                            <a data-target="#ChangeOfferedResponse" ng-click="getOfferedResponseApplicants(tblTr.id)" data-toggle="modal">
+                              <button class="btn_li">Change Offered Response</button>
+                            </a>
+                          </li>
                         </ul>
                       </div>
                     </td>
@@ -235,6 +240,42 @@
               </div>
             </div>
             <div class="modal-footer">
+              <a class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Offered Response -->
+      <div class="modal fade" id="ChangeOfferedResponse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+              </button>
+              <h4 class="modal-title">Change Offered Response</h4>
+            </div>
+            <div class="modal-body">
+              <div class="panel-body">
+                <table class="table">
+                  <tr>
+                    <th>Name</th>
+                    <th>Not Select</th>
+                    <th>Accepted</th>
+                    <th>Declined</th>
+                  </tr>
+                  <tr ng-repeat="application in change_offered_response.applications">
+                    <td>{{application.applicant_name}}</td>
+                    <td><input type="radio" ng-model="application.offer_accept" value="not_select"></td>
+                    <td><input type="radio" ng-model="application.offer_accept" value="accepted"></td>
+                    <td><input type="radio" ng-model="application.offer_accept" value="rejected"></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-info" data-dismiss="modal" ng-click="updateOfferedResponse();">Update</button>
               <a class="btn btn-default" data-dismiss="modal">Close</a>
             </div>
           </div>
