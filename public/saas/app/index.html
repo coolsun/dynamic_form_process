@@ -166,8 +166,8 @@
         <div class="collapse navbar-collapse navHeaderCollapse">
           <ul class="nav navbar-nav navbar-right">
             <li>
-              <a ng-show="$root.current_user.is_admin" data-target="#changeUser" ng-click="getChangeUserList()" data-toggle="modal">Hello {{$root.current_user.first_name}}</a>
-              <a ng-hide="$root.current_user.is_admin" ng-click="$root.defaultConfirm('Logout', 'Do you want to logout?', logout, '')">Hello {{$root.current_user.first_name}}</a>
+              <a ng-show="$root.current_user.is_admin" data-target="#changeUser" ng-click="getChangeUserList()" data-toggle="modal">Hello {{user_preffered_name ? user_preffered_name : $root.current_user.first_name}}</a>
+              <a ng-hide="$root.current_user.is_admin" ng-click="$root.defaultConfirm('Logout', 'Do you want to logout?', logout, '')">Hello {{user_preffered_name ? user_preffered_name : $root.current_user.first_name}}</a>
             </li>
             <li id="showMenuList" ng-show="showMenuList()">
               <a class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> <b class="caret"></b></a>

@@ -101,7 +101,10 @@ indexModule.controller('indexCtrl',
       waitingIcon.open();
       $http({
         url: JSON_URL + "/applicants/get_user_authority",
-        method: "GET"
+        method: "GET",
+        params: {
+          "current_process_id" : $rootScope.current_process.id
+        }
       })
       .success(function (data){
         if (data.success || $location.path().split("/")[3] == "apply_now"){
@@ -110,6 +113,7 @@ indexModule.controller('indexCtrl',
 
           $rootScope.show_content = true;
           $scope.index.getProcessList();
+          $scope.user_preffered_name = data.user_preffered_name;
         }
         else{
           $("#modalLoginFail").modal('show');
