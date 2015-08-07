@@ -574,8 +574,8 @@ class ApplicationController < ActionController::Base
       permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
 
     when "change_offered_response"
-      visibility_group = ['Admin', 'HM', 'LM Staff', 'LM Student']
-      action_group = ['Admin', 'HM', 'LM Staff', 'LM Student']
+      visibility_group = ['Admin', 'HM']
+      action_group = ['Admin', 'HM']
       permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
 
     #-------------------------------------------------------------------------------------actions----------------------------------------------------------------------------------
