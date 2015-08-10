@@ -1206,8 +1206,8 @@ class InterviewsController < ApplicationController
 
     i_user_id = user.id;
 
-    positions = Position.joins(:positions_in_interviews)
-                        .where(:positions_in_interviews => {:interview_id => i_interview_id});
+    #positions = Position.joins(:positions_in_interviews)
+    #                    .where(:positions_in_interviews => {:interview_id => i_interview_id});
 
     application_form_join_list = [:form];
 

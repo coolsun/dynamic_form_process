@@ -215,6 +215,91 @@ class DownloadPdfsController < ApplicationController
 
   end
 
+  def interview_scheduled_applicant_list_pdf
+    i_interview_id = params[:interviewId].to_i;
+    i_interview_id = 10860;
+    i_mgr_user_id = session[:user_id].to_i;
+
+    interview = Interview.find_by_id(i_interview_id);
+
+
+
+
+    @applicant_list = [];
+    @s_round_name = '';
+    @s_interview_name = '';
+    @s_downloader_name = '';
+
+    if (interview)
+      i_round_id = interview.round_id;
+      @s_interview_name = interview.name;
+      round = Round.find_by_id(i_round_id);
+      @s_round_name = round.title;
+      i_procedure_id = round.procedure_id;
+      @s_downloader_name = current_user.name;
+
+      interviewers = User.interviewer(i_interview_id);
+
+      total_show_applicants = [];
+
+      interview_position_ids = interview.position_ids();
+      total_show_applicants = User.get_position_applicants(i_procedure_id, interview_position_ids) - interviewers;
+
+      GC.start();
+
+      total_show_applicants |= total_show_applicants;
+
+      total_show_applicants = total_show_applicants.sort_by{|e| e[:first_name]};
+
+      GC.start();
+
+
+      invitees_user_ids = User.joins(:invitees)
+                              .where(:invites => {:interview_id => i_interview_id})
+                              .pluck(:id);
+
+
+
+      b_senior_manager = (is_hiring_mgr(i_procedure_id) || is_admin());
+      under_manage_position_ids = Position.get_under_manage_position_ids(i_procedure_id, i_mgr_user_id);
+
+      search_position_ids = b_senior_manager ? interview_position_ids : (interview_position_ids & under_manage_position_ids);
+
+      total_show_applicants.each do |applicant|
+        @applicant_list << interview_applicant_list_pdf_struct(applicant, invitees_user_ids, i_interview_id, b_senior_manager, search_position_ids);
+      end
+    end
+
+    pdf = WickedPdf.new.pdf_from_string(
+      render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb'),
+      :footer => {:center => '[page] / [topage]'}
+    )
+
+    s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
+    s_file_name = ("%s_%s_%s.pdf" % [@s_round_name, @s_interview_name, s_time]);
+    send_data(pdf, :filename => s_file_name, :type => "application/pdf");
+
+  end
+
+  def interview_applicant_list_pdf_struct(user, invitees_user_ids, i_interview_id, b_senior_manager, search_position_ids)
+    i_user_id = user.id;
+
+    user_hash = user.as_json();
+
+    user_hash[:name] = user.name;
+
+    user_hash[:positions] = Position.joins(:applications)
+                                    .where(:applications => {:user_id => i_user_id})
+                                    .where(:positions => {:id => search_position_ids});
+
+
+    user_hash[:check] = invitees_user_ids.include?(i_user_id) ? 'Y' : 'N';
+
+    user_hash[:time_slots] = TimeSlot.includes(:interviewees).where(:interview_id => i_interview_id, :interviewees => {:user_id => i_user_id});
+
+    return (user_hash);
+  end
+
 
   def review_pdf
     interviewee = User.find_by_id(params[:interviewee_id]) if params[:interviewee_id]
