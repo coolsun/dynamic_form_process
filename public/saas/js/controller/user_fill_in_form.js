@@ -117,6 +117,26 @@ rsasApp.controller('UserFillInForm',
       });
     };
 
+    $scope.submitAllForm = function() {
+      for (var i = 0; i < $scope.forms.length; i ++) {
+        var rq_empty = false;
+        angular.forEach( $scope.forms[i].schema, function(item){
+          if (item.rq && !item.value) {
+            rq_empty = true;
+          }
+        });
+        if (rq_empty) {
+          $scope.forms[i].show = true;
+          $scope.forms[i].error_msg = "Required Field Can't Blank.";
+          $rootScope.rsasAlert({type: 'danger', msg: "Failed to submit " + $scope.forms[i].form_name + "."});
+        }
+        else {
+          $scope.forms[i].error_msg = null;
+          $scope.submit(i);
+        }
+      }
+    };
+
     // file upload
 
     $scope.set_uploader = function(user_form_id) {
