@@ -49,7 +49,7 @@
 						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
 						<td style="border: 1px solid #ddd;">
 							<% applicant[:time_slots].each do |time_slots| %>
-								<span><%= time_slots.t_start %></span>
+								<span><%= time_slots.t_start - 8.hrs %></span>
 							<% end %>
 						</td>
 
