@@ -246,6 +246,7 @@ class Procedure < ActiveRecord::Base
             :name => old_procedure_sub_step.name,
             :url_acronym => old_procedure_sub_step.url_acronym,
             :identify_name => old_procedure_sub_step.identify_name,
+            :lm_see => old_procedure_sub_step.lm_see,
             :t_start => Time.now(),
             :t_end => (Time.now() + 1.months)
           }
