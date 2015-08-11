@@ -271,7 +271,7 @@ class DownloadPdfsController < ApplicationController
       end
     end
 
-
+=begin
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb'),
       :footer => {:center => '[page] / [topage]'}
@@ -280,7 +280,7 @@ class DownloadPdfsController < ApplicationController
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
     s_file_name = ("%s_%s_%s.pdf" % [@s_round_name, @s_interview_name, s_time]);
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
-
+=end
 
 
   end
@@ -381,8 +381,7 @@ class DownloadPdfsController < ApplicationController
 
 #=begin
     pdf = WickedPdf.new.pdf_from_string(
-      render_to_string('download_pdfs/review_pdf.html.erb'),
-      :footer => {:center => '[page] / [topage]'}
+      render_to_string('download_pdfs/review_pdf.html.erb')
     )
 
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
