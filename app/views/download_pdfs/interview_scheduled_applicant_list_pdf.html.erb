@@ -36,7 +36,7 @@
  		</div>
   </div>
   <div>
-		<table class="table table-bordered table-hover tableRsas" style="border-collapse: collapse; border-spacing: 0; page-break-inside: avoid;">
+		<table class="table table-bordered table-hover tableRsas" style="border-collapse: collapse; border-spacing: 0;">
 			<thead style="color: #fff; background-color: #8c1515;">
 				<tr>
 					<th style="border: 1px solid #ddd;"><span>name</span></th>
@@ -45,7 +45,7 @@
 					<th style="border: 1px solid #ddd;"><span>scheduled</span></th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody style="page-break-inside: avoid;">
 				<% @applicant_list.each do |applicant| %>
 					<tr style="page-break-inside: avoid;">
 						<td style="border: 1px solid #ddd; page-break-inside: avoid;"><span><%= applicant[:name] %></span></td>
