@@ -169,7 +169,7 @@ class ApplicationController < ActionController::Base
   def check_user_permissions(actions, all_options={})
     permissions = {}
     actions.each do |action|
-      options = all_options[action]
+      options = all_options[action] || {}
       permission_to_show, permission_to_active, permission_message  = check_user_permission(action, options)
       permissions[action] = {
         :show => permission_to_show,
@@ -185,6 +185,8 @@ class ApplicationController < ActionController::Base
     permission_to_show = false
     permission_to_active = false
     permission_message = ''
+    visibility_group = []
+    action_group = []
     case action
     #-------------------------------------------------------------------------------------menu-------------------------------------------------------------------------------------
     #group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'RD', 'Interviewer']
@@ -217,62 +219,62 @@ class ApplicationController < ActionController::Base
     when "Process User"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Process RD"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Process Apply White List"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
 
     #-------------------------------------------------------------------------------------process_step-----------------------------------------------------------------------------
     when "Process Step Sort And Display"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'RD', 'Interviewer']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Process"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'RD']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Application"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Interview"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Ranking"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Offer"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Post Match"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #-------------------------------------------------------------------------------------sub_step---------------------------------------------------------------------------------
     when "set_up_positions"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
-      if permission_to_active && options.present? && !is_admin && !is_hiring_mgr(params[:current_process_id])
+      if permission_to_active && options[:position].present? && !is_admin && !is_hiring_mgr(params[:current_process_id])
         location_ids = current_user_location_mgr_location_ids
         role_ids = current_user_role_mgr_role_ids
 
@@ -280,148 +282,153 @@ class ApplicationController < ActionController::Base
       end
 
     when "set_up_rounds"
-      visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
+      visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "rd_flag"
       visibility_group = ['Admin', 'HM', 'RD']
       action_group = ['Admin', 'HM', 'RD']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
+
+    when "roles_and_permissions"
+      visibility_group = ['Admin', 'HM']
+      action_group = ['Admin', 'HM']
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_system_forms"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_recommendation_forms"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_interview_forms"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_attachable_forms"
       visibility_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
       action_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_emails"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "system_message"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "applicants"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "manage_available_applicants"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "select_position"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "fill_in_form"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "recommendation"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "submit_application"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "interview"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "ranking"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'LM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'LM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "match"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "offer"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "post_offer_invitations"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "post_offer_fill_in_form"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "post_offer_recommendation"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 =begin
     when "post_offer_interview"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 =end
     when "post_offer_offer"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #-------------------------------------------------------------------------------------sub step actions-------------------------------------------------------------------------
     #set_up_positions
     when "Create role"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "Create Location"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "import_mgrs_by_xlsx"
       visibility_group = ['Admin']
       action_group = ['Admin']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #rd_flag
     when "rd_flag_button"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'RD']
       action_group = []
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #applicants
     when "lower_mgr_see_time"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'RD']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "time_to_see_applicant_forms"
       visibility_group = ['Admin', 'HM']
@@ -448,22 +455,22 @@ class ApplicationController < ActionController::Base
         end
       end
 
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "see_applicant_filled_forms"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "applicant_disqualify"
       visibility_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
       action_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "help landing"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer', 'RD']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #interview
     when "interview_admin_page"
@@ -471,128 +478,128 @@ class ApplicationController < ActionController::Base
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "interview_create"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "interview_setting"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "interview_position"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "interview_time_slot"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "select_interviewer"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "select_applicant"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "schedule_interviewer"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "schedule_applicant"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "interview_delete"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "applicant_tags"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student', 'Interviewer'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "interview_review"
       same_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     #Manage Applicants
     when "Show Applicant All Form"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "force_submit"
       visibility_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
       action_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "manual_add_positions"
       visibility_group = ['Admin']
       action_group = ['Admin']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
 
     #Offer Status
     when "import_pre_offered_applicants_by_xlsx"
       visibility_group = ['Admin']
       action_group = ['Admin']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "change_offered_response"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #-------------------------------------------------------------------------------------actions----------------------------------------------------------------------------------
     when "send_email_to_applicants"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "send_offered_email"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "send_invite_post_offer_email"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group)
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     #-------------------------------------------------------------------------------------applicant--------------------------------------------------------------------------------
     when "Applicant Select Position"
@@ -665,17 +672,24 @@ class ApplicationController < ActionController::Base
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     when "MiddleManager"
       same_group = ['LM Staff', 'RM Staff', 'LM Student', 'RM Student'];
 
       visibility_group = same_group;
       action_group = same_group;
-      permission_to_show, permission_to_active = check_with_groups(visibility_group, action_group);
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     #########################################################################################################################
 
+    end
+
+    if options[:return_permission]
+      return {
+        :visibility_group => visibility_group,
+        :action_group => action_group
+      }
     end
 
 
@@ -685,10 +699,17 @@ class ApplicationController < ActionController::Base
     return permission_to_show, permission_to_active, permission_message
   end
 
-  def check_with_groups(visibility_group, action_group)
+  def substep_check(visibility_group)
+
+    return visibility_group
+  end
+
+  def check_with_groups(action, options, visibility_group, action_group)
     can_visibility = false
     can_action = false
     @permission ||= {}
+
+    visibility_group, action_group = update_group_by_options(action, options, visibility_group, action_group)
 
     requirement_group = visibility_group | action_group
     user_group = []
@@ -748,14 +769,6 @@ class ApplicationController < ActionController::Base
           user_group << 'Interviewer';
         end
       end
-
-      #user_group << 'Admin'       if 'Admin'.in?(requirement_group)        && is_admin
-      #user_group << 'HM'          if 'HM'.in?(requirement_group)           && is_hiring_mgr(params[:current_process_id])
-      #user_group << 'LM Staff'    if 'LM Staff'.in?(requirement_group)     && is_procedure_location_mgr(params[:current_process_id]) && current_user.status == 'Staff'
-      #user_group << 'LM Student'  if 'LM Student'.in?(requirement_group)   && is_procedure_location_mgr(params[:current_process_id]) && current_user.status == 'Student'
-      #user_group << 'RM Staff'    if 'RM Staff'.in?(requirement_group)     && is_procedure_role_mgr(params[:current_process_id])     && current_user.status == 'Staff'
-      #user_group << 'RM Student'  if 'RM Student'.in?(requirement_group)   && is_procedure_role_mgr(params[:current_process_id])     && current_user.status == 'Student'
-      #user_group << 'Interviewer' if 'Interviewer'.in?(requirement_group)  && is_procedure_interviewer(params[:current_process_id])
     end
     can_visibility = true if (user_group & visibility_group).present?
     can_action     = true if (user_group & action_group).present?
@@ -825,19 +838,16 @@ class ApplicationController < ActionController::Base
           user_group << 'Interviewer';
         end
       end
-
-
-      #user_group << 'Admin'       if 'Admin'.in?(requirement_group)        && is_admin
-      #user_group << 'HM'          if 'HM'.in?(requirement_group)           && current_user.procedure_mgrs.present?
-      #user_group << 'LM Staff'    if 'LM Staff'.in?(requirement_group)     && current_user.location_mgrs.present? && current_user.status == 'Staff'
-      #user_group << 'LM Student'  if 'LM Student'.in?(requirement_group)   && current_user.location_mgrs.present? && current_user.status == 'Student'
-      #user_group << 'RM Staff'    if 'RM Staff'.in?(requirement_group)     && current_user.role_mgrs.present?     && current_user.status == 'Staff'
-      #user_group << 'RM Student'  if 'RM Student'.in?(requirement_group)   && current_user.role_mgrs.present?     && current_user.status == 'Student'
-      #user_group << 'Interviewer' if 'Interviewer'.in?(requirement_group)  && current_user.interviewers.present?
     end
     can_visibility = true if (user_group & visibility_group).present?
     can_action     = true if (user_group & action_group).present?
     return can_visibility, can_action
   end
 
+  def update_group_by_options(action, options, visibility_group, action_group)
+    if options[:substep_check] && action != "applicants" && !ProcedureSubStep.find_by_id(options[:substep_check]).lm_see
+      visibility_group -= ['LM Staff', 'LM Student']
+    end
+    return visibility_group, action_group
+  end
 end

@@ -57,7 +57,7 @@ class ProcedureStepsController < ApplicationController
               permission_to_active = false;
             end
           else
-            permission_to_show, permission_to_active, permission_message = check_user_permission(sub_step["identify_name"])
+            permission_to_show, permission_to_active, permission_message = check_user_permission(sub_step["identify_name"], {:substep_check => sub_step["id"]})
           end
 
           sub_step["permission"] = {

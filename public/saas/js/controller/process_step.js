@@ -290,9 +290,6 @@ rsasApp.controller('ProcessSteps',function($scope, $sce, $location, $rootScope, 
     switch(run_sub_step)
     {
       case "set_up_positions":
-        //$scope.processSubStepURL.push("/saas/partials/roles.html" + "?sn=" + $scope.url_sn);
-        //$scope.processSubStepURL.push("/saas/partials/locations.html" + "?sn=" + $scope.url_sn);
-        //$scope.processSubStepURL.push("/saas/partials/positions.html" + "?sn=" + $scope.url_sn);
         $scope.processSubStepURL.push("/saas/partials/set_up_positions.html" + "?sn=" + $scope.url_sn);
         break;
       case "set_up_rounds":
@@ -300,6 +297,9 @@ rsasApp.controller('ProcessSteps',function($scope, $sce, $location, $rootScope, 
         break;
       case "rd_flag":
         $scope.processSubStepURL.push("/saas/partials/rd_flag.html" + "?sn=" + $scope.url_sn);
+        break;
+      case "roles_and_permissions":
+        $scope.processSubStepURL.push("/saas/partials/roles_and_permissions.html" + "?sn=" + $scope.url_sn);
         break;
       case "set_up_recommendation_forms":
       case "set_up_system_forms":

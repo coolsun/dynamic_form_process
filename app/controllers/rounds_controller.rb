@@ -166,6 +166,7 @@ class RoundsController < ApplicationController
     data = Round.get_all_round_list(table_params);
 
     response = {
+      :success => true,
       :now => data[:now],
       :total => data[:total],
       :show => data[:show],

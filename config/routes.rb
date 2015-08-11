@@ -343,7 +343,7 @@ Rails.application.routes.draw do
       post :pdf_form
       post :interview_scheduled_applicants_pdf
       post :interview_scheduled_applicant_list_pdf
-      get :interview_scheduled_applicant_list_pdf
+      #get :interview_scheduled_applicant_list_pdf
       post :review_pdf
       #get :review_pdf
     end
@@ -411,6 +411,14 @@ Rails.application.routes.draw do
     collection do
       get :repair_running_email_template
       post :send_question
+    end
+  end
+
+  resources :permission do
+    collection do
+      get  :get_permission_list
+      get  :insert_substep_roles_and_permissions
+      post :update_permissions
     end
   end
 

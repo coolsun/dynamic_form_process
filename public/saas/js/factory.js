@@ -2290,3 +2290,33 @@ factoryModule.factory('saasFactory', function($http){
 
     return saasFactory;
 });
+
+factoryModule.factory('permissionFactory', function($http){
+    var urlBase = JSON_URL + "/permission";
+    var permissionFactory = {};
+
+    permissionFactory.getPermissionList = function(current_year_id, current_process_id) {
+      return $http({
+        url : urlBase + '/get_permission_list',
+        method : "GET",
+        params : {
+          "current_process_id" : current_process_id,
+          "current_year_id" : current_year_id
+        }
+      });
+    };
+
+    permissionFactory.updatePermissions = function(permission_list, current_year_id, current_process_id) {
+      return $http({
+        url : urlBase + '/update_permissions',
+        method : "POST",
+        data : {
+          "permission_list" : permission_list,
+          "current_process_id" : current_process_id,
+          "current_year_id" : current_year_id
+        }
+      });
+    };
+
+    return permissionFactory;
+});

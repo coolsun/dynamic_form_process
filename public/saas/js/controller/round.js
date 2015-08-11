@@ -77,35 +77,38 @@ roundApp
   };
 
   $scope.round.tbl.successDo = function(data){
-    $scope.permission_to_active = data.permission_to_active;
+    if(data.success){
+      $scope.permission_to_active = data.permission_to_active;
 
-    var show = $scope.round.tbl.show;
-    var locations = [];
-    var roles = [];
+      var show = $scope.round.tbl.show;
+      var locations = [];
+      var roles = [];
 
-    for (var i = 0; i < show.length; i++)
-    {
-      var tr = show[i];
-      locations = [];
-      roles = [];
-      var tags = show[i].round_tags;
-      for (var index_tag = 0; index_tag < tags.length; index_tag++)
+      for (var i = 0; i < show.length; i++)
       {
-        var tag = tags[index_tag];
-        if (tag.location)
+        var tr = show[i];
+        locations = [];
+        roles = [];
+        var tags = show[i].round_tags;
+        for (var index_tag = 0; index_tag < tags.length; index_tag++)
         {
-          locations.push(tag.location);
+          var tag = tags[index_tag];
+          if (tag.location)
+          {
+            locations.push(tag.location);
+          }
+          else if (tag.role)
+          {
+            roles.push(tag.role);
+          }
         }
-        else if (tag.role)
-        {
-          roles.push(tag.role);
-        }
+
+        tr.locations = locations;
+        tr.roles = roles;
       }
 
-      tr.locations = locations;
-      tr.roles = roles;
-    }
 
+    }
 
   };
 

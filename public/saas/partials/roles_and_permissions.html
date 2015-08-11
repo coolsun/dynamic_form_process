@@ -1,0 +1,20 @@
+<div class="container" ng-controller="RolesAndPermissions">
+  <div class="col-md-9">
+    <h3>Roles & Permissions</h3>
+    <table class="table table-hover">
+      <tr>
+        <th>Step</th>
+        <th>Sub Step</th>
+        <th>Permission: LM</th>
+      </tr>
+      <tr ng-repeat="permission in permission_list">
+        <td>{{permission.step_name}}</td>
+        <td>{{permission.sub_step_name}}</td>
+        <td>
+          <input class="largeCeckBox" type="checkbox" ng-model="permission.lm_see">
+        </td>
+      </tr>
+    </table>
+    <button type="button" class="btn btn-info" ng-click="updatePermissions()" ng-disabled="!permission_to_active">Update</button>
+  </div>
+</div>
