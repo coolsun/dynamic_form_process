@@ -14,7 +14,6 @@
 	tr, td, th, tbody, thead, tfoot {
 	    page-break-inside: avoid !important;
 	}
-	.page-break { display:block; clear:both; page-break-after:always; }
 </style>
 
 
@@ -37,7 +36,7 @@
  		</div>
   </div>
   <div>
-		<table class="table table-bordered table-hover tableRsas" style="border-collapse: collapse; border-spacing: 0;">
+		<table class="table table-bordered table-hover tableRsas" style="border-collapse: collapse; border-spacing: 0; page-break-inside: avoid;">
 			<thead style="color: #fff; background-color: #8c1515;">
 				<tr>
 					<th style="border: 1px solid #ddd;"><span>name</span></th>
@@ -48,11 +47,11 @@
 			</thead>
 			<tbody>
 				<% @applicant_list.each do |applicant| %>
-					<tr class="page-break">
-						<td style="border: 1px solid #ddd;"><span><%= applicant[:name] %></span></td>
-						<td style="border: 1px solid #ddd;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
-						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
-						<td style="border: 1px solid #ddd;">
+					<tr style="page-break-inside: avoid;">
+						<td style="border: 1px solid #ddd; page-break-inside: avoid;"><span><%= applicant[:name] %></span></td>
+						<td style="border: 1px solid #ddd; page-break-inside: avoid;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
+						<td style="border: 1px solid #ddd; text-align: center; page-break-inside: avoid;"><span><%= applicant[:check] %></span></td>
+						<td style="border: 1px solid #ddd; page-break-inside: avoid;">
 							<% applicant[:time_slots].each do |time_slots| %>
 								<span><%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %></span>
 							<% end %>
