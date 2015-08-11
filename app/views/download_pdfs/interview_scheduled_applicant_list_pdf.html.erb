@@ -14,10 +14,7 @@
 	tr, td, th, tbody, thead, tfoot {
 	    page-break-inside: avoid !important;
 	}
-
-	td span, th span{
-	    page-break-inside: avoid;
-	}
+	.page-break { display:block; clear:both; page-break-after:always; }
 </style>
 
 
@@ -51,7 +48,7 @@
 			</thead>
 			<tbody>
 				<% @applicant_list.each do |applicant| %>
-					<tr>
+					<tr class="page-break">
 						<td style="border: 1px solid #ddd;"><span><%= applicant[:name] %></span></td>
 						<td style="border: 1px solid #ddd;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
 						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
