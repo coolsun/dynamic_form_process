@@ -35,19 +35,19 @@
 		<table class="table table-bordered table-hover tableRsas" style="border-collapse: collapse; border-spacing: 0;">
 			<thead style="color: #fff; background-color: #8c1515;">
 				<tr>
-					<th><span>name</span></th>
-					<th><span>position</span></th>
-					<th><span>selected</span></th>
-					<th><span>scheduled</span></th>
+					<th style="border: 1px solid #ddd;"><span>name</span></th>
+					<th style="border: 1px solid #ddd;"><span>position</span></th>
+					<th style="border: 1px solid #ddd;"><span>selected</span></th>
+					<th style="border: 1px solid #ddd;"><span>scheduled</span></th>
 				</tr>
 			</thead>
 			<tbody>
 				<% @applicant_list.each do |applicant| %>
 					<tr>
-						<td><span><%= applicant[:name] %></span></td>
-						<td><span>sdfsdfdsf</span></td>
-						<td><span><%= applicant[:check] %></span></td>
-						<td>
+						<td style="border: 1px solid #ddd;"><span><%= applicant[:name] %></span></td>
+						<td style="border: 1px solid #ddd;"><span>sdfsdfdsf</span></td>
+						<td style="border: 1px solid #ddd;"><span><%= applicant[:check] %></span></td>
+						<td style="border: 1px solid #ddd;">
 							<% applicant[:time_slots].each do |time_slots| %>
 								<span><%= time_slots.t_start.pst_s('%m/%d/%Y %H:%M:%S') %></span>
 							<% end %>
