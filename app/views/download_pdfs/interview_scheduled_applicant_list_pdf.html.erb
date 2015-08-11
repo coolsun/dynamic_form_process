@@ -16,12 +16,31 @@
 	};
 
 	.page-break { display:block; clear:both; page-break-after:always; };
+
+
+	.div_table {
+      display:table;
+  }
+	.div_thead {
+      display: table-header-group;
+  }
+	.div_tbody {
+      display: table-group;
+  }
+	.div_tr {
+      display: table-row;
+  }
+	.div_td {
+      display: table-cell;
+  }
+
+
 </style>
 
 
 
-<div class="panel tableRsasPanel">
- <div class="panel-heading">
+<div>
+ <div>
  		<div>
 	    <span>
 	      <label>Applicant list: <%= @s_round_name %> <%= @s_interview_name %></label>
@@ -38,30 +57,26 @@
  		</div>
   </div>
   <div>
-		<div class="table" style="border-collapse: collapse; border-spacing: 0;">
-			<div class="table-header-group" style="color: #fff; background-color: #8c1515;">
-				<div class="table-row">
-					<th style="border: 1px solid #ddd;"><span>name</span></th>
-					<th style="border: 1px solid #ddd;"><span>position</span></th>
-					<th style="border: 1px solid #ddd;"><span>selected</span></th>
-					<th style="border: 1px solid #ddd;"><span>scheduled</span></th>
-				</div>
+		<div class="div_table" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+			<div class="div_tr page-break" style="color: #fff; background-color: #8c1515;">
+				<div class="div_td" style="border: 1px solid #ddd;"><span>name</span></div>
+				<div class="div_td" style="border: 1px solid #ddd;"><span>position</span></div>
+				<div class="div_td" style="border: 1px solid #ddd;"><span>selected</span></div>
+				<div class="div_td" style="border: 1px solid #ddd;"><span>scheduled</span></div>
 			</div>
-			<div class="table-row-group">
-				<% @applicant_list.each do |applicant| %>
-					<div class="table-row">
-						<div class="table-cell" style="border: 1px solid #ddd;"><%= applicant[:name] %></div>
-						<div class="table-cell" style="border: 1px solid #ddd;">AAAAAAAAAAAAA BBBBBBBBBBBBBBBb</div>
-						<div class="table-cell" style="border: 1px solid #ddd; text-align: center;"><%= applicant[:check] %></div>
-						<div class="table-cell" style="border: 1px solid #ddd;">
-							<% applicant[:time_slots].each do |time_slots| %>
-								<%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %>
-							<% end %>
-						</div>
+			<% @applicant_list.each do |applicant| %>
+				<div class="div_tr page-break">
+					<div class="div_td" style="border: 1px solid #ddd;"><%= applicant[:name] %></div>
+					<div class="div_td" style="border: 1px solid #ddd;">AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</div>
+					<div class="div_td" style="border: 1px solid #ddd; text-align: center;"><%= applicant[:check] %></div>
+					<div class="div_td"style="border: 1px solid #ddd;">
+						<% applicant[:time_slots].each do |time_slots| %>
+							<%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %>
+						<% end %>
 					</div>
-				<% end %>
+				</div>
+			<% end %>
 
-			</tbody>
 		</div>
 
   </div>
