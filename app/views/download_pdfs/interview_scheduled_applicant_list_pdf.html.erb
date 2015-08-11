@@ -46,7 +46,7 @@
 					<tr>
 						<td style="border: 1px solid #ddd;"><span><%= applicant[:name] %></span></td>
 						<td style="border: 1px solid #ddd;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
-						<td style="border: 1px solid #ddd;"><span><%= applicant[:check] %></span></td>
+						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
 						<td style="border: 1px solid #ddd;">
 							<% applicant[:time_slots].each do |time_slots| %>
 								<span><%= time_slots.t_start.pst_s('%m/%d/%Y %H:%M:%S') %></span>
