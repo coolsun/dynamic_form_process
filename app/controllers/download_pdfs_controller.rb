@@ -219,6 +219,7 @@ class DownloadPdfsController < ApplicationController
     i_interview_id = params[:interviewId].to_i;
     i_interview_id = 10860;
     i_mgr_user_id = session[:user_id].to_i;
+    mgr_user = User.find_by_id(i_mgr_user_id);
 
     interview = Interview.find_by_id(i_interview_id);
 
@@ -230,13 +231,13 @@ class DownloadPdfsController < ApplicationController
     @s_interview_name = '';
     @s_downloader_name = '';
 
-    if (interview)
+    if (interview && mgr_user)
       i_round_id = interview.round_id;
       @s_interview_name = interview.name;
       round = Round.find_by_id(i_round_id);
       @s_round_name = round.title;
       i_procedure_id = round.procedure_id;
-      @s_downloader_name = current_user.name;
+      @s_downloader_name = mgr_user.name;
 
       interviewers = User.interviewer(i_interview_id);
 
