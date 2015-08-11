@@ -272,7 +272,8 @@ class DownloadPdfsController < ApplicationController
     end
 
     pdf = WickedPdf.new.pdf_from_string(
-      render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb')
+      render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb'),
+      :footer => {:center => '[page] / [topage]'}
     )
 
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
