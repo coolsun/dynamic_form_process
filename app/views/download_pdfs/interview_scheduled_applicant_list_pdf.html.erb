@@ -48,12 +48,12 @@
 			<tbody>
 				<% @applicant_list.each do |applicant| %>
 					<tr>
-						<td style="border: 1px solid #ddd;"><span> <p style='page-break-after:always;'><%= applicant[:name] %></p></span></td>
-						<td style="border: 1px solid #ddd;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
-						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
+						<td style="border: 1px solid #ddd;"><%= applicant[:name] %></td>
+						<td style="border: 1px solid #ddd;">AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</td>
+						<td style="border: 1px solid #ddd; text-align: center;"><%= applicant[:check] %></td>
 						<td style="border: 1px solid #ddd;">
 							<% applicant[:time_slots].each do |time_slots| %>
-								<span><%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %></span>
+								<%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %>
 							<% end %>
 						</td>
 					</tr>
