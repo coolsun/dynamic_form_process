@@ -217,7 +217,7 @@ class DownloadPdfsController < ApplicationController
 
   def interview_scheduled_applicant_list_pdf
     i_interview_id = params[:interviewId].to_i;
-    i_interview_id = 10860;
+    # i_interview_id = 10860;
     i_mgr_user_id = session[:user_id].to_i;
     mgr_user = User.find_by_id(i_mgr_user_id);
 
