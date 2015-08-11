@@ -10,7 +10,11 @@
 <%= stylesheet_link_tag '/saas/css/styles' %>
 <%= stylesheet_link_tag '/saas/css/tableRsas' %>
 
-
+<style type="text/css">
+	table, tr, td, th, tbody, thead, tfoot {
+	    page-break-inside: avoid !important;
+	}
+</style>
 
 
 
@@ -49,7 +53,7 @@
 						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
 						<td style="border: 1px solid #ddd;">
 							<% applicant[:time_slots].each do |time_slots| %>
-								<span></span>
+								<span><%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %></span>
 							<% end %>
 						</td>
 					</tr>
