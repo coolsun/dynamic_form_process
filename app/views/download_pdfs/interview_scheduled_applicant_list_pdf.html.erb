@@ -68,8 +68,8 @@
 				<div class="div_tr page-break">
 					<div class="div_td" style="border: 1px solid #ddd;"><%= applicant[:name] %></div>
 					<div class="div_td" style="border: 1px solid #ddd;">AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</div>
-					<div class="div_td" style="border: 1px solid #ddd; text-align: center;"><%= applicant[:check] %></div>
-					<div class="div_td"style="border: 1px solid #ddd; vertical-align:middle">
+					<div class="div_td" style="border: 1px solid #ddd; text-align: center; vertical-align:middle;"><%= applicant[:check] %></div>
+					<div class="div_td"style="border: 1px solid #ddd; vertical-align:middle;">
 						<% applicant[:time_slots].each do |time_slots| %>
 							<%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %>
 						<% end %>
