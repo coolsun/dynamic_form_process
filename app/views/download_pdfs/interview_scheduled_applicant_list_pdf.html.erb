@@ -47,11 +47,11 @@
 			</thead>
 			<tbody>
 				<% @applicant_list.each do |applicant| %>
-					<tr style="padding: 10px;page-break-before:always;">
-						<td style="border: 1px solid #ddd;page-break-before:always;"><span><%= applicant[:name] %></span></td>
-						<td style="border: 1px solid #ddd;page-break-before:always;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
-						<td style="border: 1px solid #ddd; text-align: center;page-break-before:always;"><span><%= applicant[:check] %></span></td>
-						<td style="border: 1px solid #ddd;page-break-before:always;">
+					<tr>
+						<td style="border: 1px solid #ddd;"><span> <p style='page-break-after:always;'><%= applicant[:name] %></p></span></td>
+						<td style="border: 1px solid #ddd;"><span>AAAAAAAAAAAAA<br />BBBBBBBBBBBBBBBb</span></td>
+						<td style="border: 1px solid #ddd; text-align: center;"><span><%= applicant[:check] %></span></td>
+						<td style="border: 1px solid #ddd;">
 							<% applicant[:time_slots].each do |time_slots| %>
 								<span><%= (time_slots.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S') %></span>
 							<% end %>
