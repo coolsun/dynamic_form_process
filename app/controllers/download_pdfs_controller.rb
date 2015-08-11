@@ -381,7 +381,8 @@ class DownloadPdfsController < ApplicationController
 
 #=begin
     pdf = WickedPdf.new.pdf_from_string(
-      render_to_string('download_pdfs/review_pdf.html.erb')
+      render_to_string('download_pdfs/review_pdf.html.erb'),
+      :footer => {:center => '[page] / [topage]'}
     )
 
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
