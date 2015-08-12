@@ -99,7 +99,8 @@ class RecommendationFormsController < ApplicationController
   end
 
   def redir
-    session[:return_url] = "https://#{request.host}/saas/app/index.html#/recommendation_form?rid=#{params[:rid]}&key=#{params[:key]}"
+    #session[:return_url] = "https://#{request.host}/saas/app/index.html#/recommendation_form?rid=#{params[:rid]}&key=#{params[:key]}"
+    session[:return_url] = "https://#{request.host}/saas/index.html#/recommendation_form?rid=#{params[:rid]}&key=#{params[:key]}"
     redirect_to session[:return_url]
   end
 
