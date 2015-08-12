@@ -221,7 +221,7 @@ class Applicant < ActiveRecord::Base
         :disqualify => applicant.disqualify,
         :first_name => applicant.user.first_name,
         :last_name => applicant.user.last_name,
-        :name => applicant.user.name,
+        :name => User.get_preferred_name(applicant.user_id),
         :email => applicant.user.email,
         :submited => applicant.try(:application_submit_at) ? "Y" : "N",
         :system_forms => applicant_system_forms,

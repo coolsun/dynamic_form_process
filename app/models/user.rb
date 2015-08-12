@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
   def self.get_preferred_name(user_id)
     user = User.find_by_id(user_id)
     if user
-      return  user.preferred_name ? user.preferred_name : user.first_name
+      return  user.preferred_name.present? ? user.preferred_name : user.first_name
     end
     return ""
   end

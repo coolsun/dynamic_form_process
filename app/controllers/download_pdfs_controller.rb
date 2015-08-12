@@ -29,7 +29,7 @@ class DownloadPdfsController < ApplicationController
     JSON.parse(params[:selected_forms]).each do |applicant|
       obj = {}
       logger.info "== applicant #{applicant.to_json} =="
-      obj["name"] = User.get_preferred_name(applicant["user_id"])
+      obj["name"] = applicant["name"]
       obj["forms"] = []
 
       system_forms = UserForm.where(:id => applicant["system"])

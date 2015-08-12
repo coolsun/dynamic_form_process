@@ -120,9 +120,14 @@ rsasApp.controller('UserFillInForm',
     $scope.submitAllForm = function() {
       for (var i = 0; i < $scope.forms.length; i ++) {
         var rq_empty = false;
-        angular.forEach( $scope.forms[i].schema, function(item){
-          if (item.rq && !item.value) {
-            rq_empty = true;
+        angular.forEach( $scope.forms[i].schema, function(item) {
+          if (item.rq) {
+            if (item.type == "name" && !item.option[0].value) {
+              rq_empty = true;
+            }
+            else if (item.type != "name" && !item.value) {
+              rq_empty = true;
+            }
           }
         });
         if (rq_empty) {
