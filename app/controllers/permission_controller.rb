@@ -30,8 +30,8 @@ class PermissionController < ApplicationController
     ProcedureStep.where(:name => "Process").each do |ps|
       if !ps.procedure_sub_steps.where(:identify_name => "roles_and_permissions").first
         ProcedureSubStep.create({
-          :procedure_step_id => ps.id, :rank => 11, :name => "Roles & Permissions", :identify_name => "roles_and_permissions", :t_start => (Time.now - 5.day),
-          :t_end => (Time.now + 1.year), :enabled => true, :user_view => false, :url_acronym => "roles-and-permissions"
+          :procedure_step_id => ps.id, :rank => 11, :name => "Roles & Permissions", :identify_name => "roles_and_permissions", :t_start => ps.t_start,
+          :t_end => ps.t_end, :enabled => true, :user_view => false, :url_acronym => "roles-and-permissions"
         })
       end
     end
