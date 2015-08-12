@@ -24,7 +24,7 @@ class RdFlagsController < ApplicationController
       }
     })
 
-    applicant_list = applicant_list.select { |applicant| applicant["user"]["name"].include? params[:keyword] } if params[:keyword].present?
+    applicant_list = applicant_list.select { |applicant| applicant["user"]["name"].downcase.include? params[:keyword].downcase } if params[:keyword].present?
 
     page = params[:page] ? params[:page].to_i : 1 # If there is no params[:page] return 1
     applicant_per_page = 25 # Set the applicant number per page
