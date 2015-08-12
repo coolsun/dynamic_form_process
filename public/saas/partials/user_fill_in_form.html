@@ -12,6 +12,6 @@
     </form>
     <hr style="border-color:rgb(190, 190, 190);">
   </div>
-  <a class="btn btn-info" ng-click="submitAllForm()" data-toggle="modal" ng-if="forms.length > 0">Submit</a>
+  <a class="btn btn-info" ng-disabled="!permission_to_active"  ng-click="submitAllForm()" data-toggle="modal" ng-if="forms.length > 0">Submit</a>
   <h3 class="alert alert-success alert-dismissable" ng-if="forms.length == 0">No forms need to fill in.</h3>
 </div>

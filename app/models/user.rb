@@ -94,6 +94,14 @@ class User < ActiveRecord::Base
     return [self.first_name, self.middle_name, self.last_name].join(" ").gsub("  "," ").strip
   end
 
+  def self.get_preferred_name(user_id)
+    user = User.find_by_id(user_id)
+    if user
+      return  user.preferred_name ? user.preferred_name : user.first_name
+    end
+    return ""
+  end
+
   def is_interviewer
     return self.interviewers.present?
   end

@@ -13,7 +13,7 @@
 <div class="container">
   <div class="col-md-9" style="float: none; margin: 0 auto;">
     <% @applicants.each_with_index do |applicant, applicant_index| %>
-      <h1 align="center" style="font-size: 72px; margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;" class="ng-binding"><%= applicant["name"] %></h1>
+      <h1 align="center" style="margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;" class="ng-binding"><%= applicant["name"] %></h1>
       <% applicant["forms"].each_with_index do |form, form_index| %>
         <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding"><%= form["form_name"] %></h4>
         <% form["blocks"].each do |block| %>

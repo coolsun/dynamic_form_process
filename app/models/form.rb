@@ -118,6 +118,9 @@ class Form < ActiveRecord::Base
         column["maxlength"] = column["maxlength"] ? column["maxlength"] : 1000
       end
       #logger.info "= #{column} ="
+      if column["description"] == "Preferred Name (optional)"
+        sql_user.update!(preferred_name: column["value"])
+      end
     end
     new_schema = new_schema.to_json
 

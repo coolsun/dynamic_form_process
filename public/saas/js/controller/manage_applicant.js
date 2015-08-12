@@ -244,6 +244,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
             };
             applicant_and_its_form_ids = {
               "name" : applicant.name,
+              "user_id" : applicant.id,
               "system" : system_form_check_list,
               "application": user_form_check_list,
               "recommendation": recommendation_form_check_list,
