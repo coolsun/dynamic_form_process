@@ -611,19 +611,7 @@ class ApplicantsController < ApplicationController
     request_headers_remote_user = request.headers["REMOTE_USER"];
 
     user = User.get_and_check_user_authority(session_user_id, params_user_id, request_headers_remote_user, is_admin());
-
-    application_form_id = Form.where(
-      :procedure_id => params[:current_process_id],
-      :form_type => "System",
-      :form_name => "Application Form"
-    ).first.id if params[:current_process_id].present?
-
-    user_form = UserForm.where(
-      :user_id => user.id,
-      :form_id => application_form_id
-    ).first if application_form_id.present?
-
-    user_preffered_name = user_form.present? ? JSON.parse(user_form.schema).detect{|q| q["description"].include? "Preferred Name (optional)"} : nil
+    user_preffered_name = User.get_preferred_name(session_user_id)
 
     if user
       session[:user_id] = user.id
@@ -632,7 +620,7 @@ class ApplicantsController < ApplicationController
       render :json => {
         :success => true,
         :authorities => user,
-        :user_preffered_name => user_preffered_name.present? ? user_preffered_name["value"] : nil,
+        :user_preffered_name => user_preffered_name.present? ? user_preffered_name : nil,
         :permissions => permissions
       }
     else
