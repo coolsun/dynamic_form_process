@@ -343,7 +343,7 @@ Rails.application.routes.draw do
       post :pdf_form
       post :interview_scheduled_applicants_pdf
       post :interview_scheduled_applicant_list_pdf
-      #get :interview_scheduled_applicant_list_pdf
+      get :interview_scheduled_applicant_list_pdf
       post :review_pdf
       #get :review_pdf
     end

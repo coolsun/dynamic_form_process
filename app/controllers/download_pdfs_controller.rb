@@ -272,17 +272,27 @@ class DownloadPdfsController < ApplicationController
     end
 
 
-#=begin
-    pdf = WickedPdf.new.pdf_from_string(
-      render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb'),
-      :footer => {:center => '[page] / [topage]'}
-    )
+    if (false)
+      pdf = WickedPdf.new.pdf_from_string(
+        render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb'),
+        :footer => {:center => '[page] / [topage]'}
+      )
 
-    s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
-    s_file_name = ("%s_%s_%s.pdf" % [@s_round_name, @s_interview_name, s_time]);
-    send_data(pdf, :filename => s_file_name, :type => "application/pdf");
+      s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
+      s_file_name = ("%s_%s_%s.pdf" % [@s_round_name, @s_interview_name, s_time]);
+      send_data(pdf, :filename => s_file_name, :type => "application/pdf");
+    else
+      @title_row = ["Name", "Position", "selected", "scheduled"]
+      s_file_name = ("%s_%s_%s" % [@s_round_name, @s_interview_name, s_time]);
 
-#=end
+
+      respond_to do |format|
+        format.xlsx {
+          response.headers['Content-Disposition'] = "attachment; filename='#{s_file_name}.xlsx'"
+        }
+      end
+
+    end
 
 
   end
