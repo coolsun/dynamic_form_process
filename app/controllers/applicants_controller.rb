@@ -728,7 +728,11 @@ class ApplicantsController < ApplicationController
     @data_types = [nil, nil , :string, nil]
     @user_record = []
 
-    applicants = Applicant.includes(:user).where(:user_id => user_ids, :procedure_id => procedure_id)
+    #applicants = Applicant.includes(:user).where(:user_id => user_ids, :procedure_id => procedure_id)
+    applicants = []
+    user_ids.in_groups_of(1000, false).each do |user_ids_group_1000|
+      applicants << Applicant.includes(:user).where(:user_id => user_ids_group_1000, :procedure_id => procedure_id)
+    end
     applicants.each do |applicant|
       user_data = applicant.user
       answers = []
