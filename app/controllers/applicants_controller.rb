@@ -62,7 +62,7 @@ class ApplicantsController < ApplicationController
           end;
         else
           i_user_id = user.id;
-          if (user.is_get_people_soft.blank?)
+          if (user.is_get_people_soft.blank? && !user.is_admin)
             success = applicant_get_people_soft(user);
 
             if (!success)
