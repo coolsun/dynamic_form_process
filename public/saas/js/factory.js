@@ -1281,14 +1281,15 @@ factoryModule.factory('applicationFactory', function($http){
         }
       });
     };
-    applicationFactory.manualPositionsList = function(current_year_id, current_process_id, user_id){
+    applicationFactory.manualPositionsList = function(current_year_id, current_process_id, user_id, sub_step){
       return $http({
         url: urlBase + '/manual_positions_list',
         method: "POST",
         data: {
           "current_year_id": current_year_id,
           "current_process_id": current_process_id,
-          "user_id": user_id
+          "user_id": user_id,
+          "sub_step": sub_step
         }
       });
     };

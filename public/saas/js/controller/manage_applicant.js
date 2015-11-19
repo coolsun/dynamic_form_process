@@ -481,7 +481,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       $scope.add_positions.applicant = applicant;
 
       waitingIcon.open();
-      applicationFactory.manualPositionsList($rootScope.current_year.id, $rootScope.current_process.id, applicant.id)
+      applicationFactory.manualPositionsList($rootScope.current_year.id, $rootScope.current_process.id, applicant.id, $rootScope.current_sub_step.identify_name)
       .success(function(data){
         if(data.success) {
           $scope.add_positions.positions = data.positions;
