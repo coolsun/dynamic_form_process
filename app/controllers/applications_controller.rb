@@ -83,7 +83,7 @@ class ApplicationsController < ApplicationController
     permission_to_show, permission_to_active, permission_message = check_user_permission("manual_add_positions")
     render :json => {:success => false, :msg => permission_message} and return if !permission_to_show
 
-    select_position_list = Position.get_select_position_list(params[:current_process_id], params[:user_id])
+    select_position_list = Position.get_select_position_list(params[:current_process_id], params[:user_id], params[:sub_step])
     render :json => {
       :success => true,
       :positions => select_position_list,
