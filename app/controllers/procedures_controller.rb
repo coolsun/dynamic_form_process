@@ -103,8 +103,12 @@ class ProceduresController < ApplicationController
     permission_to_show, permission_to_active, permission_message = check_user_permission("Menu Clone")
     render :json => {:success => false, :clone_messages => [permission_message], :years => Year.year_list_for_clone} and return if !permission_to_active
 
-    is_success, clone_messages = Procedure.clone_all_procedure(params[:source_year_id], params[:target_year_id])
+    before_check_duplicate, duplicated_messages = Procedure.check_procedure_name_and_acronym_duplicate(params[:source_year_id], params[:target_year_id])
+    if before_check_duplicate
+      render :json => {:success => false, :clone_messages => duplicated_messages, :years => Year.year_list_for_clone} and return
+    end
 
+    is_success, clone_messages = Procedure.clone_all_procedure(params[:source_year_id], params[:target_year_id])
     if is_success
       render :json => {:success => true, :msg => "All the processes have been cloned successfully.", :years => Year.year_list_for_clone}
     else

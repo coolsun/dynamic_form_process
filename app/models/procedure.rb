@@ -189,10 +189,24 @@ class Procedure < ActiveRecord::Base
     return true
   end
 
+  def self.check_procedure_name_and_acronym_duplicate(source_year_id, target_year_id)
+    duplicated_messages = ["The entire clone process can not proceed since some processes are having errors: "]
+    existed_target_process = Procedure.where(:year_id => target_year_id).select(:name, :acronym)
+    Procedure.where(:year_id => source_year_id).each do |source_procedure|
+      duplicated_message = "#{source_procedure.name.to_s}: "
+      duplicated_message += "This name already exists. " if existed_target_process.pluck(:name).include? source_procedure.name
+      duplicated_message += "This acronym already exists." if existed_target_process.pluck(:acronym).include? source_procedure.acronym
+      if (existed_target_process.pluck(:name).include? source_procedure.name) || (existed_target_process.pluck(:acronym).include? source_procedure.acronym)
+        duplicated_messages << duplicated_message
+      end
+    end
+
+    return duplicated_messages.length > 1, duplicated_messages
+  end
+
   def self.clone_all_procedure(source_year_id, target_year_id)
     error_messages = []
-
-    Procedure.where(:year_id => source_year_id).each do |source_procedure|
+      Procedure.where(:year_id => source_year_id).each do |source_procedure|
       source_procedure_params = source_procedure.as_json(:only => [:select_position_limit, :name, :acronym, :contact_email, :domain, :faq_url])
       source_procedure_params[:year_id] = target_year_id
       target_procedure = Procedure.create(source_procedure_params)
