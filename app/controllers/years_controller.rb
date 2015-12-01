@@ -57,6 +57,10 @@ class YearsController < ApplicationController
     permission_to_show, permission_to_active, permission_message = check_user_permission("Menu Year")
     render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
 
+    if @year.is_current_year
+      render :json => {:success => false, :msg => "#{@year.name} is the current year. It can not be deleted."} and return
+    end
+
     @year.destroy
     if @year.errors.any?
       render :json => {:success => false, :msg => get_error_messages(@year)}
