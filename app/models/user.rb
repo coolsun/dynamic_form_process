@@ -238,6 +238,8 @@ class User < ActiveRecord::Base
 
   def self.get_or_create_other_year_user(source_user_id, target_year_id)
     source_user = User.find_by_id(source_user_id)
+    return nil unless source_user
+    return nil if source_user.sunet_id.blank?
     target_user = User.where(:year_id => target_year_id, :sunet_id => source_user.sunet_id).first
     if !target_user
       source_user_params = source_user.as_json(:only => [:first_name, :middle_name, :last_name, :status, :is_admin, :sunet_id])

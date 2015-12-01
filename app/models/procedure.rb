@@ -355,7 +355,8 @@ class Procedure < ActiveRecord::Base
       end
 
       UserProcedure.where(:procedure_id => procedure_id).each do |default_user_procedure|
-        target_user_id = change_year ? User.get_or_create_other_year_user(default_user_procedure.user_id, self.year_id).id : default_user_procedure.user_id
+        target_user_id = change_year ? User.get_or_create_other_year_user(default_user_procedure.user_id, self.year_id).try(:id) : default_user_procedure.user_id
+        next unless target_user_id
 
         user_procedure = {
           :procedure_id => self.id,
@@ -365,7 +366,8 @@ class Procedure < ActiveRecord::Base
       end
 
       ProcedureMgr.where(:procedure_id => procedure_id).each do |default_procedure_mgr|
-        target_user_id = change_year ? User.get_or_create_other_year_user(default_procedure_mgr.user_id, self.year_id).id : default_procedure_mgr.user_id
+        target_user_id = change_year ? User.get_or_create_other_year_user(default_procedure_mgr.user_id, self.year_id).try(:id) : default_procedure_mgr.user_id
+        next unless target_user_id
 
         procedure_mgr = {
           :procedure_id => self.id,
@@ -374,7 +376,8 @@ class Procedure < ActiveRecord::Base
         ProcedureMgr.create(procedure_mgr)
       end
       RdMgr.where(:procedure_id => procedure_id).each do |default_rd_mgr|
-        target_user_id = change_year ? User.get_or_create_other_year_user(default_rd_mgr.user_id, self.year_id).id : default_rd_mgr.user_id
+        target_user_id = change_year ? User.get_or_create_other_year_user(default_rd_mgr.user_id, self.year_id).try(:id) : default_rd_mgr.user_id
+        next unless target_user_id
 
         rd_mgr = {
           :procedure_id => self.id,
@@ -383,7 +386,8 @@ class Procedure < ActiveRecord::Base
         RdMgr.create(rd_mgr)
       end
       LocationMgr.where(:location_id => location_id_transform.keys).each do |default_location_mgr|
-        target_user_id = change_year ? User.get_or_create_other_year_user(default_location_mgr.user_id, self.year_id).id : default_location_mgr.user_id
+        target_user_id = change_year ? User.get_or_create_other_year_user(default_location_mgr.user_id, self.year_id).try(:id) : default_location_mgr.user_id
+        next unless target_user_id
 
         location_mgr = {
           :location_id => location_id_transform[default_location_mgr.location_id],
@@ -392,7 +396,8 @@ class Procedure < ActiveRecord::Base
         LocationMgr.create(location_mgr)
       end
       RoleMgr.where(:role_id => role_id_transform.keys).each do |default_role_mgr|
-        target_user_id = change_year ? User.get_or_create_other_year_user(default_role_mgr.user_id, self.year_id).id : default_role_mgr.user_id
+        target_user_id = change_year ? User.get_or_create_other_year_user(default_role_mgr.user_id, self.year_id).try(:id) : default_role_mgr.user_id
+        next unless target_user_id
         role_mgr = {
           :role_id => role_id_transform[default_role_mgr.role_id],
           :user_id => target_user_id
