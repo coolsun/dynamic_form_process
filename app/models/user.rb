@@ -240,7 +240,7 @@ class User < ActiveRecord::Base
     source_user = User.find_by_id(source_user_id)
     target_user = User.where(:year_id => target_year_id, :sunet_id => source_user.sunet_id).first
     if !target_user
-      source_user_params = source_user.as_json(:only => [:first_name, :middle_name, :last_name, :status, :is_admin])
+      source_user_params = source_user.as_json(:only => [:first_name, :middle_name, :last_name, :status, :is_admin, :sunet_id])
       source_user_params[:year_id] = target_year_id
       target_user = User.create!(source_user_params)
     end
