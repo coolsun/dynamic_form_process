@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150211081715) do
+ActiveRecord::Schema.define(version: 20151202053442) do
 
   create_table "applicant_tags", force: true do |t|
     t.integer  "applicant_id", precision: 38, scale: 0
@@ -30,24 +30,27 @@ ActiveRecord::Schema.define(version: 20150211081715) do
     t.boolean  "disqualify",            precision: 1,  scale: 0, default: false,   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "ranked_at"
   end
 
   add_index "applicants", ["procedure_id", "user_id"], name: "i_app_pro_id_use_id", unique: true
   add_index "applicants", ["user_id", "procedure_id"], name: "i_app_use_id_pro_id", unique: true
 
   create_table "applications", force: true do |t|
-    t.integer  "user_id",           precision: 38, scale: 0
-    t.integer  "position_id",       precision: 38, scale: 0
-    t.integer  "user_rank",         precision: 38, scale: 0, default: 999999, null: false
-    t.integer  "mgr_rank",          precision: 38, scale: 0, default: 999999, null: false
+    t.integer  "user_id",            precision: 38, scale: 0
+    t.integer  "position_id",        precision: 38, scale: 0
+    t.integer  "user_rank",          precision: 38, scale: 0, default: 999999, null: false
+    t.integer  "mgr_rank",           precision: 38, scale: 0, default: 999999, null: false
     t.string   "offered"
-    t.boolean  "auto_match",        precision: 1,  scale: 0
+    t.boolean  "auto_match",         precision: 1,  scale: 0
     t.string   "offer_accept"
-    t.integer  "rd_flag",           precision: 38, scale: 0
+    t.integer  "rd_flag",            precision: 38, scale: 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "disable_user_rank", precision: 1,  scale: 0
-    t.boolean  "disable_mgr_rank",  precision: 1,  scale: 0
+    t.boolean  "disable_user_rank",  precision: 1,  scale: 0
+    t.boolean  "disable_mgr_rank",   precision: 1,  scale: 0
+    t.datetime "mgr_ranked_at"
+    t.integer  "mgr_ranked_user_id", precision: 38, scale: 0
   end
 
   add_index "applications", ["position_id", "user_id"], name: "i_app_pos_id_use_id", unique: true
@@ -177,6 +180,7 @@ ActiveRecord::Schema.define(version: 20150211081715) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "schedule_due_time"
   end
 
   add_index "interviews", ["round_id"], name: "index_interviews_on_round_id"
@@ -257,6 +261,7 @@ ActiveRecord::Schema.define(version: 20150211081715) do
     t.boolean  "one_year_up",   precision: 1,  scale: 0, default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
   end
 
   add_index "positions", ["location_id"], name: "index_positions_on_location_id"
@@ -331,6 +336,7 @@ ActiveRecord::Schema.define(version: 20150211081715) do
     t.datetime "t_end"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "lm_see",            precision: 1,  scale: 0, default: true
   end
 
   add_index "procedure_sub_steps", ["procedure_step_id", "identify_name"], name: "i5ea09e621885b5f36de641bf5e08a", unique: true
@@ -568,6 +574,7 @@ ActiveRecord::Schema.define(version: 20150211081715) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "last_transcript_date"
+    t.string   "preferred_name"
   end
 
   add_index "users", ["suid"], name: "index_users_on_suid"

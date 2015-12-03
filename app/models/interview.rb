@@ -16,17 +16,28 @@ class Interview < ActiveRecord::Base
 
   attr_accessor :i_user_id;
 
+
+  def s_schedule_due_time
+    return ((self.schedule_due_time.present?) ? self.schedule_due_time.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M") : '');
+
+  end
+
+  def b_before_schedule_due_time
+    return ((self.schedule_due_time.present?) ? (self.schedule_due_time >= Time.now) : false);
+  end
+
   def self.set_attr_user_id(i_user_id)
     @@i_user_id = i_user_id;
   end
 
 ####################################################################################################
-  def self.new_interview(i_round_id, i_vacancy, s_name, b_one_time_slot_per_applicant, b_interviewer_can_edit, b_interviewer_can_schedule, i_interviewer_vacancy, i_max_time_slot_per_interviewer)
+  def self.new_interview(i_round_id, i_vacancy, s_name, t_schedule_due_time, b_one_time_slot_per_applicant, b_interviewer_can_edit, b_interviewer_can_schedule, i_interviewer_vacancy, i_max_time_slot_per_interviewer)
 
     interview = Interview.create(
       :round_id => i_round_id,
       :vacancy => i_vacancy,
       :name => s_name,
+      :schedule_due_time => t_schedule_due_time,
       :one_time_slot_per_applicant => b_one_time_slot_per_applicant,
       :interviewer_can_edit => b_interviewer_can_edit,
       :interviewer_can_schedule => b_interviewer_can_schedule,
@@ -83,7 +94,9 @@ class Interview < ActiveRecord::Base
 
 
     interviews_list = interviews.as_json({
+      :methods => :s_schedule_due_time,
       :include => [
+
         {
           :time_slots => {
             :include => [
@@ -184,6 +197,7 @@ class Interview < ActiveRecord::Base
     end
 
     interviews_list = interviews.as_json({
+      :methods => :s_schedule_due_time,
       :include => [
         {
           :time_slots => {
@@ -622,7 +636,11 @@ class Interview < ActiveRecord::Base
                           .per(table_params.i_page_count);
 
     interview_list = interviews.as_json({
-      :methods => :applied,
+      :methods => [
+        :applied,
+        :b_before_schedule_due_time,
+        :s_schedule_due_time
+      ],
       :include => [
         {
           :time_slots => {
@@ -644,24 +662,6 @@ class Interview < ActiveRecord::Base
     i_interview_total_count = interviews.total_count;
     interviews = nil;
     GC.start();
-
-=begin
-    include_applied_interviews.each do |interview|
-      b_push_user_interviews = true;
-      interview["interviewers"].each do |interviewer|
-        if (interviewer["user_id"] == i_user_id)
-          b_push_user_interviews = false;
-          break;
-        end
-      end
-
-      if (b_push_user_interviews)
-        interview.delete("interviewers");
-        user_interviews << interview;
-      end
-    end
-=end
-
 
     return ({
       :now => table_params.i_page,

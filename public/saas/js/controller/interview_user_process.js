@@ -244,9 +244,6 @@ interviewUserProcessApp
       }
       else
       {
-        //$scope.interviewUserProcess.flow = 400;
-        //$scope.interviewUserProcess.flow = 410;
-        // change apply
         $scope.interviewUserProcess.interview.timeSlot.changeApply.init(timeSlot, interviewName);
       }
     }
@@ -310,6 +307,9 @@ interviewUserProcessApp
         case 'xSYS00011':
           $scope.interviewUserProcess.flow = 560;
           break;
+        case 'xDBI00009':
+          $scope.interviewUserProcess.flow = 550;
+          break;
         default:
           $scope.interviewUserProcess.flow = 599;
       }
@@ -359,6 +359,9 @@ interviewUserProcessApp
           break;
         case 'xSYS00011':
           $scope.interviewUserProcess.flow = 560;
+          break;
+        case 'xDBI00009':
+          $scope.interviewUserProcess.flow = 550;
           break;
         default:
           $scope.interviewUserProcess.flow = 599;

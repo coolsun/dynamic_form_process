@@ -20,6 +20,7 @@ class InterviewsController < ApplicationController
     i_round_id = params[:roundId].to_i;
     us_name = params[:name];
     us_place = params[:place];
+    us_schedule_due_time = params[:scheduleDueTime];
     i_vacancy = params[:vacancy].to_i;
     b_interviewer_can_edit = params[:interviewerCanEdit];
     b_interviewer_can_schedule = params[:interviewerCanSchedule];
@@ -35,10 +36,13 @@ class InterviewsController < ApplicationController
     round = Round.find_by_id(i_round_id);
 
     if (round)
+      t_schedule_due_time = us_schedule_due_time.pst_t
+
       interview = Interview.new_interview(
         i_round_id,
         i_vacancy,
         us_name,
+        t_schedule_due_time,
         b_one_time_slot_per_applicant,
         b_interviewer_can_edit,
         b_interviewer_can_schedule,
@@ -129,6 +133,9 @@ class InterviewsController < ApplicationController
     b_one_time_slot_per_applicant = params[:oneTimeSlotPerApplicant];
     us_time_list = params[:timeList];
     us_positions = params[:positionIds];
+    us_schedule_due_time = params[:scheduleDueTime];
+
+    t_schedule_due_time = us_schedule_due_time.pst_t
 
     update_data = {
       :vacancy => i_vacancy,
@@ -137,7 +144,8 @@ class InterviewsController < ApplicationController
       :interviewer_can_schedule => b_interviewer_can_schedule,
       :interviewer_vacancy => i_interviewer_vacancy,
       :max_time_slot_per_interviewer => i_max_time_slot_per_interviewer,
-      :name => us_name
+      :name => us_name,
+      :schedule_due_time => t_schedule_due_time
     };
 
     if (@interview.update(update_data))

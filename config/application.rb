@@ -22,6 +22,7 @@ module RsasRails
 
     config.autoload_paths << Rails.root.join('lib')
     require 'ext/time'
+    require 'ext/string'
     require 'ext/optimized_gs'
   end
 end

@@ -538,6 +538,14 @@
                 <input class="form-control" ng-class="interviewAdminProcess.interview.create.noNameCss" type="text" ng-model="interviewAdminProcess.interview.create.name" ng-change="interviewAdminProcess.interview.create.nameOnChange();">
               </span>
             </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Schedule due time:</label>
+              <span class="col-md-8">
+                <input class="form-control setDatetimepicker" type="text" ng-class="interviewAdminProcess.interview.create.noScheduleDueTimeCss"  ng-model="interviewAdminProcess.interview.create.scheduleDueTime"  ng-change="interviewAdminProcess.interview.create.scheduleDueTimeOnChange();">
+              </span>
+            </div>
+
             <div class="form-group">
               <label class="col-md-4 control-label pull-left text-align-left">Applicant vacancy per time slot:</label>
               <span class="col-md-8">
@@ -653,6 +661,14 @@
                 <input class="form-control" ng-class="interviewAdminProcess.interview.edit.noNameCss" type="text" ng-model="interviewAdminProcess.interview.edit.interview.name" ng-change="interviewAdminProcess.interview.edit.nameOnChange();">
               </span>
             </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label pull-left text-align-left">Schedule due time:</label>
+              <span class="col-md-8">
+                <input class="form-control setDatetimepicker" type="text" ng-class="interviewAdminProcess.interview.edit.noScheduleDueTimeCss"  ng-model="interviewAdminProcess.interview.edit.interview.s_schedule_due_time"  ng-change="interviewAdminProcess.interview.edit.scheduleDueTimeOnChange();">
+              </span>
+            </div>
+
             <div class="form-group">
               <label class="col-md-4 control-label pull-left text-align-left">Applicant vacancy per time slot:</label>
               <span class="col-md-8">

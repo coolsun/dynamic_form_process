@@ -657,6 +657,12 @@ interviewAdminProcessApp
       isSend = false;
     }
 
+    if (!$scope.interviewAdminProcess.interview.create.scheduleDueTime)
+    {
+      $scope.interviewAdminProcess.interview.create.noScheduleDueTimeCss = $scope.inputNotSetCss;
+      isSend = false;
+    }
+
     if (!checkPositiveInteger($scope.interviewAdminProcess.interview.create.vacancy))
     {
       $scope.interviewAdminProcess.interview.create.noVacancyCss = $scope.inputNotSetCss;
@@ -682,6 +688,7 @@ interviewAdminProcessApp
       var roundId = $scope.interviewAdminProcess.round.id;
       var positionList = $scope.interviewAdminProcess.interview.create.positionList;
       var name = $scope.interviewAdminProcess.interview.create.name;
+      var scheduleDueTime = $scope.interviewAdminProcess.interview.create.scheduleDueTime;
       var place = $scope.interviewAdminProcess.interview.create.place;
       var vacancy = $scope.interviewAdminProcess.interview.create.vacancy;
       var interviewerCanEdit = $scope.interviewAdminProcess.interview.create.interviewerCanEdit;
@@ -700,6 +707,7 @@ interviewAdminProcessApp
       var postData = {
         roundId: roundId,
         name: name,
+        scheduleDueTime: scheduleDueTime,
         place: place,
         vacancy: vacancy,
         interviewerCanEdit: interviewerCanEdit,
@@ -755,6 +763,7 @@ interviewAdminProcessApp
   {
     var interviewId = $scope.interviewAdminProcess.interview.edit.interview.id;
     var name = $scope.interviewAdminProcess.interview.edit.interview.name;
+    var scheduleDueTime = $scope.interviewAdminProcess.interview.edit.interview.s_schedule_due_time;
     var vacancy = $scope.interviewAdminProcess.interview.edit.interview.vacancy;
     var interviewerCanEdit = $scope.interviewAdminProcess.interview.edit.interview.interviewer_can_edit;
     var interviewerCanSchedule = $scope.interviewAdminProcess.interview.edit.interview.interviewer_can_schedule;
@@ -765,6 +774,7 @@ interviewAdminProcessApp
 
     var postData = {
       name: name,
+      scheduleDueTime: scheduleDueTime,
       vacancy: vacancy,
       interviewerCanEdit: interviewerCanEdit,
       interviewerCanSchedule: interviewerCanSchedule,
@@ -2842,6 +2852,11 @@ interviewAdminProcessApp
           $scope.interviewAdminProcess.interview.edit.noNameCss = $scope.inputNotSetCss;
           eCode = 'xIAP00006';
         }
+        else if (!$scope.interviewAdminProcess.interview.edit.interview.s_schedule_due_time)
+        {
+          $scope.interviewAdminProcess.interview.edit.noScheduleDueTimeCss = $scope.inputNotSetCss;
+          eCode = 'xIAP00009';
+        }
         else if (!checkPositiveInteger($scope.interviewAdminProcess.interview.edit.interview.vacancy))
         {
           $scope.interviewAdminProcess.interview.edit.noVacancyCss = $scope.inputNotSetCss;
@@ -2964,6 +2979,11 @@ interviewAdminProcessApp
     $scope.interviewAdminProcess.interview.create.noNameCss = ($scope.interviewAdminProcess.interview.create.name)? '' : $scope.inputNotSetCss;
   };
 
+  $scope.interviewAdminProcess.interview.create.scheduleDueTimeOnChange = function()
+  {
+    $scope.interviewAdminProcess.interview.create.noScheduleDueTimeCss = ($scope.interviewAdminProcess.interview.create.scheduleDueTime)? '' : $scope.inputNotSetCss;
+  };
+
   $scope.interviewAdminProcess.interview.create.vacancyOnChange = function()
   {
      $scope.interviewAdminProcess.interview.create.noVacancyCss = checkPositiveInteger($scope.interviewAdminProcess.interview.create.vacancy)? '' : $scope.inputNotSetCss;
@@ -2993,6 +3013,11 @@ interviewAdminProcessApp
   $scope.interviewAdminProcess.interview.edit.nameOnChange = function()
   {
     $scope.interviewAdminProcess.interview.edit.noNameCss = ($scope.interviewAdminProcess.interview.edit.interview.name)? '' : $scope.inputNotSetCss;
+  };
+
+  $scope.interviewAdminProcess.interview.edit.scheduleDueTimeOnChange = function()
+  {
+    $scope.interviewAdminProcess.interview.edit.noScheduleDueTimeCss = ($scope.interviewAdminProcess.interview.edit.interview.s_schedule_due_time)? '' : $scope.inputNotSetCss;
   };
 
   $scope.interviewAdminProcess.interview.edit.vacancyOnChange = function()

@@ -61,7 +61,8 @@
                 <tbody>
                   <tr ng-repeat="tblTr in interviewUserProcess.interview.tbl.show">
                     <!-- <td><span ng-show="tblTr.applied.isApplied" class="glyphicon glyphicon-ok"></span></td> -->
-                    <td>{{tblTr.name}}</td>
+                    <td>{{tblTr.name}} <br /> (schedule due time: {{tblTr.s_schedule_due_time}})
+                    </td>
                     <td class="rsas-table-position-name-field">
                       <div ng-repeat="positions_in_interview in tblTr.positions_in_interviews">
                         <p>
@@ -73,8 +74,6 @@
                       <div ng-repeat="timeSlot in tblTr.time_slots">
                         <div ng-class="{rsas_time_slot_has_reserve: (timeSlot.id==tblTr.applied.timeSlotId)}">
                           <p>
-                            <!-- <a class="" href="" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)">{{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</a> -->
-                            <!-- {{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | datetimeFormatUTC2ZoneSub8}} -->
                             <span ng-show="timeSlot.id==tblTr.applied.timeSlotId" class="glyphicon glyphicon-ok"></span>
                             {{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | timeFormatUTC2ZoneSub8}}
                           </p>
@@ -83,8 +82,8 @@
                           </p>
                           <p>
                             <div ng-if="!interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end)" ng-click="interviewUserProcess.interview.timeSlot.checkActive(interviewUserProcess.round.permission.active);">
-                              <button class="btn btn-primary" ng-hide="timeSlot.id==tblTr.applied.timeSlotId" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end)">Apply</button>
-                              <button class="btn btn-danger" ng-show="tblTr.applied.isApplied && (timeSlot.id==tblTr.applied.timeSlotId)" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active">Cancel</button>
+                              <button class="btn btn-primary" ng-hide="timeSlot.id==tblTr.applied.timeSlotId" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end) || tblTr.b_before_schedule_due_time==false">Apply</button>
+                              <button class="btn btn-danger" ng-show="tblTr.applied.isApplied && (timeSlot.id==tblTr.applied.timeSlotId)" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end) || tblTr.b_before_schedule_due_time==false">Cancel</button>
                             </div>
                           </p>
                         </div>
@@ -269,6 +268,29 @@
             <button class="btn btn-primary" type="submit" ng-click="interviewUserProcess.nextFlow(500,510);">
               Apply
             </button>
+          </div>
+        </form>
+      </div>
+      <!-- it's scheduling conflict. -->
+      <div ng-show="550==interviewUserProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Warning</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-8"><b>
+                <h4>It is over time to schedule time slot.</h4>
+              </span>
+              <label class="col-md-2 control-label"></label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
           </div>
         </form>
       </div>

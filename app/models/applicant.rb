@@ -91,7 +91,7 @@ class Applicant < ActiveRecord::Base
 
   def self.get_applicant_list(table_params, filter_options, current_user_status, display_rd_flag_button)
     logger.info "== table_params #{table_params} =="
-    order_by_hash = {'Name' => 'lower(users.first_name)', 'Email' => 'users.email', 'Submitted' => 'applicants.application_submit_at'}
+    order_by_hash = {'First Name' => 'lower(users.first_name)', 'Last Name' => 'lower(users.last_name)', 'Name' => 'lower(users.first_name)', 'Email' => 'users.email', 'Submitted' => 'applicants.application_submit_at'}
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
     search_condition = RsasTools.get_where_search_condition(search_fields, table_params.us_search_text)
     order_condition = table_params.us_order_by.present? ? "#{order_by_hash[table_params.us_order_by]} #{table_params.s_asc_or_desc}" : "users.last_name asc"

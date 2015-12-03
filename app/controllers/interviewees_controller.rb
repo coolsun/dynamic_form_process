@@ -24,68 +24,77 @@ class IntervieweesController < ApplicationController
         i_mail_to_user_ids = [];
         i_mail_to_user_ids << i_user_id;
         if (interview.present?)
-          i_round_id = interview.round_id;
-          round = Round.find_by_id(i_round_id);
+          b_before_schedule_due_time = interview.b_before_schedule_due_time
 
-          if (round.present?)
-            active = nil;
-            active = round.is_in_active_time(session[:user_id]);
 
-            if (active)
-              i_interview_time_slot_ids = TimeSlot.where(:interview_id => time_slot.interview_id).pluck(:id);
-              i_interviewee_time_slot_ids = Interviewee.where(:user_id => i_user_id).pluck(:time_slot_id);
+          if (b_before_schedule_due_time)
+            i_round_id = interview.round_id;
+            round = Round.find_by_id(i_round_id);
 
-              manager_emails = time_slot.get_related_manager(interview);
+            if (round.present?)
+              active = nil;
+              active = round.is_in_active_time(session[:user_id]);
 
-              if (i_interview_time_slot_ids == (i_interview_time_slot_ids - i_interviewee_time_slot_ids))
-                interviewee = Interviewee.apply(time_slot, i_user_id, interview.vacancy);
-                success = interviewee.success;
+              if (active)
+                i_interview_time_slot_ids = TimeSlot.where(:interview_id => time_slot.interview_id).pluck(:id);
+                i_interviewee_time_slot_ids = Interviewee.where(:user_id => i_user_id).pluck(:time_slot_id);
 
-                if (success)
-                  Interview.email_at_applicant_schedule_to_self(i_mail_to_user_ids, time_slot, manager_emails);
-                  error_code = 'xSYS00000';
-                  logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create success, i_user_id #{i_user_id}");
+                manager_emails = time_slot.get_related_manager(interview);
+
+                if (i_interview_time_slot_ids == (i_interview_time_slot_ids - i_interviewee_time_slot_ids))
+                  interviewee = Interviewee.apply(time_slot, i_user_id, interview.vacancy);
+                  success = interviewee.success;
+
+                  if (success)
+                    Interview.email_at_applicant_schedule_to_self(i_mail_to_user_ids, time_slot, manager_emails);
+                    error_code = 'xSYS00000';
+                    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create success, i_user_id #{i_user_id}");
+                  else
+                    error_code = interviewee.error_code;
+                    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create fail, i_user_id #{i_user_id}, error_code: #{error_code}");
+                  end
                 else
-                  error_code = interviewee.error_code;
-                  logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create fail, i_user_id #{i_user_id}, error_code: #{error_code}");
+                  interviewee = Interviewee.apply(time_slot, i_user_id, interview.vacancy);
+                  success = interviewee.success;
+                  if (success)
+                    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create success, i_user_id #{i_user_id}");
+                    Interview.email_at_applicant_schedule_to_self(i_mail_to_user_ids, time_slot, manager_emails);
+
+                    old_interviewees = Interviewee.joins(:time_slot)
+                                                  .where(:user_id => i_user_id)
+                                                  .where(:time_slots => {:interview_id => interview.id})
+                                                  .where.not(:id => interviewee.interviewee.id);
+
+                    if (old_interviewees.present?)
+                      old_interviewees.each do |old_interviewee|
+                        old_time_slot = TimeSlot.find_by_id(old_interviewee.time_slot_id);
+                        Interview.email_at_applicant_cancel_schedule_to_self(i_mail_to_user_ids, old_time_slot, manager_emails);
+                      end
+
+                    end
+                    result = old_interviewees.delete_all;
+                    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController remove old interviewee success, i_user_id #{i_user_id}, old_interviewees: #{old_interviewees}");
+                    error_code = 'xSYS00000';
+                  else
+                    error_code = interviewee.error_code;
+                    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create fail, i_user_id #{i_user_id}, error_code: #{error_code}");
+                  end
+
+                  #error_code = 'xIUP00002';
+                  #logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create fail, interview_id:#{time_slot.interview_id}, time_slot_id:#{time_slot.id}, error_code: #{error_code}");
                 end
               else
-                interviewee = Interviewee.apply(time_slot, i_user_id, interview.vacancy);
-                success = interviewee.success;
-                if (success)
-                  logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create success, i_user_id #{i_user_id}");
-                  Interview.email_at_applicant_schedule_to_self(i_mail_to_user_ids, time_slot, manager_emails);
-
-                  old_interviewees = Interviewee.joins(:time_slot)
-                                                .where(:user_id => i_user_id)
-                                                .where(:time_slots => {:interview_id => interview.id})
-                                                .where.not(:id => interviewee.interviewee.id);
-
-                  if (old_interviewees.present?)
-                    old_interviewees.each do |old_interviewee|
-                      old_time_slot = TimeSlot.find_by_id(old_interviewee.time_slot_id);
-                      Interview.email_at_applicant_cancel_schedule_to_self(i_mail_to_user_ids, old_time_slot, manager_emails);
-                    end
-
-                  end
-                  result = old_interviewees.delete_all;
-                  logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController remove old interviewee success, i_user_id #{i_user_id}, old_interviewees: #{old_interviewees}");
-                  error_code = 'xSYS00000';
-                else
-                  error_code = interviewee.error_code;
-                  logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create fail, i_user_id #{i_user_id}, error_code: #{error_code}");
-                end
-
-                #error_code = 'xIUP00002';
-                #logger.info("# #{Time.now} IP:#{request.remote_ip}, action: IntervieweesController create fail, interview_id:#{time_slot.interview_id}, time_slot_id:#{time_slot.id}, error_code: #{error_code}");
+                error_code = 'xSYS00009';
+                logger.info("# #{Time.now} action: IntervieweesController create fail, it's not time, error_code: #{error_code}");
               end
             else
-              error_code = 'xSYS00009';
-              logger.info("# #{Time.now} action: IntervieweesController create fail, it's not time, error_code: #{error_code}");
+              error_code = 'xSYS00002';
+              logger.info("# #{Time.now} action: IntervieweesController create fail, can't find this round, round_id: #{i_round_id}, error_code: #{error_code}");
             end
           else
-            error_code = 'xSYS00002';
-            logger.info("# #{Time.now} action: IntervieweesController create fail, can't find this round, round_id: #{i_round_id}, error_code: #{error_code}");
+            error_code = 'xDBI00009';
+            logger.info("# #{Time.now} action: IntervieweesController create fail, applicant schedule time is over the due time, now: #{Time.now}, due time: #{interview.schedule_due_time}, error_code: #{error_code}");
+
           end
         else
           error_code = 'xSYS00004';
