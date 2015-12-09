@@ -122,10 +122,25 @@ rsasApp.controller('UserFillInForm',
         var rq_empty = false;
         angular.forEach( $scope.forms[i].schema, function(item) {
           if (item.rq) {
-            if (item.type == "name" && !item.option[0].value) {
+/*
+console.log("==================================");
+console.log(item);
+console.log((["name", "date"].indexOf(item.type) != -1 && (!item.option[0].value || !item.option[1].value || !item.option[2].value)));
+console.log((["text", "textarea"].indexOf(item.type) != -1 && !item.value));
+console.log((["select", "radio"].indexOf(item.type) != -1 && !item.select));
+console.log((["multi-select", "checkbox"].indexOf(item.type) != -1 && item.select.length == 0));
+console.log("==================================");
+*/
+            if ((["name", "date"].indexOf(item.type) != -1 && (!item.option[0].value || !item.option[1].value || !item.option[2].value))) {
               rq_empty = true;
             }
-            else if (item.type != "name" && !item.value) {
+            else if ((["text", "textarea"].indexOf(item.type) != -1 && !item.value)) {
+              rq_empty = true;
+            }
+            else if ((["select", "radio"].indexOf(item.type) != -1 && !item.select)) {
+              rq_empty = true;
+            }
+            else if ((["multi-select", "checkbox"].indexOf(item.type) != -1 && item.select.length == 0)) {
               rq_empty = true;
             }
           }
