@@ -506,6 +506,7 @@ class ApplicantsController < ApplicationController
       :interviews => interviews,
       :status => status,
       :question_filters => params[:question_filters].blank? ? [] : params[:question_filters],
+      :disqualified => params[:disqualified]
     }
 
     logger.warn "== permission        #{permission} =="
@@ -664,6 +665,7 @@ class ApplicantsController < ApplicationController
       :interviews => interviews,
       :status => status,
       :question_filters => params[:form_question_filters].blank? ? [] : JSON.parse(params[:form_question_filters]),
+      :disqualified => (params[:disqualified] == "true")
     }
 
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
@@ -676,12 +678,6 @@ class ApplicantsController < ApplicationController
     logger.info "== question_filters  #{filter_options[:question_filters]}=="
 
     filter_where_condition, filter_where_not_condition = Applicant.applicant_list_setting_where_condition(filter_options, procedure_id)
-
-    # LM can not see disqualify applicants and not submit applicant
-    if permission == 'LM' # means only LM
-      filter_where_not_condition[:disqualify] = 1
-      filter_where_not_condition[:application_submit_at] = nil
-    end
 
     if filter_options[:question_filters].present?
       question_filters_user_ids = FormInput.question_filters_user_ids(filter_options[:question_filters], procedure_id)

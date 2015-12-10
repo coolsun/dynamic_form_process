@@ -12,7 +12,7 @@ class LimitPeriod < ActiveRecord::Base
 
   def locations
     locations = []
-    self.limit_managers.where.not(:location_id => nil).each do |limit_manager|
+    self.limit_managers.includes(:location).where.not(:location_id => nil).each do |limit_manager|
       locations << limit_manager.location.as_json(:only => [:id, :name]) if limit_manager.location
     end
     return locations

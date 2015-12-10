@@ -101,12 +101,6 @@ class Applicant < ActiveRecord::Base
 
     filter_where_condition, filter_where_not_condition = self.applicant_list_setting_where_condition(filter_options, procedure_id)
 
-    # LM can not see disqualify applicants and not submit applicant
-    if filter_options[:permission] == 'LM' # means only LM
-      filter_where_not_condition[:disqualify] = 1
-      filter_where_not_condition[:application_submit_at] = nil
-    end
-
     if filter_options[:question_filters].present?
       question_filters_user_ids = FormInput.question_filters_user_ids(filter_options[:question_filters], procedure_id)
       logger.info "== question_filters_user_ids #{question_filters_user_ids} =="
@@ -267,9 +261,16 @@ class Applicant < ActiveRecord::Base
       filter_where_condition[:applications] = {:offer_accept => "accepted"}
     elsif filter_options[:status] == 'Unaccepted'
       filter_where_not_condition[:applications] = {:offer_accept => "accepted"}
-    elsif filter_options[:status] == 'Disqualify'
-      filter_where_condition[:disqualify] = 1
     end
+
+    filter_where_condition[:disqualify] = filter_options[:disqualified] || false
+
+    # LM can not see disqualify applicants and not submit applicant
+    if filter_options[:permission] == 'LM' # means only LM
+      filter_where_condition[:disqualify] = false
+      filter_where_not_condition[:application_submit_at] = nil
+    end
+
     return filter_where_condition, filter_where_not_condition
   end
 
