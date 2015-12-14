@@ -80,14 +80,11 @@ class DownloadPdfsController < ApplicationController
         @applicants << obj
       end
     end
-    @applicants.sort! { |a, b| a["name"].downcase <=> b["name"].downcase }
-#=begin
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/pdf_form.html.erb'),
       :footer => {:center => '[page] / [topage]'}
     )
     send_data(pdf, :filename => Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M") + ".pdf", :type => "application/pdf")
-#=end
   end
 
 
