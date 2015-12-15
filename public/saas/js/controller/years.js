@@ -2,7 +2,7 @@ rsasApp.controller('Years',
   function($scope, $rootScope, $window, CTableRsas, yearFactory, waitingIcon) {
     $scope.yearTable = {};
     $scope.yearTable.tbl = new CTableRsas('yearTable.tbl', JSON_URL + '/years');
-    $scope.yearTable.tbl.setHeader(['Current Year', 0], ['Admin Current Year', 0], ['Name', 1], ['Next Year', 1]);
+    $scope.yearTable.tbl.setHeader(['Current Year', 0], ['My Admin Current Year', 0], ['Name', 1], ['Next Year', 1]);
     $scope.yearTable.tbl.setDataAndRequest = function(){
       var data = {
         /////////  Need Year Data  //////////
