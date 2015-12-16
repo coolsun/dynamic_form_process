@@ -387,13 +387,13 @@ rsasApp.controller('UserOffers',function($scope, $rootScope, $sce, waitingIcon, 
 
   $scope.check_again = function(offer, result){
     $scope.current_applicant = offer;
-    if (!offer.last_click) {
-      offer.offer_msg = '<span style="color: red;">Do you really want to confirm/decline this job offer? Once you confirm a job, you will not be able to accept other jobs.</span>';
-    }
-    else {
+    //if (!offer.last_click) {
+    //  offer.offer_msg = '<span style="color: red;">Do you really want to confirm/decline this job offer? Once you confirm a job, you will not be able to accept other jobs.</span>';
+    //}
+    //else {
       $scope.submitResult(result);
-    }
-    offer.last_click = true;
+    //}
+    //offer.last_click = true;
   };
 
   $scope.submitResult = function(result){
