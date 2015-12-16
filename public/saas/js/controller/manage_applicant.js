@@ -86,7 +86,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       $scope.force_submit_permission_show = data.permissions.force_submit.show;
       $scope.is_staff = ($rootScope.current_user.status == 'Staff');
       $scope.forms_and_questions = data.forms_and_questions;
-      $scope.email.editAll();
+      $scope.all_applicants_emails = data.all_applicants_emails;
     };
 
     angular.element(document).ready(function () {
@@ -347,8 +347,8 @@ adminEditApplicantModule.controller('AdminApplicationForm',
 
     $scope.email.editAll = function(){
       $scope.email.init();
-      if($scope.applicationFormTable.tbl.show) {
-        $scope.applicationFormTable.tbl.show.forEach(function(applicant){
+      if($scope.all_applicants_emails) {
+        $scope.all_applicants_emails.forEach(function(applicant){
           $scope.rsas_email.recipients.push({name:applicant.name, email:applicant.email});
         });
       }

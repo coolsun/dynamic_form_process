@@ -518,7 +518,7 @@ class ApplicantsController < ApplicationController
     logger.info "== question_filters  #{filter_options[:question_filters]}=="
 
     display_rd_flag_button = check_user_permission("rd_flag_button")[0]
-    applicant_list, applicants_total, forms_and_questions = Applicant.get_applicant_list(rsas_table_params, filter_options, current_user.status, display_rd_flag_button)
+    applicant_list, applicants_total, forms_and_questions, all_applicants_emails = Applicant.get_applicant_list(rsas_table_params, filter_options, current_user.status, display_rd_flag_button)
     #logger.info "== applicant_list #{applicant_list} =="
 
     render :json => {
@@ -531,7 +531,8 @@ class ApplicantsController < ApplicationController
       :interview_list => interview_list.sort! { |a, b| a[:title].downcase <=> b[:title].downcase },
       :permissions => permissions,
       :all_limits => all_limits,
-      :forms_and_questions => forms_and_questions
+      :forms_and_questions => forms_and_questions,
+      :all_applicants_emails => all_applicants_emails
     }
   end
 

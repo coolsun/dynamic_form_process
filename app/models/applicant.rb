@@ -119,15 +119,17 @@ class Applicant < ActiveRecord::Base
       filter_match_question_applicants = ""
     end
 
-    applicants = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
+    all_applicants = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
                     .where(:procedure_id => procedure_id)
                     .where(filter_where_condition)
                     .where.not(filter_where_not_condition)
                     .where(filter_match_question_applicants)
                     .where(search_condition)
                     .order(order_condition)
-                    .page(table_params.i_page)
-                    .per(table_params.i_page_count)
+
+    all_applicants_emails = []
+    all_applicants_emails = all_applicants.map{|applicant| {:name => applicant.user.name, :email => applicant.user.email}}
+    applicants = all_applicants.page(table_params.i_page).per(table_params.i_page_count)
 
     position_match_forms = Procedure.all_position_match_forms(procedure_id)
 
@@ -232,7 +234,7 @@ class Applicant < ActiveRecord::Base
       applicants_length += 1
     end
 
-    return applicant_list, applicants.total_count, forms_and_questions_hash
+    return applicant_list, applicants.total_count, forms_and_questions_hash, all_applicants_emails
   end
 
   def self.applicant_list_setting_where_condition(filter_options, procedure_id)
