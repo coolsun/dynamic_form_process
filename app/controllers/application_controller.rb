@@ -312,8 +312,8 @@ class ApplicationController < ActionController::Base
       permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_attachable_forms"
-      visibility_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
-      action_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
+      visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
+      action_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
     when "set_up_emails"

@@ -11,6 +11,9 @@ class FormsController < ApplicationController
 
     # Get the forms in process, in sub step
     forms = Form.get_form_list(params[:process_id], params[:identify_name])
+    if !is_admin && !is_hiring_mgr(params[:process_id]) && !is_procedure_role_mgr(params[:process_id]) && is_procedure_location_mgr(params[:process_id])
+      forms = filter_location_form(forms, params[:process_id], current_user.id)
+    end
 
     roles_in_process = []
     locations_in_process = []
@@ -79,6 +82,10 @@ class FormsController < ApplicationController
       end
 
       forms = Form.get_form_list(params[:process_id], params[:identify_name])
+      if !is_admin && !is_hiring_mgr(params[:process_id]) && !is_procedure_role_mgr(params[:process_id]) && is_procedure_location_mgr(params[:process_id])
+        forms = filter_location_form(forms, params[:process_id], current_user.id)
+      end
+
       render :json => {:success => true, :forms => forms}
     end
   end
@@ -126,6 +133,10 @@ class FormsController < ApplicationController
       end
 
       forms = Form.get_form_list(params[:process_id], params[:identify_name])
+      if !is_admin && !is_hiring_mgr(params[:process_id]) && !is_procedure_role_mgr(params[:process_id]) && is_procedure_location_mgr(params[:process_id])
+        forms = filter_location_form(forms, params[:process_id], current_user.id)
+      end
+
       render :json => {:success => true, :forms => forms}
     end
   end
@@ -139,6 +150,10 @@ class FormsController < ApplicationController
       delete_form.destroy
 
       forms = Form.get_form_list(params[:process_id], params[:identify_name])
+      if !is_admin && !is_hiring_mgr(params[:process_id]) && !is_procedure_role_mgr(params[:process_id]) && is_procedure_location_mgr(params[:process_id])
+        forms = filter_location_form(forms, params[:process_id], current_user.id)
+      end
+
       render :json => {:success => true, :forms => forms}
     end
   end
@@ -151,6 +166,10 @@ class FormsController < ApplicationController
       toggle_form = Form.find_by_id(params[:id])
       toggle_form.update_attributes(:display => params[:display])
       forms = Form.get_form_list(params[:process_id], params[:identify_name])
+      if !is_admin && !is_hiring_mgr(params[:process_id]) && !is_procedure_role_mgr(params[:process_id]) && is_procedure_location_mgr(params[:process_id])
+        forms = filter_location_form(forms, params[:process_id], current_user.id)
+      end
+
       render :json => {:success => true, :forms => forms}
     end
   end
@@ -206,6 +225,21 @@ class FormsController < ApplicationController
       logger.error e.backtrace
       render :json => {:success => false, :msg => "There was a problem to clone the form."}
     end
+  end
+
+  def filter_location_form(forms, process_id, current_user_id)
+    location_ids = LocationMgr.where(:user_id => current_user_id).pluck(:location_id)
+    position_ids = Position.where(:procedure_id => process_id, :location_id => location_ids).pluck(:id)
+    location_forms = []
+    forms.each do |form|
+      if (form["form_tags"].select { |form_tag| (location_ids.include? form_tag["location_id"]) || 
+                                                (position_ids.include? form_tag["position_id"])
+                                   }
+         ).present?
+        location_forms << form
+      end
+    end
+    return location_forms
   end
 
 end

@@ -12,8 +12,15 @@ class Form < ActiveRecord::Base
     if procedure_id == 0
       forms = Form.where(:procedure_id => procedure_id)
     elsif
-      forms = Form.where(:procedure_id => procedure_id,
-                         :form_type => Form.get_form_type(identify_name)).as_json(:include => {:form_tags => {:only => [:role_id, :location_id, :position_id]}})
+      forms = Form.where(
+        :procedure_id => procedure_id,
+        :form_type => Form.get_form_type(identify_name)
+      )
+      .as_json(:include => {
+        :form_tags => {
+          :only => [:role_id, :location_id, :position_id]
+        }
+      })
     end
 
     return forms
