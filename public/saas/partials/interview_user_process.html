@@ -3,7 +3,7 @@
   <div class="">
     <div class="col-md-12">
       <h2 ng-show="interviewUserProcess.round.t_start">
-        Round: <b>{{interviewUserProcess.round.title}}</b> <br /> From <b>{{interviewUserProcess.round.t_start | datetimeFormatUTC2ZoneSub8}}</b> To <b>{{interviewUserProcess.round.t_end | datetimeFormatUTC2ZoneSub8}}</b>
+        Round: <b>{{interviewUserProcess.round.title}}</b> <br /> From <b>{{interviewUserProcess.round.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> To <b>{{interviewUserProcess.round.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b>
       </h2>
     </div>
     <hr />
@@ -75,7 +75,7 @@
                         <div ng-class="{rsas_time_slot_has_reserve: (timeSlot.id==tblTr.applied.timeSlotId)}">
                           <p>
                             <span ng-show="timeSlot.id==tblTr.applied.timeSlotId" class="glyphicon glyphicon-ok"></span>
-                            {{timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} to {{timeSlot.t_end | timeFormatUTC2ZoneSub8}}
+                            {{timeSlot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}} to {{timeSlot.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}
                           </p>
                           <p>
                             Place: {{timeSlot.place}}
@@ -210,7 +210,7 @@
             <div class="form-group">
               <label class="col-md-2"><h4>time:</h4></label>
               <span class="col-md-10">
-                <h4>From {{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+                <h4>From {{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}} To {{interviewUserProcess.interview.timeSlot.changeApply.timeSlot.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</h4>
               </span>
             </div>
             <div class="form-group">
@@ -253,7 +253,7 @@
             <div class="form-group">
               <label class="col-md-2"><h4>Time:</h4></label>
               <span class="col-md-10">
-                <h4>From {{interviewUserProcess.interview.timeSlot.reserve.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.reserve.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+                <h4>From {{interviewUserProcess.interview.timeSlot.reserve.timeSlot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}} To {{interviewUserProcess.interview.timeSlot.reserve.timeSlot.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</h4>
               </span>
             </div>
             <div class="form-group">
@@ -331,7 +331,7 @@
             <div class="form-group">
               <label class="col-md-2 control-label"></label>
               <span class="col-md-8"><b>
-                <h4>This interview is active from <b>{{interviewUserProcess.round.t_start | datetimeFormatUTC2ZoneSub8}}</b> to <b>{{interviewUserProcess.round.t_end | datetimeFormatUTC2ZoneSub8}}</b>.</h4>
+                <h4>This interview is active from <b>{{interviewUserProcess.round.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> to <b>{{interviewUserProcess.round.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b>.</h4>
                 <h4>It is not active yet.</h4>
               </span>
               <label class="col-md-2 control-label"></label>
@@ -440,7 +440,7 @@
             <div class="form-group">
               <label class="col-md-2"><h4>time:</h4></label>
               <span class="col-md-10">
-                <h4>From {{interviewUserProcess.interview.timeSlot.cancel.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.cancel.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+                <h4>From {{interviewUserProcess.interview.timeSlot.cancel.timeSlot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}} To {{interviewUserProcess.interview.timeSlot.cancel.timeSlot.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</h4>
               </span>
             </div>
             <div class="form-group">
@@ -523,7 +523,7 @@
             <div class="form-group">
               <label class="col-md-2"><h4>time:</h4></label>
               <span class="col-md-10">
-                <h4>From {{interviewUserProcess.interview.timeSlot.info.timeSlot.t_start | datetimeFormatUTC2ZoneSub8}} To {{interviewUserProcess.interview.timeSlot.info.timeSlot.t_end | datetimeFormatUTC2ZoneSub8}}</h4>
+                <h4>From {{interviewUserProcess.interview.timeSlot.info.timeSlot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}} To {{interviewUserProcess.interview.timeSlot.info.timeSlot.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</h4>
               </span>
             </div>
             <div class="form-group">

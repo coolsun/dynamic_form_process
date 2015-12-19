@@ -3,7 +3,7 @@
   <div class="">
     <div class="col-md-12">
       <h2 ng-show="interviewAdminProcess.round.t_start">
-        Round: <b>{{interviewAdminProcess.round.title}}</b> <br /> From <b>{{interviewAdminProcess.round.t_start | datetimeFormatUTC2ZoneSub8}}</b> To <b>{{interviewAdminProcess.round.t_end | datetimeFormatUTC2ZoneSub8}}</b>
+        Round: <b>{{interviewAdminProcess.round.title}}</b> <br /> From <b>{{interviewAdminProcess.round.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> To <b>{{interviewAdminProcess.round.t_end | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b>
       </h2>
       <div>
         <h3>Locations: {{interviewAdminProcess.locationTitle}}</h3>
@@ -91,7 +91,7 @@
                       <td>
                         <div ng-repeat="time_slot in tblTr.time_slots">
                           <p>
-                            <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8}}</b></p>
+                            <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</b></p>
                           </p>
                           <p>
                             <p><b>Place: {{time_slot.place}}</b></p>
@@ -313,7 +313,7 @@
                       <td>
                         <div ng-repeat="time_slot in applicant.time_slots">
                           <p>
-                            {{time_slot.t_start | datetimeFormatUTC2ZoneSub8}}
+                            {{time_slot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}
                           </p>
                         </div>
                       </td>
@@ -440,7 +440,7 @@
                           </span>
                           <span class="rsas-div-left">
                             <p>
-                              <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8}}</b></p>
+                              <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</b></p>
                             </p>
                             <p>
                               <p><b>Place: {{time_slot.place}}</b></b></p>

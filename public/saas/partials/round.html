@@ -114,8 +114,8 @@
           <tbody>
             <tr ng-repeat="tblTr in round.tbl.show">
               <td>{{tblTr.title}} <div ng-if="!tblTr.erasable">(in Post Match)</div></td>
-              <td>{{tblTr.t_start | dateFormatUTC2ZoneSub8}}<br />{{tblTr.t_start | timeFormatUTC2ZoneSub8}}</td>
-              <td>{{tblTr.t_end | dateFormatUTC2ZoneSub8}}<br />{{tblTr.t_end | timeFormatUTC2ZoneSub8}}</td>
+              <td>{{tblTr.t_start | dateFormatUTC2ZoneSub8}}<br />{{tblTr.t_start | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</td>
+              <td>{{tblTr.t_end | dateFormatUTC2ZoneSub8}}<br />{{tblTr.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</td>
               <td ng-init="round.locationShow[$index]=false; round.locationShowHideNum=3;">
                 <div ng-repeat="location in tblTr.locations">
                   <p ng-show="round.locationShowHideNum > $index || (round.locationShow[$parent.$index] && round.locationShowHideNum <= $index)">
