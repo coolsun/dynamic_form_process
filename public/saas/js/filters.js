@@ -78,4 +78,19 @@ rsasFilters
     return filtered;
   };
 })
+.filter("s_time_12hr", function() {
+  return function(s_time_24hr){
+    var s_time_12hr = "";
+    var date = s_time_24hr.split(" ")[0];
+    var hour = s_time_24hr.split(" ")[1].split(":")[0];
+    var minute =s_time_24hr.split(" ")[1].split(":")[1];
+    var am_pm = " AM";
+    if(parseInt(hour) > 12){
+      hour = parseInt(hour) - 12;
+      am_pm = " PM";
+    }
+    s_time_12hr = date + " " + hour + ":" + minute + am_pm;
+    return s_time_12hr;
+  };
+})
 ;
