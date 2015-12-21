@@ -27,8 +27,8 @@
             {{recommendation_email.name}}
           </th>
           <th class="text-center">{{recommendation_email.email}}</th>
-          <th class="text-center">{{recommendation_email.created_at | date : 'MM/dd/yyyy HH:mm'}}</th>
-          <th class="text-center">{{recommendation_email.submit_date | date : 'MM/dd/yyyy HH:mm'}}</th>
+          <th class="text-center">{{recommendation_email.created_at_string}}</th>
+          <th class="text-center">{{recommendation_email.submit_date_string}}</th>
           <th class="text-center">{{get_recommendation_form_name(recommendation_email.recommendation_form_id)}}</th>
           <th class="text-center">
             <button class="btn-xs btn btn-info" ng-disabled="!permission_to_active" ng-click="resendRecommandation(recommendation_email.id)">Reminder</button><br />

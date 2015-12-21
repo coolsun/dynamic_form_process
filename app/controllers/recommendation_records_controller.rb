@@ -4,11 +4,11 @@ class RecommendationRecordsController < ApplicationController
     procedure_id = params[:current_process_id]
     permission_to_show, permission_to_active, permission_message = check_user_permission("Applicant Recommendation")
 
-    
+
     records = RecommendationRecord.where(
       :user_id => params[:user_id],
       :procedure_id => procedure_id
-    ).order(:created_at => :asc)
+    ).order(:created_at => :asc).as_json(:methods => [:created_at_string, :submit_date_string])
     settings = RecommendationSetting.where(:procedure_id => procedure_id)
 
     recommendation_forms = Form.where(
