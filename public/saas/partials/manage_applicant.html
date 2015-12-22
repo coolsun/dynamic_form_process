@@ -235,7 +235,7 @@
                       <input type="hidden" name="status" value="{{applicationFormTable.tbl.status}}">
                       <input type="hidden" name="locations" value="{{applicationFormTable.tbl.locations}}">
                       <input type="hidden" name="roles" value="{{applicationFormTable.tbl.roles}}">
-                      <input type="hidden" name="disqualified" value="{{applicationFormTable.tbl.disqualified}}">
+                      <input type="hidden" name="includes_disqualified" value="{{applicationFormTable.tbl.includes_disqualified}}">
                       <input type="hidden" name="interviews" value="{{applicationFormTable.tbl.interviews}}">
                       <input type="hidden" name="searchText" value="{{applicationFormTable.tbl.searchText}}">
                       <input type="hidden" name="sub_step" value="{{$root.current_sub_step.identify_name}}">
@@ -251,7 +251,7 @@
                         <td style="width: 20%;">Interview (Selected):</td>
                         <td style="width: 20%;">Location:</td>
                         <td style="width: 20%;">Role:</td>
-                        <td style="width: 20%;">Disqualified:</td>
+                        <td style="width: 20%;">Includes disqualified:</td>
                         <td style="width: 70px;"></td>
                       </tr>
                       <tr>
@@ -268,7 +268,7 @@
                           <multiselect multiple="true" id="select_roles" ng-model="applicationFormTable.tbl.roles" options="list.name for list in role_list" change="selected()"></multiselect>
                         </td>
                         <td>
-                          <input type="checkbox" ng-model="applicationFormTable.tbl.disqualified">
+                          <input type="checkbox" ng-model="applicationFormTable.tbl.includes_disqualified">
                         </td>
                         <td><button class="btn btn-info" ng-click="applicationFormTable.tbl.setDataAndRequest()">Filter</button></td>
                       </tr>

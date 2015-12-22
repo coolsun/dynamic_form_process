@@ -263,9 +263,13 @@ class Applicant < ActiveRecord::Base
       filter_where_condition[:applications] = {:offer_accept => "accepted"}
     elsif filter_options[:status] == 'Unaccepted'
       filter_where_not_condition[:applications] = {:offer_accept => "accepted"}
+    elsif filter_options[:status] == 'Disqualify'
+      filter_where_condition[:disqualify] = true
     end
 
-    filter_where_condition[:disqualify] = filter_options[:disqualified] || false
+    unless filter_options[:includes_disqualified]
+      filter_where_condition[:disqualify] = false
+    end
 
     # LM can not see disqualify applicants and not submit applicant
     if filter_options[:permission] == 'LM' # means only LM

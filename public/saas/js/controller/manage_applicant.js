@@ -66,7 +66,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
         "roles": http_array_safe(roles),
         "question_filters": $scope.form_question_filters,
         "sub_step": $rootScope.current_sub_step.identify_name,
-        "disqualified": $scope.applicationFormTable.tbl.disqualified,
+        "includes_disqualified": $scope.applicationFormTable.tbl.includes_disqualified,
         "current_year_id": $rootScope.current_year.id,
         "current_process_id": $rootScope.current_process.id
       };

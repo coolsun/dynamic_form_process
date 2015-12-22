@@ -506,7 +506,7 @@ class ApplicantsController < ApplicationController
       :interviews => interviews,
       :status => status,
       :question_filters => params[:question_filters].blank? ? [] : params[:question_filters],
-      :disqualified => params[:disqualified]
+      :includes_disqualified => params[:includes_disqualified]
     }
 
     logger.warn "== permission        #{permission} =="
@@ -666,7 +666,7 @@ class ApplicantsController < ApplicationController
       :interviews => interviews,
       :status => status,
       :question_filters => params[:form_question_filters].blank? ? [] : JSON.parse(params[:form_question_filters]),
-      :disqualified => (params[:disqualified] == "true")
+      :includes_disqualified => (params[:includes_disqualified] == "true")
     }
 
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
