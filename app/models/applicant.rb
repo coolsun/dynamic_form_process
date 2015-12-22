@@ -244,12 +244,19 @@ class Applicant < ActiveRecord::Base
     if filter_options[:locations].present?
       filter_where_condition[:locations] = {:id => filter_options[:locations]}
     end
+
     if filter_options[:roles].present?
       filter_where_condition[:roles] = {:id => filter_options[:roles]}
     end
+
     if filter_options[:interviews].present?
       filter_where_condition[:interviews] = {:id => filter_options[:interviews]}
     end
+
+    unless filter_options[:includes_disqualified]
+      filter_where_condition[:disqualify] = false
+    end
+
     if filter_options[:status] == 'Submitted'
       filter_where_not_condition[:application_submit_at] = nil
     elsif filter_options[:status] == 'Not submitted'
@@ -265,10 +272,6 @@ class Applicant < ActiveRecord::Base
       filter_where_not_condition[:applications] = {:offer_accept => "accepted"}
     elsif filter_options[:status] == 'Disqualify'
       filter_where_condition[:disqualify] = true
-    end
-
-    unless filter_options[:includes_disqualified]
-      filter_where_condition[:disqualify] = false
     end
 
     # LM can not see disqualify applicants and not submit applicant
