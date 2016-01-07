@@ -41,12 +41,21 @@ class FormInput < ActiveRecord::Base
       end
       form_ids = self.where(filters.join(' and ')).pluck(:form_id)
       form_ids = form_ids.in_groups_of(1000, false)
+
+logger.info "== form input's form ids ============="
+logger.info form_ids.to_json
+logger.info "======================================"
+
       #logger.info "== form_input #{form_input.as_json} =="
       if form_table == 'USER_FORMS'
         arr = []
         form_ids.each do |form_id_of_1000|
           arr += UserForm.where(:id => form_id_of_1000, :form_id => origin_form.id).pluck(:user_id)
         end
+logger.info "== arr? =============================="
+logger.info arr.to_json
+logger.info "======================================"
+
         filter_match_users << arr
       elsif form_table == 'RECOMMENDATION_FORMS'
         arr = []
@@ -57,10 +66,17 @@ class FormInput < ActiveRecord::Base
         filter_match_users << arr
       end
     end
+logger.info "== filter_match_users ================"
+logger.info filter_match_users.to_json
+logger.info "======================================"
+
     match_user_ids = filter_match_users.first
     filter_match_users.each do |filter_match_user|
       match_user_ids = match_user_ids & filter_match_user
     end
+logger.info "== match_user_ids ===================="
+logger.info match_user_ids.to_json
+logger.info "======================================"
 
     return match_user_ids
   end
