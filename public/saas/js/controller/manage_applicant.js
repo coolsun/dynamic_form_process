@@ -161,14 +161,14 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       $scope.every_applicant_and_its_forms = [];
       $scope.every_applicant_and_its_form_ids = [];
       obj = $scope.addApplicantWithForms(applicant);
-      $scope.getApplicantForms(applicant, obj.system_form_check_list, obj.user_form_check_list, obj.recommendation_form_check_list, obj.interview_form_check_list, obj.transcripts_check_list);
+      $scope.getApplicantForms(applicant, obj.system_form_check_list, obj.user_form_check_list, obj.recommendation_form_check_list, obj.interview_form_check_list, obj.transcripts_check_list, 0);
     };
 
     $scope.previewSelectTypesForms = function(){
       $("#formsWaitedPrint").modal('toggle');
       $scope.every_applicant_and_its_forms = [];
       $scope.every_applicant_and_its_form_ids = [];
-      $scope.applicationFormTable.tbl.show.forEach(function(applicant) {
+      $scope.applicationFormTable.tbl.show.forEach(function(applicant, applicantFormTableIndex) {
         var system_form_check_list         = [];
         var user_form_check_list           = [];
         var recommendation_form_check_list = [];
@@ -187,7 +187,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
         if($scope.selectFormTypes.indexOf($scope.formTypes[3].value) >= 0) {
           transcripts_check_list.push(applicant.id);
         };
-        $scope.getApplicantForms(applicant, system_form_check_list, user_form_check_list, recommendation_form_check_list, interview_form_check_list, transcripts_check_list);
+        $scope.getApplicantForms(applicant, system_form_check_list, user_form_check_list, recommendation_form_check_list, interview_form_check_list, transcripts_check_list, applicantFormTableIndex);
       });
     };
 
@@ -229,7 +229,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       return obj;
     };
 
-    $scope.getApplicantForms = function(applicant, system_form_check_list, user_form_check_list, recommendation_form_check_list, interview_form_check_list, transcripts_check_list){
+    $scope.getApplicantForms = function(applicant, system_form_check_list, user_form_check_list, recommendation_form_check_list, interview_form_check_list, transcripts_check_list, tbl_row_index){
       if((system_form_check_list + user_form_check_list + recommendation_form_check_list + interview_form_check_list + transcripts_check_list).length > 0){
         waitingIcon.open();
         userFormFactory.showApplicantForms(system_form_check_list, user_form_check_list, recommendation_form_check_list, interview_form_check_list, transcripts_check_list, $rootScope.current_year.id, $rootScope.current_process.id)
@@ -253,8 +253,8 @@ adminEditApplicantModule.controller('AdminApplicationForm',
               "transcripts": transcripts_check_list
             };
             if(applicant_and_its_forms.all_forms_about_applicant.length != 0 || applicant_and_its_forms.transcripts.length != 0) {
-              $scope.every_applicant_and_its_forms.push(applicant_and_its_forms);
-              $scope.every_applicant_and_its_form_ids.push(applicant_and_its_form_ids);
+              $scope.every_applicant_and_its_forms[tbl_row_index] = (applicant_and_its_forms);
+              $scope.every_applicant_and_its_form_ids[tbl_row_index] = (applicant_and_its_form_ids);
             };
           }
           else{
