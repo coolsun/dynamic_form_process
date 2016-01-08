@@ -27,6 +27,10 @@ class DownloadPdfsController < ApplicationController
   def pdf_form
     @applicants = []
     JSON.parse(params[:selected_forms]).each do |applicant|
+      if applicant.blank?
+        next
+      end
+
       obj = {}
       logger.info "== applicant #{applicant.to_json} =="
       obj["name"] = applicant["name"]
