@@ -113,7 +113,9 @@
               </div>
               <div class="modal-body" id="htmlStringToPrint">
                 <div ng-repeat="applicant_and_its_forms in every_applicant_and_its_forms track by $index" style="padding: 10px; margin-bottom: 10px">
-                  <h1 align="center" style="margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;">{{applicant_and_its_forms.applicant_name}}</h1>
+                  <h1 align="center" style="margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;">
+                    {{applicant_and_its_forms.applicant_name}} {{applicant_and_its_forms.applicant_last_name}}
+                  </h1>
                   <div ng-repeat="form in applicant_and_its_forms.all_forms_about_applicant">
                     <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow">{{form.form_name}}</h4>
                     <rsas-form-show></rsas-form-show>

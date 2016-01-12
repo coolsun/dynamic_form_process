@@ -34,6 +34,7 @@ class DownloadPdfsController < ApplicationController
       obj = {}
       logger.info "== applicant #{applicant.to_json} =="
       obj["name"] = applicant["name"]
+      obj["last_name"] = applicant["last_name"]
       obj["forms"] = []
 
       system_forms = UserForm.where(:id => applicant["system"])

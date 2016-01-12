@@ -240,11 +240,13 @@ adminEditApplicantModule.controller('AdminApplicationForm',
             });
             applicant_and_its_forms = {
               "applicant_name" : applicant.name,
+              "applicant_last_name" : applicant.last_name,
               "all_forms_about_applicant" : data.forms,
               "transcripts" : data.transcripts
             };
             applicant_and_its_form_ids = {
               "name" : applicant.name,
+              "last_name" : applicant.last_name,
               "user_id" : applicant.id,
               "system" : system_form_check_list,
               "application": user_form_check_list,
