@@ -122,6 +122,12 @@
               <input type="text" class="form-control" ng-model="new_role.description">
             </div>
           </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Terms of Appointment:</label>
+            <div class="col-lg-10">
+              <textarea class="form-control" ng-model="new_role.offer_appointment" ng-required="true"></textarea>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-info navbar-right">Add</button>
@@ -159,6 +165,12 @@
               <input type="text" class="form-control" ng-model="edit_role.description">
             </div>
           </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Terms of Appointment:</label>
+            <div class="col-lg-10">
+              <textarea class="form-control" ng-model="edit_role.offer_appointment" ng-required="true"></textarea>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-info">Save</button>
@@ -179,7 +191,7 @@
           <h4 class="modal-title" id="myModalLabel">Edit Role Managers</h4>
         </div>
         <div class="modal-body">
-           <div class="form-group">
+          <div class="form-group">
             <label class="col-lg-2 control-label">Filter:</label>
             <span class="col-lg-9">
               <input class="form-control" type="text" ng-model="edit_role_mgr_search.name">

@@ -23,7 +23,7 @@ rsasApp.controller('Roles',
       $scope.permission_to_active = data.permission_to_active;
     };
 
-    $scope.new_role = {"procedure_id": $scope.current_process_id};
+    $scope.new_role = {"procedure_id": $scope.current_process_id, "offer_appointment": "Do you really want to confirm/decline this job offer?\nOnce you confirm a job, you will not be able to accept other jobs."};
     $scope.edit_role = {};
     $scope.update_role = {};
     $scope.combineUserName = function(user){
@@ -57,7 +57,8 @@ rsasApp.controller('Roles',
           $scope.RoleTable.tbl.show.splice(0 , 0, data.role);
           $scope.RoleTable.tbl.pTotal += 1;
           $("#addRole").modal("hide");
-          $scope.new_role = {"procedure_id": $scope.current_process_id};
+          $scope.new_role = {"procedure_id": $scope.current_process_id, "offer_appointment": "Do you really want to confirm/decline this job offer?\nOnce you confirm a job, you will not be able to accept other jobs."};
+          console.log($scope.new_role);
         }
         else{
           $rootScope.rsasAlert({type: 'danger', msg: data.msg});

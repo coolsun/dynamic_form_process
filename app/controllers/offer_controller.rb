@@ -311,7 +311,7 @@ class OfferController < ApplicationController
       end
       offers << {
         "position_id" => application.position_id,
-        "position_offer_appointment" => application.position.offer_appointment,
+        "position_offer_appointment" => application.position.role.offer_appointment,
         "offered" => application.offered,
         "offer_accept" => application.offer_accept,
         "position_name" => application.position.name,

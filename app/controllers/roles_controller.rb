@@ -81,6 +81,6 @@ class RolesController < ApplicationController
       @role = Role.find_by_id(params[:id])
     end
     def role_params
-      params.require(:role).permit(:procedure_id, :name, :tag, :description)
+      params.require(:role).permit(:procedure_id, :name, :tag, :description, :offer_appointment)
     end
 end
