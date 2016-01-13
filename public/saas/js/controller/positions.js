@@ -71,6 +71,7 @@ rsasApp.controller('Positions',
       waitingIcon.open();
       $scope.new_position.auto_matching = true;
       $scope.new_position.one_year_up = false;
+      $scope.new_position.offer_appointment = "Do you really want to confirm/decline this job offer?\nOnce you confirm a job, you will not be able to accept other jobs.";
       positionFactory.getSelectLists($rootScope.current_year.id, $rootScope.current_process.id)
       .success(function (data) {
         if(data.success){

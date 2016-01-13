@@ -367,6 +367,7 @@ rsasApp.controller('UserOffers',function($scope, $rootScope, $sce, waitingIcon, 
     if($rootScope.isRunNowProcess){
       waitingIcon.open();
       $scope.offers = [];
+      $scope.bSelectOffer = false;
       offerFactory.userOfferList($rootScope.current_year.id, $rootScope.current_process.id, $rootScope.applicant_sub_step.identify_name)
       .success(function(data){
         $scope.offers = data.offer;
@@ -387,14 +388,23 @@ rsasApp.controller('UserOffers',function($scope, $rootScope, $sce, waitingIcon, 
 
   $scope.check_again = function(offer, result){
     $scope.current_applicant = offer;
-    //if (!offer.last_click) {
-    //  offer.offer_msg = '<span style="color: red;">Do you really want to confirm/decline this job offer? Once you confirm a job, you will not be able to accept other jobs.</span>';
-    //}
-    //else {
-      $scope.submitResult(result);
-    //}
-    //offer.last_click = true;
+    $scope.bSelectOffer = true;
+    $scope.bSelectAccept = result;
+    $scope.bSelectDecline = !result;
   };
+
+  $scope.submitOffer = function(offer, result){
+    $scope.current_applicant = offer;
+    $scope.submitResult(result);
+  };
+
+  $scope.cancelSelectOffer = function(){
+    $scope.current_applicant = null;
+    $scope.bSelectOffer = false;
+    $scope.bSelectAccept = false;
+    $scope.bSelectDecline = false;
+  };
+
 
   $scope.submitResult = function(result){
     waitingIcon.open();
@@ -423,6 +433,9 @@ rsasApp.controller('UserOffers',function($scope, $rootScope, $sce, waitingIcon, 
       else{
         $rootScope.rsasAlert({type: 'danger', msg: data.msg});
       };
+      $scope.bSelectOffer = false;
+      $scope.bSelectAccept = false;
+      $scope.bSelectDecline = false;
       waitingIcon.close();
     })
     .error(function (data) {

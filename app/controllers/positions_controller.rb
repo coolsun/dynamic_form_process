@@ -121,6 +121,6 @@ class PositionsController < ApplicationController
       @position = Position.find_by_id(params[:id])
     end
     def position_params
-      params.require(:position).permit(:role_id, :procedure_id, :location_id, :vacancy, :tag, :auto_matching, :one_year_up, :description)
+      params.require(:position).permit(:role_id, :procedure_id, :location_id, :vacancy, :tag, :auto_matching, :one_year_up, :description, :offer_appointment)
     end
 end

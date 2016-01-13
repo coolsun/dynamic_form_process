@@ -1,5 +1,5 @@
 <div ng-controller="UserOffers">
-  <table class="table">
+  <table class="table" ng-show="!bSelectOffer">
     <thead>
       <tr>
         <th style="width: 20%;">Position</th>
@@ -13,13 +13,39 @@
         <td ng-bind-html="to_html((!selected || offer.offer_accept) ? offer.offer_msg : '')"></td>
         <td>
           <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && offer.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && offer.offered == 'post_offered')) && !selected">
-            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="check_again(offer, true)">{{offer.last_click ? 'Really ' : ''}}Accept</button>
-            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="check_again(offer, false)">{{offer.last_click ? 'Really ' : ''}}Decline</button>
+            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="check_again(offer, true)">Accept</button>
+            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="check_again(offer, false)">Decline</button>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <table class="table" ng-show="bSelectOffer">
+    <thead>
+      <tr>
+        <th style="width: 20%;">Position</th>
+        <th style="width: 40%;">Terms of Appointment</th>
+        <th>Acceptance of Appointment Terms</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{current_applicant.position_name}}</td>
+        <td ng-bind-html="to_html(current_applicant.position_offer_appointment)"></td>
+        <td>
+          <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && current_applicant.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && current_applicant.offered == 'post_offered')) && !selected">
+            <button ng-show="bSelectAccept" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="submitOffer(current_applicant, true)">Accept</button>
+            <button ng-show="bSelectDecline" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitOffer(current_applicant, false)">Decline</button>
+            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-default" ng-click="cancelSelectOffer();">Back</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+
 
   <!-- Dialogs -->
   <div class="modal fade" id="success_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
