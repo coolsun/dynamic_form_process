@@ -181,6 +181,12 @@ class RecommendationRecordsController < ApplicationController
                                             :procedure_step_id => get_step_application_id,
                                             :identify_name => "recommendation")
                                           .pluck(:t_end).first
+
+logger.info "======================================="
+logger.info get_sub_step_recommendation_endtime
+logger.info get_sub_step_recommendation_endtime.in_time_zone("Pacific Time (US & Canada)")
+logger.info "======================================="
+
     get_role_names = User.find_by_id(recommendation_record.user_id).get_user_all_role_names(recommendation_record.procedure_id)
     get_position_names = User.find_by_id(recommendation_record.user_id).get_user_all_position_names(recommendation_record.procedure_id)
 
@@ -204,7 +210,7 @@ class RecommendationRecordsController < ApplicationController
     new_content = new_content.gsub('[[NextYear]]', current_year.next_year.to_s)
 
     new_content = new_content.gsub('[[HiringManagerName]]', procedure_mgr_names.join(", ").strip)
-    new_content = new_content.gsub('[[RecommendationEndDate]]', get_sub_step_recommendation_endtime.to_s)
+    new_content = new_content.gsub('[[RecommendationEndDate]]', get_sub_step_recommendation_endtime.in_time_zone("Pacific Time (US & Canada)").to_s)
     new_content = new_content.gsub('[[RecommendationFormURL]]', '<a href="' + recommendation_form_url + '">Go to recommend</a><br /><b style="color: red;">Kindly note that if your email address is with "@stanford.</b><b style="color: red;">edu", you need to log in Webauth first and then hit "go to recommend" link to fill in the form. Thank you.</b>')
     new_content = new_content.gsub('[[RecommendationRequestDate]]', recommendation_record.created_at.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M PST"))
 
