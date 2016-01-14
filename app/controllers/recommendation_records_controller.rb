@@ -181,12 +181,6 @@ class RecommendationRecordsController < ApplicationController
                                             :procedure_step_id => get_step_application_id,
                                             :identify_name => "recommendation")
                                           .pluck(:t_end).first
-
-logger.info "======================================="
-logger.info get_sub_step_recommendation_endtime
-logger.info get_sub_step_recommendation_endtime.in_time_zone("Pacific Time (US & Canada)")
-logger.info "======================================="
-
     get_role_names = User.find_by_id(recommendation_record.user_id).get_user_all_role_names(recommendation_record.procedure_id)
     get_position_names = User.find_by_id(recommendation_record.user_id).get_user_all_position_names(recommendation_record.procedure_id)
 
