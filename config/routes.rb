@@ -214,6 +214,7 @@ Rails.application.routes.draw do
   resources :recommendation_records do
     collection do
       post :send_reminder_email
+      post :update_recommendor_data
     end
   end
 

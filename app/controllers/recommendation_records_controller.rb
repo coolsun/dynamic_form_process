@@ -4,7 +4,6 @@ class RecommendationRecordsController < ApplicationController
     procedure_id = params[:current_process_id]
     permission_to_show, permission_to_active, permission_message = check_user_permission("Applicant Recommendation")
 
-
     records = RecommendationRecord.where(
       :user_id => params[:user_id],
       :procedure_id => procedure_id
@@ -119,6 +118,18 @@ class RecommendationRecordsController < ApplicationController
 
     records = RecommendationRecord.where(:user_id => params[:user_id], :procedure_id => params[:procedure_id]).order(:created_at => :asc)
     render :json => {:success => true, :msg => "Request delivery success", :records => records}
+  end
+
+  def update_recommendor_data
+    update_record = RecommendationRecord.find_by_id(params[:id])
+    update_record.update_attributes(
+      :name => params[:name],
+      :title => params[:title],
+      :relationship => params[:relationship],
+      :email => params[:email],
+      :recommendation_form_id => params[:recommendation_form_id]
+    )
+    render :json => {:success => true, :msg => "Update recommendor data success", :record => update_record}
   end
 
   def update

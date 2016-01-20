@@ -53,14 +53,16 @@ recommendationModule.controller('UserRecommendations',
 function($scope, $location, $sce, $rootScope, waitingIcon, recommendationRecordFactory){
   $scope.current_process_id = $rootScope.current_process.id;
   $scope.request = {};
+  $scope.edit_recommendation = {};
   $scope.duplicate_email_record = null;
+  $scope.duplicate_email_record_edit = null;
   $scope.record_detail == null;
 
   $scope.showRecordList = function(){
     // Find the email send record and the process description
     recommendationRecordFactory.showRecordList($rootScope.current_user.id, $rootScope.current_year.id, $rootScope.current_process.id)
     .success(function(data){
-      console.log(data);
+      //console.log(data);
       $scope.recommendation_emails = data.records;
       $scope.permission_to_active = data.permission_to_active;
       $scope.recommendation = findObj(data.settings, "procedure_id", $scope.current_process_id);
@@ -77,15 +79,6 @@ function($scope, $location, $sce, $rootScope, waitingIcon, recommendationRecordF
       console.log("Fail to get record and setting.");
     });
   };
-
-  // Combine the first_name, middle_name, last_name to applicant_name
-  var applicant_name = $rootScope.current_user.first_name;
-  if($rootScope.current_user.middle_name){
-    applicant_name += " " + $rootScope.current_user.middle_name;
-  }
-  if($rootScope.current_user.last_name){
-    applicant_name += " " + $rootScope.current_user.last_name;
-  }
 
   $scope.sendRecommendation = function() {
     waitingIcon.open();
@@ -121,6 +114,33 @@ function($scope, $location, $sce, $rootScope, waitingIcon, recommendationRecordF
     }
   };
 
+  $scope.recommendation_into_edit = function(recommendation_record) {
+    $scope.edit_recommendation.id = recommendation_record.id;
+    $scope.edit_recommendation.name = recommendation_record.name;
+    $scope.edit_recommendation.title = recommendation_record.title;
+    $scope.edit_recommendation.relationship = recommendation_record.relationship;
+    $scope.edit_recommendation.email = recommendation_record.email;
+    $scope.edit_recommendation.recommendation_form_id = recommendation_record.recommendation_form_id;
+    $scope.check_duplicate_email_edit();
+  };
+
+  $scope.update_recommendation = function(recommendation_record) {
+    recommendationRecordFactory.updateRecommendation(recommendation_record, $rootScope.current_year.id, $rootScope.current_process.id)
+    .success(function(data) {
+      if(data.success) {
+        updated_record = findObj($scope.recommendation_emails, "id", data.record.id);
+        $scope.recommendation_emails[$scope.recommendation_emails.indexOf(updated_record)] = data.record;
+        $rootScope.rsasAlert({type: 'success', msg: data.msg});
+      }
+      else {
+        $rootScope.rsasAlert({type: 'danger', msg: "There is some problem to update recommendor data."});
+      }
+    })
+    .error(function(data) {
+      $rootScope.rsasAlert({type: 'danger', msg: "There is some problem to update recommendor data."});
+    });
+  };
+
   $scope.disable_record = function(recommendation_record) {
     console.log(recommendation_record);
     recommendationRecordFactory.disableRecord(recommendation_record.id, $rootScope.current_year.id, $rootScope.current_process.id)
@@ -136,9 +156,11 @@ function($scope, $location, $sce, $rootScope, waitingIcon, recommendationRecordF
   $scope.check_duplicate_email = function() {
     $scope.duplicate_email_record = findObjs($scope.recommendation_emails, "email", $scope.request.email);
     $scope.duplicate_form_record = findObj($scope.duplicate_email_record, "recommendation_form_id", $scope.request.recommendation_form_id);
-    if($scope.duplicate_form_record != null) {
-      console.log($scope.duplicate_form_record);
-    }
+  };
+
+  $scope.check_duplicate_email_edit = function() {
+    $scope.duplicate_email_record_edit = findObjs($scope.recommendation_emails, "email", $scope.edit_recommendation.email);
+    $scope.duplicate_form_record_edit = findObj($scope.duplicate_email_record_edit, "recommendation_form_id", $scope.edit_recommendation.recommendation_form_id);
   };
 
   $scope.get_recommendation_form_name = function(form_id) {

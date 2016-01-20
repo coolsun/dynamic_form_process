@@ -31,9 +31,20 @@
           <th class="text-center">{{recommendation_email.submit_date_string}}</th>
           <th class="text-center">{{get_recommendation_form_name(recommendation_email.recommendation_form_id)}}</th>
           <th class="text-center">
-            <button class="btn-xs btn btn-info" ng-disabled="!permission_to_active" ng-click="resendRecommandation(recommendation_email.id)">Reminder</button><br />
-            <button class="btn-xs btn {{recommendation_email.disabled ? '' : 'btn-info'}}" ng-click="disable_record(recommendation_email)">
+            <button class="btn btn-info btn-xs btn-block" ng-disabled="!permission_to_active" ng-click="resendRecommandation(recommendation_email.id)">
+              Reminder
+            </button>
+            <button class="btn {{recommendation_email.disabled ? '' : 'btn-info'}} btn-xs btn-block" ng-click="disable_record(recommendation_email)">
               {{recommendation_email.disabled ? 'Enable' : 'Disable'}}
+            </button>
+            <button
+              class="btn btn-info btn-xs btn-block"
+              ng-disabled="!permission_to_active"
+              ng-click="recommendation_into_edit(recommendation_email)"
+              data-toggle="modal"
+              data-target="#edit_recommendation"
+            >
+              Edit
             </button>
           </th>
         </tr>
@@ -77,9 +88,17 @@
         <label class="col-lg-3 control-label">* Select Form:</label>
         <div class="col-lg-9">
           <div ng-repeat="form in recommendation_forms">
-            <input ng-model="request.recommendation_form_id" ng-value="form.id" ng-change="check_duplicate_email()" type="radio" ng-required="true" name="whatever" /> {{form.form_name}}
+            <input
+              ng-model="request.recommendation_form_id"
+              ng-value="form.id"
+              ng-change="check_duplicate_email()"
+              type="radio"
+              ng-required="true"
+              name="whatever"
+            />
+            {{form.form_name}}
           </div>
-          <h6 ng-show="duplicate_form_record != null" style="color: red">You have sent this recommender the same form already.</h6>
+          <h6 ng-show="duplicate_form_record != null && duplicate_form_record.id != request.id" style="color: red">You have sent this recommender the same form already.</h6>
         </div>
       </div>
     </div>
@@ -87,4 +106,71 @@
       <button class="btn btn-info" ng-disabled="!permission_to_active || duplicate_form_record != null" type="submit">Send Request</button>
     </div>
   </form>
+  <div class="modal fade" id="edit_recommendation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Edit Recommendation</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label class="col-lg-3 control-label">* Name:</label>
+              <div class="col-lg-9">
+                <input ng-model="edit_recommendation.name" class="form-control" type="text" ng-required="true" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-3 control-label">* Title:</label>
+              <div class="col-lg-9">
+                <input ng-model="edit_recommendation.title" class="form-control" type="text" ng-required="true" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-3 control-label">* Relationship:</label>
+              <div class="col-lg-9">
+                <input ng-model="edit_recommendation.relationship" class="form-control" type="text" ng-required="true" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-3 control-label">* Email Address:</label>
+              <div class="col-lg-9">
+                <input ng-model="edit_recommendation.email" class="form-control" type="text" ng-required="true" ng-change="check_duplicate_email_edit()" />
+              </div>
+            </div>
+            <div class="form-group" ng-show="recommendation_forms.length > 0">
+              <label class="col-lg-3 control-label">* Select Form:</label>
+              <div class="col-lg-9">
+                <div ng-repeat="form in recommendation_forms">
+                  <input
+                    ng-model="edit_recommendation.recommendation_form_id"
+                    ng-value="form.id"
+                    ng-change="check_duplicate_email_edit()"
+                    type="radio"
+                    ng-required="true"
+                    name="whatever"
+                  />
+                  {{form.form_name}}
+                </div>
+                <h6 ng-show="duplicate_form_record_edit != null && duplicate_form_record_edit.id != edit_recommendation.id" style="color: red">You have sent this recommender the same form already.</h6>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button
+            type="button"
+            class="btn btn-info"
+            data-dismiss="modal"
+            ng-click="update_recommendation(edit_recommendation)"
+            ng-disabled="duplicate_form_record_edit != null && duplicate_form_record_edit.id != edit_recommendation.id"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

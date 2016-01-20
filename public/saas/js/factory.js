@@ -918,6 +918,22 @@ factoryModule.factory('recommendationRecordFactory', function($http){
         }
       });
     };
+    recommendationRecordFactory.updateRecommendation = function(record, current_year_id, current_process_id) {
+      return $http({
+        url : urlBase + "/update_recommendor_data",
+        method : "POST",
+        data : {
+          "id" : record.id,
+          "name" : record.name,
+          "title" : record.title,
+          "relationship" : record.relationship,
+          "email" : record.email,
+          "recommendation_form_id" : record.recommendation_form_id,
+          "current_year_id": current_year_id,
+          "current_process_id": current_process_id
+        }
+      });
+    };
     recommendationRecordFactory.disableRecord = function(record_id, current_year_id, current_process_id){
       return $http({
         url : urlBase + "/" + record_id,
