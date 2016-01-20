@@ -11,16 +11,20 @@ class BatchJobsController < ApplicationController
 
   def translate_form_schema
     begin
-      FormInput.delete_all
+      #FormInput.delete_all
       current_year_id = Year.find_by_is_current_year(true).id
-      procedure_ids = Procedure.where(:year_id => current_year_id).pluck(:id)
+      #procedure_ids = Procedure.where(:year_id => current_year_id).pluck(:id)
+      procedure_ids = Procedure.all.pluck(:id)
       UserForm.where(:procedure_id => procedure_ids).where.not(:submit_date => nil).each do |user_form|
+        FormInput.where(:form_id => user_form.id).destroy_all
         Form.translate_form_schema(user_form.schema, user_form.id, "USER_FORMS", user_form.form.form_type, user_form.form_name)
       end
       RecommendationForm.includes(:recommendation_record).where(:recommendation_records => {:procedure_id => procedure_ids}).each do |recommendation_form|
+        FormInput.where(:form_id => recommendation_form.id).destroy_all
         Form.translate_form_schema(recommendation_form.schema, recommendation_form.id, "RECOMMENDATION_FORMS", recommendation_form.recommendation_record.form_template.form_type, recommendation_form.form_name)
       end
       InterviewEvaluateForm.includes(:interview_evaluate => :form).where(:forms => {:procedure_id => procedure_ids}).each do |interview_evaluate_form|
+        FormInput.where(:form_id => interview_evaluate_form.id).destroy_all
         Form.translate_form_schema(interview_evaluate_form.schema, interview_evaluate_form.id, "INTERVIEW_EVALUATE_FORMS", interview_evaluate_form.interview_evaluate.form.form_type, interview_evaluate_form.interview_evaluate.form.form_name)
       end
       render :json => {:success => true, :msg => "The form schema has been exported successfully."}
