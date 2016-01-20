@@ -451,7 +451,7 @@ class ApplicantsController < ApplicationController
   def applicant_list
     procedure_id = rsas_table_params.i_procedure_id
 
-    permissions = check_user_permissions(["lower_mgr_see_time", "see_applicant_filled_forms", "applicant_disqualify", "force_submit"])
+    permissions = check_user_permissions(["lower_mgr_see_time", "see_applicant_filled_forms", "applicant_disqualify", "force_submit", "see_includes_disqualified"])
     all_limits = LimitPeriod.where(:procedure_id => procedure_id).order(:t_start => :asc)
                             .as_json(:methods => [:t_start_string, :roles, :locations, :t_end_string],
                                      :only => [:id, :t_start_string, :roles, :locations, :t_end_string])

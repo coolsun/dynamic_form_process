@@ -430,6 +430,11 @@ class ApplicationController < ActionController::Base
       action_group = ['Admin', 'HM']
       permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
+    when "see_includes_disqualified"
+      visibility_group = ['Admin', 'HM', 'RM Staff', 'RM Student', 'RD']
+      action_group = []
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
+
     when "time_to_see_applicant_forms"
       visibility_group = ['Admin', 'HM']
       action_group = ['Admin', 'HM']

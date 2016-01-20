@@ -84,6 +84,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       $scope.see_applicant_forms = data.permissions.see_applicant_filled_forms;
       $scope.disqualify_permission_show = data.permissions.applicant_disqualify.show;
       $scope.force_submit_permission_show = data.permissions.force_submit.show;
+      $scope.see_includes_disqualified = data.permissions.see_includes_disqualified.show;
       $scope.is_staff = ($rootScope.current_user.status == 'Staff');
       $scope.forms_and_questions = data.forms_and_questions;
       $scope.all_applicants_emails = data.all_applicants_emails;
