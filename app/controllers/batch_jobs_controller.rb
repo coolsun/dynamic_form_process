@@ -13,8 +13,8 @@ class BatchJobsController < ApplicationController
     begin
       #FormInput.delete_all
       current_year_id = Year.find_by_is_current_year(true).id
-      #procedure_ids = Procedure.where(:year_id => current_year_id).pluck(:id)
-      procedure_ids = Procedure.all.pluck(:id)
+      procedure_ids = Procedure.where(:year_id => current_year_id).pluck(:id)
+      #procedure_ids = Procedure.all.pluck(:id)
       UserForm.where(:procedure_id => procedure_ids).where.not(:submit_date => nil).each do |user_form|
         FormInput.where(:form_id => user_form.id).destroy_all
         Form.translate_form_schema(user_form.schema, user_form.id, "USER_FORMS", user_form.form.form_type, user_form.form_name)
