@@ -85,7 +85,7 @@ rsasFilters
     var hour = s_time_24hr.split(" ")[1].split(":")[0];
     var minute = s_time_24hr.split(" ")[1].split(":")[1];
     var am_pm = " AM";
-    if(parseInt(hour) > 12){
+    if(parseInt(hour) >= 12){
       hour = parseInt(hour) - 12;
       am_pm = " PM";
     }
@@ -99,7 +99,7 @@ rsasFilters
     var hour = s_time_24hr.split(":")[0];
     var minute = s_time_24hr.split(":")[1];
     var am_pm = " AM";
-    if(parseInt(hour) > 12){
+    if(parseInt(hour) >= 12){
       hour = parseInt(hour) - 12;
       am_pm = " PM";
     }
