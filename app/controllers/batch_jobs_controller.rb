@@ -53,6 +53,75 @@ class BatchJobsController < ApplicationController
     logger.info "============================================================="
     logger.info "** Clear the data no needs.                                **"
     logger.info "============================================================="
+    ssl_client_cert = nil;
+    ssl_client_key = nil;
+
+    f_crt = File.read(SSL_CRT_PATH)
+    f_key = File.read(SSL_KEY_PATH)
+
+    if Rails.env == "production"
+      api_url = "https://saisapp96.stanford.edu/saservice2/v2.0/cases/queries.json?c=zdGrfTPcKJCHdWDreXKq663zkYGaMo&requesterId=bsun2"
+
+      ssl_client_cert = OpenSSL::X509::Certificate.new(f_crt);
+      ssl_client_key = OpenSSL::PKey::RSA.new(f_key, SSL_KEY_PASSWORD);
+    else
+      api_url = "https://saisappdev96.stanford.edu/saservice2/v2.0/cases/queries.json?c=22222-111&requesterId=bsun2"
+
+      ssl_client_cert = OpenSSL::X509::Certificate.new(f_crt);
+      ssl_client_key = OpenSSL::PKey::RSA.new(f_key);
+    end
+
+    client = RestClient::Resource.new(
+      api_url,
+      :ssl_client_cert  =>  ssl_client_cert,
+      :ssl_client_key   =>  ssl_client_key,
+      :verify_ssl       =>  false
+    );
+
+    user_suid_string = User.where.not(:suid => nil).pluck(:suid).join(",") # Take all the user suid into a string split by ','
+    all_the_cases = JSON.parse(client.post({:studentId => "05970673"})) # API call and get the datas about case
+
+    rd_records_with_user_data = RdRecord.includes(:user).all # Get the user suid in RdRecord table
+    rd_records_with_suid = rd_records_with_user_data.as_json(
+      :include => {
+        :user => {
+          :only => [:suid]
+        }
+      }
+    )
+    rd_records_with_suid.each do |rd_record| # Clear the case was cancled
+      remote_data_exist = all_the_cases.any?{|a| (a["caseId"] == rd_record["case_id"]) && (a["involvedStudentId"].include? rd_record["user"]["suid"])}
+      #RdRecord.find_by_id(rd_record["id"]).destroy if !remote_data_exist
+    end
+
+    all_the_cases.each do |single_case|
+      case_involved_student_ids = single_case["involvedStudentId"].split("; ") # Involve student(s) in each case product an array
+      case_involved_student_ids.each do |involved_student_id| # Involve student(s) in each case check..
+        involve_user = User.where(:suid => involved_student_id).last # Find the user with the suid the same as involved student id
+        if involve_user # If the user existed..
+          existed_record = RdRecord.where(:user_id => involve_user.id, :case_id => single_case["caseId"]).first # Find the rd record about user with this case
+          existed_record.update_attributes(
+            :primary_student_id => single_case["primaryStudentId"],
+            :primary_student_name => single_case["primaryStudentName"],
+            :involved_student_id => single_case["involvedStudentId"],
+            :involved_student_name => single_case["involvedStudentName"],
+            :case_type => single_case["caseType"],
+            :created_date => single_case["createdDate"]
+          ) if existed_record # If the record in db, update
+          RdRecord.create(
+            :user_id => involve_user.id,
+            :case_id => single_case["caseId"],
+            :primary_student_id => single_case["primaryStudentId"],
+            :primary_student_name => single_case["primaryStudentName"],
+            :involved_student_id => single_case["involvedStudentId"],
+            :involved_student_name => single_case["involvedStudentName"],
+            :case_type => single_case["caseType"],
+            :created_date => single_case["createdDate"]
+          ) if !existed_record # If the record not in db, create
+        end # If the user not existed, nothing to do
+      end
+    end
+
     render :text => "success"
   end
 
@@ -83,7 +152,7 @@ class BatchJobsController < ApplicationController
     );
 
     user_suid_string = User.where.not(:suid => nil).pluck(:suid).join(",") # Take all the user suid into a string split by ','
-    all_the_cases = JSON.parse(client.post({:studentId => "05970673"})) # API call and get the datas about case
+    all_the_cases = JSON.parse(client.post({:studentId => user_suid_string})) # API call and get the datas about case
 
     rd_records_with_user_data = RdRecord.includes(:user).all # Get the user suid in RdRecord table
     rd_records_with_suid = rd_records_with_user_data.as_json(
