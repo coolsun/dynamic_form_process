@@ -83,17 +83,7 @@ class BatchJobsController < ApplicationController
     );
 
     user_suid_string = User.where.not(:suid => nil).pluck(:suid).join(",") # Take all the user suid into a string split by ','
-if user_suid_string.include? "05970673"
-  logger.info "======================================="
-  logger.info user_suid_string
-  logger.info "======================================="
-end
-    all_the_cases = JSON.parse(client.post({:studentId => user_suid_string})) # API call and get the datas about case
-if all_the_cases.select {|test| test["involvedStudentId"].include? "05970673"}
-  logger.info "======================================="
-  logger.info all_the_cases.select {|test| test["involvedStudentId"].include? "05970673"}
-  logger.info "======================================="
-end
+    all_the_cases = JSON.parse(client.post({:studentId => "05970673"})) # API call and get the datas about case
 
     rd_records_with_user_data = RdRecord.includes(:user).all # Get the user suid in RdRecord table
     rd_records_with_suid = rd_records_with_user_data.as_json(
