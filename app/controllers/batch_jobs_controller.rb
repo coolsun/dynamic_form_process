@@ -83,7 +83,17 @@ class BatchJobsController < ApplicationController
     );
 
     user_suid_string = User.where.not(:suid => nil).pluck(:suid).join(",") # Take all the user suid into a string split by ','
+if user_suid_string.include? "05970673"
+  logger.info "======================================="
+  logger.info user_suid_string
+  logger.info "======================================="
+end
     all_the_cases = JSON.parse(client.post({:studentId => user_suid_string})) # API call and get the datas about case
+if all_the_cases.select {|test| test["involvedStudentId"].include? "05970673"}
+  logger.info "======================================="
+  logger.info all_the_cases.select {|test| test["involvedStudentId"].include? "05970673"}
+  logger.info "======================================="
+end
 
     rd_records_with_user_data = RdRecord.includes(:user).all # Get the user suid in RdRecord table
     rd_records_with_suid = rd_records_with_user_data.as_json(
@@ -101,17 +111,7 @@ class BatchJobsController < ApplicationController
     all_the_cases.each do |single_case|
       case_involved_student_ids = single_case["involvedStudentId"].split("; ") # Involve student(s) in each case product an array
       case_involved_student_ids.each do |involved_student_id| # Involve student(s) in each case check..
-if involved_student_id == "05970673"
-  logger.info "======================================="
-  logger.info involved_student_id
-  logger.info "======================================="
-end
         involve_user = User.where(:suid => involved_student_id).last # Find the user with the suid the same as involved student id
-if involved_student_id == "05970673"
-  logger.info "======================================="
-  logger.info involve_user
-  logger.info "======================================="
-end
         if involve_user # If the user existed..
           existed_record = RdRecord.where(:user_id => involve_user.id, :case_id => single_case["caseId"]).first # Find the rd record about user with this case
           existed_record.update_attributes(
@@ -133,11 +133,6 @@ end
             :created_date => single_case["createdDate"]
           ) if !existed_record # If the record not in db, create
         end # If the user not existed, nothing to do
-if involved_student_id == "05970673"
-  logger.info "======================================="
-  logger.info "Done"
-  logger.info "======================================="
-end
       end
     end
 
