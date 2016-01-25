@@ -13,8 +13,8 @@ class BatchJobsController < ApplicationController
     begin
       #FormInput.delete_all
       current_year_id = Year.find_by_is_current_year(true).id
-      #procedure_ids = Procedure.where(:year_id => current_year_id).pluck(:id)
-      procedure_ids = Procedure.all.pluck(:id)
+      procedure_ids = Procedure.where(:year_id => params[:year_id].present? ? params[:year_id] : current_year_id).pluck(:id)
+      #procedure_ids = Procedure.all.pluck(:id)
       UserForm.where(:procedure_id => procedure_ids).where.not(:submit_date => nil).each do |user_form|
         FormInput.where(:form_id => user_form.id).destroy_all
         Form.translate_form_schema(user_form.schema, user_form.id, "USER_FORMS", user_form.form.form_type, user_form.form_name)
@@ -101,7 +101,7 @@ class BatchJobsController < ApplicationController
     all_the_cases.each do |single_case|
       case_involved_student_ids = single_case["involvedStudentId"].split("; ") # Involve student(s) in each case product an array
       case_involved_student_ids.each do |involved_student_id| # Involve student(s) in each case check..
-        involve_user = User.where(:suid => involved_student_id).first # Find the user with the suid the same as involved student id
+        involve_user = User.where(:suid => involved_student_id).last # Find the user with the suid the same as involved student id
         if involve_user # If the user existed..
           existed_record = RdRecord.where(:user_id => involve_user.id, :case_id => single_case["caseId"]).first # Find the rd record about user with this case
           existed_record.update_attributes(
