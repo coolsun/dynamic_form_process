@@ -106,20 +106,46 @@ adminEditApplicantModule.controller('AdminApplicationForm',
           data.form.schema = eval(data.form.schema);
           waitingIcon.close();
           $scope.form = data.form;
+          $scope.admin_could_update = data.admin_could_update;
         }
         else{
           $rootScope.rsasAlert({type: 'danger', msg: "Failed to get the user form."});
+          $scope.admin_could_update = false;
         };
       })
       .error(function (data){
         $rootScope.rsasAlert({type: 'danger', msg: "Failed to get the user form."});
         waitingIcon.close();
         $scope.form = {"schema": []};
+        $scope.admin_could_update = false;
+      });
+    };
+
+    $scope.adminUpdateUserForm = function(user_form) {
+      waitingIcon.open();
+      user_form_only_schema = {
+        "id" : user_form.id,
+        "schema" : JSON.stringify(user_form.schema)
+      };
+      userFormFactory.adminUpdateUserForm(user_form_only_schema, $rootScope.current_year.id, $rootScope.current_process.id, true)
+      .success(function(data){
+        if(data.success) {
+          $rootScope.rsasAlert({type: 'success', msg: data.msg});
+        }
+        else {
+          $rootScope.rsasAlert({type: 'danger', msg: data.msg});
+        }
+        waitingIcon.close();
+      })
+      .error(function(data){
+        $rootScope.rsasAlert({type: 'danger', msg: "There was a problem to update the form."});
+        waitingIcon.close();
       });
     };
 
     $scope.showTranscript = function(user_id){
       $scope.grades = [];
+      $scope.admin_could_update = false;
       waitingIcon.open();
       transcriptFactory.showApplicantTranscripts(user_id, $rootScope.current_year.id, $rootScope.current_process.id)
       .success(function (data){
@@ -139,6 +165,7 @@ adminEditApplicantModule.controller('AdminApplicationForm',
 
     $scope.showRecommendationForm = function(recommendation_form_id){
       $scope.form = {"schema": []};
+      $scope.admin_could_update = false;
       waitingIcon.open();
       recommendationFormFactory.showRecommendationForm(recommendation_form_id)
       .success(function (data){

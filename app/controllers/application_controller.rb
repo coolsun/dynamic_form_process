@@ -568,6 +568,11 @@ class ApplicationController < ActionController::Base
       action_group = ['Admin', 'HM']
       permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
+    when "Admin Update User Form"
+      visibility_group = ['Admin', 'HM']
+      action_group = ['Admin', 'HM']
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
+
     when "force_submit"
       visibility_group = ['Admin', 'HM', 'RM Staff', 'RM Student']
       action_group = ['Admin', 'HM', 'RM Staff', 'RM Student']

@@ -1459,11 +1459,12 @@ factoryModule.factory('userFormFactory', function($http){
         }
       });
     };
-    userFormFactory.updateUserFilledForms = function(user_form, current_year_id, current_process_id, is_submit){
+    userFormFactory.adminUpdateUserForm = function(user_form, current_year_id, current_process_id, is_submit){
       return $http({
-        url: urlBase + "/" + user_form.id,
-        method: "PUT",
+        url: urlBase + "/admin_update_user_form",
+        method: "POST",
         data: {
+          "id": user_form.id,
           "user_form": user_form,
           "is_submit": is_submit,
           "current_year_id": current_year_id,

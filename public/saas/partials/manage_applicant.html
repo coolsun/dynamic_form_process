@@ -12,10 +12,14 @@
                 </button>
                 <h4 class="modal-title" id="myModalLabel">{{form.form_name}}</h4>
               </div>
-              <div class="modal-body">
+              <div class="modal-body" ng-if="!admin_could_update">
                 <rsas-form-show></rsas-form-show>
               </div>
+              <div class="modal-body" ng-if="admin_could_update">
+                <rsas-form></rsas-form>
+              </div>
               <div class="modal-footer">
+                <a class="btn btn-info" ng-if="admin_could_update" ng-click="adminUpdateUserForm(form)" data-dismiss="modal">Update</a>
                 <a class="btn btn-default" data-dismiss="modal">Close</a>
               </div>
             </div>

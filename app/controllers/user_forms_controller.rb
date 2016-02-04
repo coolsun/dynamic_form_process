@@ -1,11 +1,12 @@
 class UserFormsController < ApplicationController
 
   def show
+    permission_to_show, permission_to_active, permission_message = check_user_permission("Admin Update User Form")
     @user_form = UserForm.find_by_id(params[:id])
     @user_form.schema = Form.data_binding(@user_form.schema, @user_form.user_id, session[:user_id])
 
     if @user_form
-      render :json => {:success => true, :form => @user_form.as_json(:include => [:upload_files])}
+      render :json => {:success => true, :form => @user_form.as_json(:include => [:upload_files]), :admin_could_update => permission_to_active}
     else
       render :json => {:success => false}
     end
@@ -26,6 +27,31 @@ class UserFormsController < ApplicationController
         if @user_form.form.form_type == "System"
           @user_form.schema = Form.data_binding(@user_form.schema, user.id, session[:user_id])
           @user_form.save!
+        end
+      else
+        msg = "There was a problem to update the form."
+      end
+    else
+      msg = permission_message
+    end
+    render :json => {:success => is_success, :msg => msg}
+  end
+
+  def admin_update_user_form
+    permission_to_show, permission_to_active, permission_message = check_user_permission("Admin Update User Form")
+    is_success = false
+    msg = ""
+    if permission_to_active
+      user_form = UserForm.find_by_id(params[:id])
+      user = User.find_by_id(user_form.user_id)
+      logger.info "== params[:is_submit] #{params[:is_submit]} =="
+      user_form.submit_date = Time.now if params[:is_submit]
+      if user_form.update(user_form_update_params)
+        is_success = true
+        msg = "The form has been updated successfully."
+        if user_form.form.form_type == "System"
+          user_form.schema = Form.data_binding(user_form.schema, user.id, session[:user_id])
+          user_form.save!
         end
       else
         msg = "There was a problem to update the form."

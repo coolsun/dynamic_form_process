@@ -127,6 +127,7 @@ Rails.application.routes.draw do
   resources :user_forms do
     collection do
       post :show_user_filled_forms
+      post :admin_update_user_form
       post :delete_user_forms
       post  :applicant_forms
       get  :form_translations
