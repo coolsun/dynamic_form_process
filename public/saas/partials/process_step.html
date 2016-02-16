@@ -7,7 +7,7 @@
       <ul class="list-group" ng-model="process_steps" ui-sortable="sortableOptions" style="min-width: 268px;border-right: 5px solid #8c1515;">
         <li class="list-group-item list-group-item-success rsas-process-step-title-li-div" ng-show="process_step.permission.show" ng-class="{'disabled':!process_step.enabled}" ng-repeat="process_step in process_steps">
           <span class="process-step-text rsas-process-step-title-font">
-            <a style="cursor: pointer;" ng-click="process_step.id != $root.current_step.id ? changeStep(process_step) : console.log(' ')">{{process_step.name}}</a>
+            <a style="cursor: pointer;" ng-click="process_step.id != $root.current_step.id ? changeStep(process_step) : console.log(' ')">{{getProcessStepName(process_step)}}</a>
           </span>
           <span class="pull-right" style="width: 49px;">
             <span class="pull-right">

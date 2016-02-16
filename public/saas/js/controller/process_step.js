@@ -459,6 +459,15 @@ rsasApp.controller('ProcessSteps',function($scope, $sce, $location, $rootScope, 
     $location.path(url);
   };
 
+  $scope.getProcessStepName = function(process_step){
+    if(process_step.name == "Offer"){
+      return "Match Placement";
+    }
+    else{
+      return process_step.name;
+    }
+  };
+
   $scope.setCurrentStepAndSubStep = function(){
     var urlStep = $routeParams.urlStep;
     var urlSubStep = $routeParams.urlSubStep;

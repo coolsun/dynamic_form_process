@@ -19,10 +19,10 @@ class Application < ActiveRecord::Base
       elsif self.offer_accept == "rejected"
         return "Regret.  You have reject the offer."
       else
-        return "Congratulations!  You have got the offer!! Do you want to accept?"
+        return "Congratulations! You have been matched!! Please confirm your acceptance."
       end
     else
-      return "Please wait for the offer."
+      return "Please wait for the match."
     end
   end
 

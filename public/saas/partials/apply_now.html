@@ -11,7 +11,7 @@
           >
             <div ng-click="changeStep(process_step)">
               <span class="process-step-text rsas-process-step-title-font">
-                <a>{{process_step.name}}</a>
+                <a>{{getProcessStepName(process_step)}}</a>
               </span>
               <span ng-click="process_step.time_to_show = !process_step.time_to_show;$event.stopPropagation()" class="pt glyphicon glyphicon-time"></span>
               <span ng-class="{'arrow':isCurrentStepClassShow('id', process_step.id)}" style="right: -1px"></span>

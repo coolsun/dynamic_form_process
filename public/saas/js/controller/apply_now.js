@@ -243,6 +243,15 @@ applyNowModule.controller('ApplyNow',
       }
     };
 
+    $scope.getProcessStepName = function(process_step){
+      if(process_step.name == "Offer"){
+        return "Match Placement";
+      }
+      else{
+        return process_step.name;
+      }
+    };
+
     $scope.changeSubStep = function(step, sub_step){
       if($rootScope.applicant_sub_step != sub_step) {
         if($scope.checkSubmittid(step, sub_step)){
