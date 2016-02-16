@@ -1459,6 +1459,18 @@ factoryModule.factory('userFormFactory', function($http){
         }
       });
     };
+    userFormFactory.updateUserFilledForms = function(user_form, current_year_id, current_process_id, is_submit){
+      return $http({
+        url: urlBase + "/" + user_form.id,
+        method: "PUT",
+        data: {
+          "user_form": user_form,
+          "is_submit": is_submit,
+          "current_year_id": current_year_id,
+          "current_process_id": current_process_id
+        }
+      });
+    };
     userFormFactory.adminUpdateUserForm = function(user_form, current_year_id, current_process_id, is_submit){
       return $http({
         url: urlBase + "/admin_update_user_form",
