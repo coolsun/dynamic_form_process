@@ -1432,7 +1432,7 @@ class InterviewsController < ApplicationController
       response = interviews_as_json;
     end
 
-    logger.info("response: #{response}");
+    #logger.info("response: #{response}");
 
     render :json => response;
 
