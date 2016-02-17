@@ -336,7 +336,7 @@ class OfferController < ApplicationController
 
     offered_applicant = Application.where(:position_id => params[:position_id], :user_id => current_user.id, :offered => (params[:sub_step] == "offer" ? "offered" : "post_offered")).first
     if offered_applicant.present?
-      offered_applicant.update(:offer_accept => (params[:attitude] ? "accepted" : "rejected"))
+      offered_applicant.update(:offer_accept => (params[:attitude] ? "accepted" : "rejected"), :offer_accept_at => Time.now)
       identify_name = params[:attitude] ? "offer_status_accept" : "offer_status_decline"
       success_html = SystemMessage.where(:procedure_id => params[:current_process_id], :identify_name => identify_name).first.message
       offered_applicant =  {
@@ -394,7 +394,7 @@ class OfferController < ApplicationController
           subject = EmailTemplate.replace_keyworld(params[:email_info][:subject], procedure, positions, step, user, admin_emails)
           content = EmailTemplate.replace_keyworld(params[:email_info][:content], procedure, positions, step, user, admin_emails)
           StanfordMailer.send_shipped(user.email, subject, content, bcc, cc)
-          application.update(:offered => (params[:sub_step] == "offer" ? "offered" : "post_offered"))
+          application.update(:offered => (params[:sub_step] == "offer" ? "offered" : "post_offered"), :offered_at => Time.now)
         end
       end
       render :json => {:success => true, :msg => "Email delivery successfully."}

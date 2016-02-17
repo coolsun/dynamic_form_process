@@ -120,4 +120,18 @@ class ReportsController < ApplicationController
     end
   end
 
+  def terms_offered_accepted_report
+    permission_to_show, permission_to_active, permission_message = check_user_permission("Menu Report")
+    render :json => {:success => false, :msg => permission_message} and return if !permission_to_show
+
+    @procedure = Procedure.find_by_id(params[:procedure_id])
+    @applicants = Applicant.joins(:user).where(:procedure_id => @procedure.id).order("users.suid asc")
+
+    respond_to do |format|
+      format.xlsx {
+        response.headers['Content-Disposition'] = "attachment; filename='terms_offered_accepted_report_#{Time.now.pst_s('%Y_%m_%d_%H_%M')}.xlsx'"
+      }
+    end
+  end
+
 end

@@ -404,6 +404,7 @@ Rails.application.routes.draw do
       post :ranking_report
       post :offered_unoffered_report
       post :manager_ranking_report
+      post :terms_offered_accepted_report
     end
   end
 

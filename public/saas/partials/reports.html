@@ -80,6 +80,19 @@
           <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
         </form>
       </div>
+      <div class="report_container">
+        <form method="post" action="/reports/terms_offered_accepted_report.xlsx">
+          <span class="report_title">Terms Offered Accepted Report:</span>
+          <span class="report_options">
+            Process:&nbsp;
+            <select ng-model="terms_offered_accepted_report.procedure_id" ng-options="procedure.id as procedure.name for procedure in procedures" ng-required="true">
+              <option value="">-- choose process --</option>
+            </select>
+            <input type="hidden" name="procedure_id" value="{{terms_offered_accepted_report.procedure_id}}">
+          </span>
+          <span class="report_submit"><input class="btn btn-primary" type="submit" value="Download"/></span>
+        </form>
+      </div>
     </div>
   </div>
 </div>

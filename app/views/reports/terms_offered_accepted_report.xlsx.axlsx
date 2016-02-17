@@ -1,0 +1,39 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row [
+    "SUID",
+    "Last Name (PeopleSoft)",
+    "First Name (PeopleSoft)",
+    "Preferred Name (SAAS)",
+    "SUNet ID",
+    "Offered Position",
+    "Offer Status",
+    "Offer Action Timestamp",
+    "Terms of Appointment Status",
+    "Terms of Appontment Action Timestamp"
+  ], style: title_style
+
+  @applicants.each do |applicant|
+    user = applicant.user
+    offer_application = applicant.offer_application
+    offered_position = applicant.offered_position
+    sheet.add_row [
+      user.suid,
+      user.last_name,
+      user.first_name,
+      applicant.preferred_name,
+      user.sunet_id,
+      offered_position.try(:name),
+      offered_position ? "accepted" : nil,
+      (offer_application && offer_application.offered_at) ? offer_application.offered_at.pst_s("%m/%d/%Y %I:%M %p") : nil,
+      applicant.offer_status,
+      (offer_application && offer_application.offer_accept_at) ? offer_application.offer_accept_at.pst_s("%m/%d/%Y %I:%M %p") : nil
+    ]
+  end
+end
+
