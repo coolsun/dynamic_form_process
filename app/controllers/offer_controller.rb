@@ -261,7 +261,7 @@ class OfferController < ApplicationController
           content = EmailTemplate.replace_keyworld(params[:email_info][:content], procedure, positions, step, user, admin_emails)
           StanfordMailer.send_shipped(recipient, subject, content, bcc, cc)
         end
-        applicants.update_all(:offered => (params[:sub_step] == "offer" ? "offered" : "post_offered")) if applicants
+        applicants.update_all(:offered => (params[:sub_step] == "offer" ? "offered" : "post_offered"), :offered_at => Time.now) if applicants
       end
       applicants = []
 
