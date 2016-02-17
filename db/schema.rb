@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151202053442) do
+ActiveRecord::Schema.define(version: 20160217061638) do
 
   create_table "applicant_tags", force: true do |t|
     t.integer  "applicant_id", precision: 38, scale: 0
@@ -51,6 +51,8 @@ ActiveRecord::Schema.define(version: 20151202053442) do
     t.boolean  "disable_mgr_rank",   precision: 1,  scale: 0
     t.datetime "mgr_ranked_at"
     t.integer  "mgr_ranked_user_id", precision: 38, scale: 0
+    t.datetime "offered_at"
+    t.datetime "offer_accept_at"
   end
 
   add_index "applications", ["position_id", "user_id"], name: "i_app_pos_id_use_id", unique: true
@@ -437,12 +439,13 @@ ActiveRecord::Schema.define(version: 20151202053442) do
   add_index "role_mgrs", ["user_id", "role_id"], name: "i_role_mgrs_user_id_role_id", unique: true
 
   create_table "roles", force: true do |t|
-    t.integer  "procedure_id", precision: 38, scale: 0
+    t.integer  "procedure_id",      precision: 38, scale: 0
     t.string   "name"
     t.string   "tag"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "offer_appointment",                          default: "Do you really want to confirm/decline this job offer?\nOnce you confirm a job, you will not be able to accept other jobs."
   end
 
   add_index "roles", ["procedure_id"], name: "index_roles_on_procedure_id"
