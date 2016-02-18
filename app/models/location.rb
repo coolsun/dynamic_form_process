@@ -52,7 +52,7 @@ class Location < ActiveRecord::Base
       location_hash[:tags] = [
         {:name => "Men", :count => 0},
         {:name => "Women", :count => 0},
-        {:name => "Transgender", :count => 0}
+        {:name => "Either gender", :count => 0}
       ]
 
       application_user_ids = []
