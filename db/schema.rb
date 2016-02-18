@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160217061638) do
+ActiveRecord::Schema.define(version: 20160218071909) do
 
   create_table "applicant_tags", force: true do |t|
     t.integer  "applicant_id", precision: 38, scale: 0
@@ -230,12 +230,13 @@ ActiveRecord::Schema.define(version: 20160217061638) do
   add_index "location_mgrs", ["user_id", "location_id"], name: "i_loc_mgr_use_id_loc_id", unique: true
 
   create_table "locations", force: true do |t|
-    t.integer  "procedure_id", precision: 38, scale: 0
+    t.integer  "procedure_id",     precision: 38, scale: 0
     t.string   "name"
     t.string   "tag"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "match_conditions"
   end
 
   add_index "locations", ["procedure_id"], name: "i_locations_procedure_id"
