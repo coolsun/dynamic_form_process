@@ -1364,12 +1364,13 @@ factoryModule.factory('rankingFactory', function($http){
       });
     };
 
-    rankingFactory.updateMgrRank = function(mgr_rank_list, current_year_id, current_process_id){
+    rankingFactory.updateMgrRank = function(mgr_rank_list, match_conditions, current_year_id, current_process_id){
       return $http({
         url: urlBase + '/update_mgr_rank',
         method: "POST",
         data: {
           "mgr_rank_list": mgr_rank_list,
+          "match_conditions": match_conditions,
           "current_year_id": current_year_id,
           "current_process_id": current_process_id
         }

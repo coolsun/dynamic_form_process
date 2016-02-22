@@ -7,7 +7,18 @@
         <option value="">-- choose location --</option>
       </select>
     </span>
+
+    <table>
+      <tr ng-repeat="match_condition in match_conditions">
+        <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.tag" ng-options="tag for tag in match_tags"></select></td>
+        <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.symbol" ng-options="symbol.key as symbol.value for symbol in mathematical"></select></td>
+        <td style="padding: 3px"><input type="number" ng-required="true" min="0" ng-model="match_condition.value" /></td>
+        <td style="padding: 3px"><span ng-click="match_conditions.splice($index, 1)" class="glyphicon glyphicon-remove" style="cursor: pointer;"></span></td>
+      </tr>
+    </table>
+    <div ng-click="match_conditions.push({})" class="glyphicon glyphicon-plus" style="cursor: pointer;"></div>
   </div>
+
   <form ng-submit="updateMgrRank()">
     <tabset ng-show="selected_location">
       <tab heading="{{selected_location.name}}">

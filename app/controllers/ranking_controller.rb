@@ -56,7 +56,15 @@ class RankingController < ApplicationController
 
     selected_location_id = params[:selected_location_id] if location_ids.include?(params[:selected_location_id].to_i)
 
-    mgr_rank_list = selected_location_id ? Application.get_mgr_rank_list(procedure_id, selected_location_id) : []
+
+    match_conditions = []
+    mgr_rank_list = []
+    selected_location = selected_location_id ? Location.find_by_id(selected_location_id) : nil
+
+    if selected_location
+      match_conditions = selected_location.match_conditions if selected_location.match_conditions
+      mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id)
+    end
 
     rank_position_manager_view = SystemMessage.where(:procedure_id => procedure_id, :identify_name => "rank_position_manager_view").first.message
 
@@ -65,7 +73,8 @@ class RankingController < ApplicationController
       :mgr_rank_list => mgr_rank_list,
       :permission_to_active => permission_to_active,
       :location_list => location_list,
-      :rank_position_manager_view => rank_position_manager_view
+      :rank_position_manager_view => rank_position_manager_view,
+      :match_conditions => match_conditions
     }
   end
 
@@ -77,6 +86,7 @@ class RankingController < ApplicationController
     rank_applications = params[:mgr_rank_list][:rank_applications]
     disable_rank_applications = params[:mgr_rank_list][:disable_rank_applications]
     selected_location_id = params[:mgr_rank_list][:location_id]
+    match_conditions = params[:match_conditions] || []
 
     rank_applications.each_with_index do |application, index|
       Application.update(application[:id], {:mgr_rank => index + 1, :disable_mgr_rank => nil, :mgr_ranked_at => Time.now, :mgr_ranked_user_id => current_user.id})
@@ -86,7 +96,17 @@ class RankingController < ApplicationController
       Application.update(application[:id], {:mgr_rank => 999999, :disable_mgr_rank => true, :mgr_ranked_at => Time.now, :mgr_ranked_user_id => current_user.id})
     end if disable_rank_applications.present?
 
-    mgr_rank_list = selected_location_id ? Application.get_mgr_rank_list(procedure_id, selected_location_id) : []
+
+
+    selected_location = selected_location_id ? Location.find_by_id(selected_location_id) : nil
+
+    mgr_rank_list = []
+    if selected_location
+      logger.info "match_conditions = #{match_conditions.as_json}"
+      selected_location.match_conditions = match_conditions
+      selected_location.save
+      mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id)
+    end
 
     render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list}
   end

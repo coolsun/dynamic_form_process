@@ -13,20 +13,23 @@ wb.add_worksheet do |sheet|
     "Student ID",
     "Student Full Name",
     "Student Position",
-    "Who Ranked"
+    "Who Ranked",
+    "Match conditions"
   ], style: title_style
 
   @applications.each do |application|
     user = application.user
+    location = application.position.location
     sheet.add_row [
-      application.position.location.name,
+      location.name,
       application.mgr_ranked_at.present?,
       application.mgr_ranked_at.try(:pst_s),
       application.mgr_rank,
       user.suid,
       user.name,
       application.position.name,
-      application.ranked_mgr.name
+      application.ranked_mgr.name,
+      location.match_conditions_string
     ], :types => [nil, nil, nil, nil, :string] #for SUID not to number
   end
 end

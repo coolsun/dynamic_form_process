@@ -8,6 +8,8 @@ class Location < ActiveRecord::Base
   has_many :users, :through => :location_mgrs
   has_many :round_tags;
 
+  serialize :match_conditions
+
   validates_uniqueness_of :procedure_id, :scope => :name, :message=> "This location already exists."
 
   after_save :update_position_name
@@ -110,5 +112,16 @@ class Location < ActiveRecord::Base
     end
 =end
     return location_list
+  end
+
+  def match_conditions_string
+    symbol_switch = {
+      "=" => "=",
+      ">" => ">",
+      "<" => "<",
+      ">=" => "≥",
+      "<=" => "≤"
+    }
+    return self.match_conditions.map{|o| "#{o['tag']} #{symbol_switch[o['symbol']]} #{o['value']}"}.join(", ") if self.match_conditions.present?
   end
 end

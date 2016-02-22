@@ -88,6 +88,15 @@ rsasApp.controller('UserRanking', function($scope, $rootScope, $filter, $sce, ra
 rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankingFactory, waitingIcon){
   var orderBy = $filter('orderBy');
   $scope.set_rank_by_input = false;
+  $scope.match_conditions = [];
+  $scope.match_tags = ["Men", "Women", "Either gender"];
+  $scope.mathematical = [
+    {key:"=",value: "="},
+    {key:">",value: ">"},
+    {key:"<",value: "<"},
+    {key:">=",value: "≥"},
+    {key:"<=",value: "≤"}
+  ];
 
   $scope.getMgrRankList = function(){
     waitingIcon.open();
@@ -101,6 +110,7 @@ rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankin
         $scope.mgr_rank_list = data.mgr_rank_list;
         $scope.permission_to_active = data.permission_to_active;
         $scope.rank_position_manager_view = $sce.trustAsHtml(data.rank_position_manager_view);
+        $scope.match_conditions = data.match_conditions;
         $scope.resetNewRank();
       }
       else{
@@ -116,7 +126,7 @@ rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankin
 
   $scope.updateMgrRank = function(){
     waitingIcon.open();
-    rankingFactory.updateMgrRank($scope.mgr_rank_list, $rootScope.current_year.id, $rootScope.current_process.id)
+    rankingFactory.updateMgrRank($scope.mgr_rank_list, $scope.match_conditions, $rootScope.current_year.id, $rootScope.current_process.id)
     .success(function(data){
       if(data.success){
         $scope.mgr_rank_list = data.mgr_rank_list;
