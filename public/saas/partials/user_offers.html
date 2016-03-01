@@ -13,8 +13,8 @@
         <td ng-bind-html="to_html((!selected || offer.offer_accept) ? offer.offer_msg : '')"></td>
         <td>
           <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && offer.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && offer.offered == 'post_offered')) && !selected">
-            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="check_again(offer, true)">Accept</button>
-            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="check_again(offer, false)">Decline</button>
+            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="check_again(offer, true)">Confirm</button>
+            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="check_again(offer, false)">Withdraw</button>
           </div>
         </td>
       </tr>
@@ -35,8 +35,8 @@
         <td ng-bind-html="to_html(current_applicant.position_offer_appointment)"></td>
         <td>
           <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && current_applicant.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && current_applicant.offered == 'post_offered')) && !selected">
-            <button ng-show="bSelectAccept" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="submitOffer(current_applicant, true)">Accept</button>
-            <button ng-show="bSelectDecline" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitOffer(current_applicant, false)">Decline</button>
+            <button ng-show="bSelectAccept" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="submitOffer(current_applicant, true)">Confirm</button>
+            <button ng-show="bSelectDecline" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitOffer(current_applicant, false)">Withdraw</button>
             <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-default" ng-click="cancelSelectOffer();">Back</button>
           </div>
         </td>

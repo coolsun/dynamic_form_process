@@ -19,10 +19,10 @@ class Application < ActiveRecord::Base
       elsif self.offer_accept == "rejected"
         return "Regret.  You have reject the offer."
       else
-        return "Congratulations! You have been matched!! Please confirm your acceptance."
+        return "Congratulations! You have been appointed to this position.  Please confirm your placement to continue to the next step in which you will need to read and accept the terms of your appointment. Note: If you withdraw yourself from this placement, you will not be guaranteed housing in that house, nor will you be eligible for any other residential student staff appointment on campus."
       end
     else
-      return "Please wait for the match."
+      return "You were not appointed to this position."
     end
   end
 
