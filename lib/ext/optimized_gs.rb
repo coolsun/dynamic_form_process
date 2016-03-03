@@ -111,8 +111,8 @@ class OptimizedGs < ActiveRecord::Base
   #  ]
   #}
 
-  $debug_info = true
-  $debug_true = true
+  $debug_info = false
+  $debug_true = false
   $debug = false
   $debug_debug = false
   $max_constrained_combinations_per_house = 100
