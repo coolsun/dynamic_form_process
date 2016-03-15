@@ -122,10 +122,10 @@ rsasApp.controller('UserFillInForm',
         var rq_empty = false;
         angular.forEach( $scope.forms[i].schema, function(item) {
           if (item.rq) {
-
+/*
 console.log("==================================");
 console.log(item);
-/*console.log((["name", "date"].indexOf(item.type) != -1 && (!item.option[0].value || !item.option[1].value || !item.option[2].value)));
+console.log((["name", "date"].indexOf(item.type) != -1 && (!item.option[0].value || !item.option[1].value || !item.option[2].value)));
 console.log((["text", "textarea"].indexOf(item.type) != -1 && !item.value));
 console.log((["select", "radio"].indexOf(item.type) != -1 && !item.select));
 console.log((["multi-select", "checkbox"].indexOf(item.type) != -1 && item.select.length == 0));
@@ -140,7 +140,7 @@ console.log("==================================");
             else if ((["select", "radio"].indexOf(item.type) != -1 && !item.select)) {
               rq_empty = true;
             }
-            else if ((["multi-select", "checkbox"].indexOf(item.type) != -1 && item.select.length == 0)) {
+            else if ((["multi-select", "checkbox"].indexOf(item.type) != -1 && item.select == undefined)) {
               rq_empty = true;
             }
           }
