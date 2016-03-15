@@ -26,7 +26,7 @@ class UserFormsController < ApplicationController
         msg = "The form has been updated successfully."
         if @user_form.form.form_type == "System"
           @user_form.schema = Form.data_binding(@user_form.schema, user.id, session[:user_id])
-          @user_form.save!
+	        @user_form.save!
         end
       else
         msg = "There was a problem to update the form."
