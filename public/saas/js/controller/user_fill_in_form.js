@@ -134,7 +134,7 @@ console.log("==================================");
             if ((["name", "date"].indexOf(item.type) != -1 && (!item.option[0].value || !item.option[1].value || !item.option[2].value))) {
               rq_empty = true;
             }
-            else if ((["text", "textarea"].indexOf(item.type) != -1 && !item.value)) {
+            else if ((["text", "textarea"].indexOf(item.type) != -1 && (!item.value || !item.value.replace(/\s/g, '').length))) {
               rq_empty = true;
             }
             else if ((["select", "radio"].indexOf(item.type) != -1 && !item.select)) {
