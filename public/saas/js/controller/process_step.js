@@ -461,7 +461,7 @@ rsasApp.controller('ProcessSteps',function($scope, $sce, $location, $rootScope, 
 
   $scope.getProcessStepName = function(process_step){
     if(process_step.name == "Offer"){
-      return "Match Placement";
+      return "Placement";
     }
     else{
       return process_step.name;
