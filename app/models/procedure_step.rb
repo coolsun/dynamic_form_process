@@ -5,11 +5,13 @@ class ProcedureStep < ActiveRecord::Base
   has_many :procedure_sub_steps, :dependent => :destroy;
 
   def t_start_string
-    self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
+    #self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
+    (self.t_start - 8.hours).strftime("%m/%d/%Y %H:%M")
   end
 
   def t_end_string
-    self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
+    #self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
+    (self.t_end - 8.hours).strftime("%m/%d/%Y %H:%M")
   end
 
   def t_start_string_for_landing
@@ -21,11 +23,12 @@ class ProcedureStep < ActiveRecord::Base
   end
 
   def t_start_string=(string)
-    self.t_start = Time.strptime(string + " PST", "%m/%d/%Y %H:%M %Z")
+    self.t_start = DateTime.strptime(string + " PST", "%m/%d/%Y %H:%M %z")
   end
 
   def t_end_string=(string)
-    self.t_end = Time.strptime(string + " PST", "%m/%d/%Y %H:%M %Z")
+    logger.info(string);
+    self.t_end = DateTime.strptime(string + " PST", "%m/%d/%Y %H:%M %z")
   end
 
   def self.get_procedure_steps_list(where_condition)
