@@ -264,12 +264,14 @@
                     <th>Not Select</th>
                     <th>Accepted</th>
                     <th>Declined</th>
+                    <th ng-show="$root.current_user.is_admin">Unoffer</th>
                   </tr>
                   <tr ng-repeat="application in change_offered_response.applications">
                     <td>{{application.applicant_name}}</td>
                     <td><input type="radio" ng-model="application.offer_accept" value="not_select"></td>
                     <td><input type="radio" ng-model="application.offer_accept" value="accepted"></td>
                     <td><input type="radio" ng-model="application.offer_accept" value="rejected"></td>
+                    <td ng-show="$root.current_user.is_admin"><input type="radio" ng-model="application.offer_accept" value="Unoffer"></td>
                   </tr>
                 </table>
               </div>

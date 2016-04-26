@@ -422,7 +422,15 @@ class OfferController < ApplicationController
     params[:applications].each do |input_application|
       application = Application.find_by_id(input_application[:application_id])
       offer_accept = input_application[:offer_accept] == "not_select" ? nil : input_application[:offer_accept]
-      application.update(:offer_accept => offer_accept)
+      if ('Unoffer' == offer_accept && current_user && current_user.is_admin)
+        application.offered = 'wait'
+        application.offer_accept = nil
+        application.offered_at = nil
+        application.offer_accept_at = nil
+        application.save;
+      else
+        application.update(:offer_accept => offer_accept)
+      end
     end if params[:applications]
 
     render :json => {:success => true, :msg => "The response has been updated successfully."}
