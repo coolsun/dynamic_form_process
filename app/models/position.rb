@@ -135,8 +135,10 @@ class Position < ActiveRecord::Base
   def self.get_select_position_list(procedure_id, user_id, sub_step)
     select_position_list = []
     if sub_step == 'offer'
-      positions = Position.includes(:applications, :role, :location).where("positions.vacancy > 0").where(:procedure_id => procedure_id)
-    elsif sub_step == 'post_offer_invitations'
+      positions = Position.includes(:applications, :role, :location)
+                    .where("positions.vacancy > 0")
+                    .where(:procedure_id => procedure_id)
+    elsif ([sub_step] & ['post_offer_invitations', 'select_position']).count > 0
 
       offered_applications = Application.includes(:position).where(:offered => "offered", :positions => {:procedure_id => procedure_id})
       position_ids = offered_applications.pluck(:position_id)
@@ -149,7 +151,7 @@ class Position < ActiveRecord::Base
       logger.info "== full_positions #{full_positions} =="
       positions = Position.includes(:applications, :role, :location)
                     .where("positions.vacancy > 0")
-                    .where("positions.vacancy - (SELECT COUNT(id) FROM applications WHERE offered = 'offered' AND offer_accept = 'accepted') > 0")
+                    .where("positions.vacancy - (SELECT COUNT(id) FROM applications WHERE offered = 'offered' AND offer_accept = 'accepted' AND position_id = positions.id) > 0")
                     .where(:procedure_id => procedure_id)
                     .where.not(:id => full_positions)
         
