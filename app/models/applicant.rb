@@ -119,17 +119,22 @@ class Applicant < ActiveRecord::Base
       filter_match_question_applicants = ""
     end
 
-    all_applicants = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
+    all_applicants_emails = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
                     .where(:procedure_id => procedure_id)
                     .where(filter_where_condition)
                     .where.not(filter_where_not_condition)
                     .where(filter_match_question_applicants)
                     .where(search_condition)
-                    .order(order_condition)
+                    .order("name")
+                    .distinct.pluck("REPLACE(TRIM(users.first_name)||' '||TRIM(users.middle_name)||' '||TRIM(users.last_name), '  ', ' ') as name, users.email").map{|applicant| {:name => applicant[0], :email => applicant[1]}};
 
-    all_applicants_emails = []
-    all_applicants_emails = all_applicants.map{|applicant| {:name => applicant.user.name, :email => applicant.user.email}}
-    applicants = all_applicants.page(table_params.i_page).per(table_params.i_page_count)
+    applicants = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
+                    .where(:procedure_id => procedure_id)
+                    .where(filter_where_condition)
+                    .where.not(filter_where_not_condition)
+                    .where(filter_match_question_applicants)
+                    .where(search_condition)
+                    .order(order_condition).page(table_params.i_page).per(table_params.i_page_count)
 
     position_match_forms = Procedure.all_position_match_forms(procedure_id)
 
@@ -143,7 +148,7 @@ class Applicant < ActiveRecord::Base
 
     # applicants each do
     applicants_length = 0
-    applicants.each do |applicant|
+    applicants.each do |applicant|     
       applicant_offerd_position = applicant.user.applications.select{|application| application.offered == "offered" || application.offered == "post_offered" }
       if applicant_offerd_position.present?
         applicant_offerd = "Y"
@@ -233,7 +238,6 @@ class Applicant < ActiveRecord::Base
 
       applicants_length += 1
     end
-
     return applicant_list, applicants.total_count, forms_and_questions_hash, all_applicants_emails
   end
 
