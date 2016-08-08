@@ -59,6 +59,8 @@ class ApplicationController < ActionController::Base
     permissions[:show_menu_process] = permission_to_show
     permission_to_show, permission_to_active, permission_message = check_user_permission("Menu Report")
     permissions[:show_menu_report] = permission_to_show
+    permission_to_show, permission_to_active, permission_message = check_user_permission("Menu Student Flashcards")
+    permissions[:show_menu_report] = permission_to_show
     permission_to_show, permission_to_active, permission_message = check_user_permission("Menu Year")
     permissions[:show_menu_year] = permission_to_show
     permission_to_show, permission_to_active, permission_message = check_user_permission("import_mgrs_by_xlsx")
@@ -213,6 +215,11 @@ class ApplicationController < ActionController::Base
     when "Menu Year"
       visibility_group = ['Admin']
       action_group = ['Admin']
+      permission_to_show, permission_to_active = check_with_groups_but_not_by_procedure(visibility_group, action_group)
+
+    when "Menu Student Flashcards"
+      visibility_group = ['Admin', 'HM', 'LM Staff', 'LM Student']
+      action_group = ['Admin', 'HM', 'LM Staff', 'LM Student']
       permission_to_show, permission_to_active = check_with_groups_but_not_by_procedure(visibility_group, action_group)
 
     #-------------------------------------------------------------------------------------process-------------------------------------------------------------------------------------
@@ -692,7 +699,12 @@ class ApplicationController < ActionController::Base
       permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group);
 
     #########################################################################################################################
+    when "import_student_flashcards_by_xlsx"
+      visibility_group = ['Admin']
+      action_group = ['Admin']
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
+    #########################################################################################################################
     end
 
     if options[:return_permission]

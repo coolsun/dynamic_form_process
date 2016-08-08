@@ -408,6 +408,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :student_flashcards do
+    collection do
+      post :import_student_flashcards_by_xlsx
+    end
+  end
+
   resources :limit_periods
 
   resources :saas do

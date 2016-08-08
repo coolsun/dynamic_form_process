@@ -2260,6 +2260,13 @@ factoryModule.factory('reportFactory', function($http){
     return reportFactory;
 });
 
+factoryModule.factory('studentFlashcardsFactory', function($http){
+    var urlBase = JSON_URL + "/student_flashcards";
+    var studentFlashcardsFactory = {};
+
+    return studentFlashcardsFactory;
+});
+
 factoryModule.factory('limitPeriodFactory', function($http){
     var urlBase = JSON_URL + "/limit_periods";
     var limitPeriodFactory = {};

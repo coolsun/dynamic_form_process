@@ -57,6 +57,9 @@ rsasApp.config(['$routeProvider',
       when('/reports', {
         templateUrl: '/saas/partials/reports.html'
       }).
+      when('/student_flashcards', {
+        templateUrl: '/saas/partials/student_flashcards.html'
+      }).
       when('/years', {
         templateUrl: '/saas/partials/years.html'
       }).
