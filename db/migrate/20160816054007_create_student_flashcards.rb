@@ -2,7 +2,7 @@ class CreateStudentFlashcards < ActiveRecord::Migration
   def change
     create_table :student_flashcards do |t|
       t.integer :year_id
-      t.string :suid, :unique => true
+      t.string :suid
       t.string :sunet_id
       t.string :mf
       t.string :last_name
