@@ -1,15 +1,28 @@
-rsasApp.controller('StudentFlashcards',function($scope, $rootScope, waitingIcon, FileUploader) {
-  $scope.current_year_id = $rootScope.current_year.id;
-  $scope.current_process_id = $rootScope.current_process.id;
-
+rsasApp.controller('StudentFlashcards',function($scope, $rootScope, waitingIcon, FileUploader, studentFlashcardsFactory) {
+  $scope.is_admin = false;
   $scope.errors = [];
+
+  $scope.check_permission = function()
+  {
+    waitingIcon.open();
+    studentFlashcardsFactory.check_permission()
+    .success(function (data) {
+      $scope.is_admin = data.is_admin;
+      waitingIcon.close();
+    })
+    .error(function (data) {
+      $rootScope.rsasAlert({type: 'danger', msg: "check permission failure"});
+      waitingIcon.close();
+    });
+  };
+
   $scope.importStudentFlashcardsXlsx = function(url) {
-    var uploader = $scope.uploader =
-      new FileUploader({
-        url: url,
-        autoUpload: true,
-        removeAfterUpload: true,
-      });
+    $scope.uploader = new FileUploader({
+                        url: url,
+                        autoUpload: true,
+                        removeAfterUpload: true,
+                      });
+    var uploader = $scope.uploader;
 
     $scope.uploader.formData.push({
       "current_year_id": $rootScope.current_year.id,
@@ -51,6 +64,14 @@ rsasApp.controller('StudentFlashcards',function($scope, $rootScope, waitingIcon,
       if($scope.errors.length == 0){
         $rootScope.rsasAlert({type: 'success', msg: 'The xlsx file have been imported successfully.'});
       }
+      else
+      {
+        for (var i = 0; i <  $scope.errors.length; i++)
+        {
+          $rootScope.rsasAlert({type: 'danger', msg: $scope.errors[i]});
+        }
+
+      }
       waitingIcon.close();
     };
     uploader.onErrorItem = function(fileItem, response, status, headers) {
@@ -66,11 +87,15 @@ rsasApp.controller('StudentFlashcards',function($scope, $rootScope, waitingIcon,
     };
     uploader.onCompleteAll = function() {
       console.info('onCompleteAll');
+      document.getElementById('fileUploadStudentRoster').value = null;
     };
 
     return uploader;
   };
 
 
+  angular.element(document).ready(function () {
+    $scope.check_permission();
+  });
 
 });

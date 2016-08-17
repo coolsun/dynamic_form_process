@@ -1,7 +1,7 @@
 <div class="container" ng-controller="StudentFlashcards">
   <h3>Student Flashcards</h3>
 
-  <form>
+  <form ng-show="is_admin">
     <label for="fileUploadStudentRoster">Upload Student Roster: </label>
 
     <input type="file" id="fileUploadStudentRoster" nv-file-select uploader="importStudentFlashcardsXlsx('/student_flashcards/import_student_flashcards_by_xlsx')" accept=".xlsx" />
@@ -11,8 +11,12 @@
     <p>*One file can be uploaded for each year.</p>
     <p>*The old data will be overwritten after a new file is uploaded.</p>
   </form>
-  Student Flashcards: [Download]
 
+
+  <form method="post" action="/student_flashcards/download_student_flashcards_pdf" style="display: inline">
+    <input type="hidden" name="current_year_id" value="{{$root.current_year.id}}">
+    Student Flashcards: <input class="btn btn-info" type="submit" value="Download">
+  </form>
 
 
 </div>
