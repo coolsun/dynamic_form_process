@@ -1,7 +1,7 @@
 class CreateStudentFlashcards < ActiveRecord::Migration
   def change
     create_table :student_flashcards do |t|
-      t.string :year
+      t.integer :year_id
       t.string :suid, :unique => true
       t.string :sunet_id
       t.string :mf
@@ -17,7 +17,7 @@ class CreateStudentFlashcards < ActiveRecord::Migration
       t.text :image_base64
       t.timestamps
     end
-
+    add_index :student_flashcards, :year_id
     add_index :student_flashcards, :suid, :unique => true
   end
 end
