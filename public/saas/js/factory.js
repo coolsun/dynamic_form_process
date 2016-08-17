@@ -2264,6 +2264,13 @@ factoryModule.factory('studentFlashcardsFactory', function($http){
     var urlBase = JSON_URL + "/student_flashcards";
     var studentFlashcardsFactory = {};
 
+    studentFlashcardsFactory.check_permission = function() {
+      return $http({
+        url : urlBase + '/check_permission',
+        method : "GET"
+      });
+    };
+
     return studentFlashcardsFactory;
 });
 

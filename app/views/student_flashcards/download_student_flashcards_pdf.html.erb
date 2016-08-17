@@ -1,0 +1,26 @@
+<% col = 2; %>
+
+<table>
+	<tbody>
+		<% @student_flashcards.each_with_index do |flashcard, index| %>
+
+			<% if (0 == (index % col)) %>
+				<tr>
+			<% end %>
+
+				<td style="border: 35px solid transparent;">
+					<div style="text-align: center">
+						<img style="max-width: 250px; max-height: 250px;" src="data:image/png;base64,<%= flashcard.image_base64 %>" />
+					</div>
+					<div style="text-align: center">
+						<%= [flashcard.first_name, flashcard.last_name].join(', ') %>
+					</div>
+				</td>
+
+			<% if ((col - 1)  == (index % col)) %>
+				</tr>
+			<% end %>
+		<% end %>
+	</tbody>
+</table>
+
