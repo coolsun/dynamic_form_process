@@ -17,7 +17,7 @@ class CreateStudentFlashcards < ActiveRecord::Migration
       t.text :image_base64
       t.timestamps
     end
-    add_index :student_flashcards, :year_id
-    add_index :student_flashcards, :suid, :unique => true
+
+    add_index :student_flashcards, [:year_id, :suid], :unique => true
   end
 end
