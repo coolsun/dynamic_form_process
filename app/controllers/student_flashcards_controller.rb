@@ -11,6 +11,8 @@ class StudentFlashcardsController < ApplicationController
     permission_to_show, permission_to_active, permission_message = check_user_permission("import_student_flashcards_by_xlsx")
     render :json => {:errors => [permission_message]} and return if !permission_to_active
 
+    StudentFlashcard.destroy_all
+
     year_id = params[:current_year_id]
     name =  'student_flashcards' + Time.now.pst_s('%Y-%m-%d_%H%M_') + params['file'].original_filename
     directory = "public/saas/app/uploads"
