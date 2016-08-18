@@ -20,7 +20,7 @@ rsasApp.controller('StudentFlashcards',function($scope, $rootScope, waitingIcon,
     $scope.uploader = new FileUploader({
                         url: url,
                         autoUpload: true,
-                        //removeAfterUpload: true,
+                        removeAfterUpload: false,
                       });
     var uploader = $scope.uploader;
 
