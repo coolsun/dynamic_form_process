@@ -22,16 +22,16 @@
 				<tr>
 			<% end %>
 
-				<td style="border: solid transparent; border-width: 5px 35px 5px 35px;">
-					<div style="text-align: center">
-						<img style="max-width: 250px; max-height: 250px;" src="data:image/png;base64,<%= flashcard.image_base64 %>" />
+				<td width="400px" height="200px" style="border: solid transparent; border-width: 5px 35px 5px 35px;">
+					<div>
+						<img style="max-width: 125px; max-height: 125px;" src="data:image/png;base64,<%= flashcard.image_base64 %>" />
 					</div>
 					<div>
-						<%= [flashcard.first_name, flashcard.last_name].join(', ') %>
+						<label style="line-height: 5px;"><%= [flashcard.first_name, flashcard.last_name].join(' ') %></label>
 						<br />
-						RoomSpace: <%= flashcard.room_space %>
+						<label style="line-height: 5px;">RoomSpace: <%= flashcard.room_space %></label>
 						<br />
-						<%= "Staff: #{flashcard.staff}" if flashcard.staff.present? %>
+						<label style="line-height: 5px;"><%= flashcard.staff.present? ? "Staff: #{flashcard.staff}" : "&nbsp;".html_safe %></label>
 					</div>
 				</td>
 
