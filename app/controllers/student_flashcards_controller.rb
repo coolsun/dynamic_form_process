@@ -133,7 +133,7 @@ class StudentFlashcardsController < ApplicationController
 
     logger.info(locations);
 
-    @student_flashcards = StudentFlashcard.where(:location => locations).order([:location, :suid]);
+    @student_flashcards = StudentFlashcard.where(:location => locations).order([:location, :last_name]);
 
 
 
