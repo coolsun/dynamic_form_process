@@ -1,6 +1,6 @@
 class StudentFlashcard < ActiveRecord::Base
 
-  def self.get_student_flashcard_data(suid)
+  def self.get_student_flashcard_data(suid, sunet_id)
     json_message = nil;
     if (suid.present?)
 
@@ -12,12 +12,12 @@ class StudentFlashcard < ActiveRecord::Base
       f_key = File.read(SSL_KEY_PATH)
 
       if Rails.env == "production"
-        #api_url = "https://saisapp96.stanford.edu/saservice2/v2.0/students/#{suid}/profile.json?c=zdGrfTPcKJCHdWDreXKq663zkYGaMo&requesterId=#{sunet_id}"
+        #api_url = "https://saisapp96.stanford.edu/saservice2/v3.0/students/#{suid}/profile.json?c=zdGrfTPcKJCHdWDreXKq663zkYGaMo&requesterId=#{sunet_id}"
 
         #ssl_client_cert = OpenSSL::X509::Certificate.new(f_crt);
         #ssl_client_key = OpenSSL::PKey::RSA.new(f_key, SSL_KEY_PASSWORD);
       else
-        api_url = "https://saisappdev96.stanford.edu/saservice2/v3.0/students/#{suid}/profile?c=resjobs-111&requesterId=bsun2"
+        api_url = "https://saisappdev96.stanford.edu/saservice2/v3.0/students/#{suid}/profile?c=resjobs-111&requesterId=#{sunet_id}"
 
         ssl_client_cert = OpenSSL::X509::Certificate.new(f_crt);
         ssl_client_key = OpenSSL::PKey::RSA.new(f_key);
