@@ -46,8 +46,8 @@ class StudentFlashcardsController < ApplicationController
       new_or_u = input_xlsx.cell(row_number, title_to_column_number["New or U"]).to_s.strip;
 
       if (suid.present?)
-        logger.info("get_student_flashcard_data suid: #{suid}");
-        json_message = StudentFlashcard.get_student_flashcard_data(suid);
+        logger.info("@@ get_student_flashcard_data suid: #{suid}");
+        json_message = StudentFlashcard.get_student_flashcard_data(suid, current_user.sunet_id);
         if (json_message.present? &&
             json_message["profile"].present? &&
             json_message["profile"]["demographics"].present? &&
