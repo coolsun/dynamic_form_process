@@ -412,7 +412,7 @@ Rails.application.routes.draw do
     collection do
       post :import_student_flashcards_by_xlsx
       post :download_student_flashcards_pdf
-      #get :download_student_flashcards_pdf
+      get :download_student_flashcards_pdf
       get :check_permission
     end
   end
