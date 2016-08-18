@@ -87,7 +87,7 @@ rsasApp.controller('StudentFlashcards',function($scope, $rootScope, waitingIcon,
     };
     uploader.onCompleteAll = function() {
       console.info('onCompleteAll');
-      document.getElementById('fileUploadStudentRoster').value = null;
+      //document.getElementById('fileUploadStudentRoster').value = null;
     };
 
     return uploader;
