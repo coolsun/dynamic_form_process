@@ -1,25 +1,45 @@
 <% col = 2; %>
-
+<% now_location = '' %>
+<% col_count = 0 %>
 <table>
 	<tbody>
-		<% @student_flashcards.each_with_index do |flashcard, index| %>
+		<% @student_flashcards.each do |flashcard| %>
+			<% if now_location != flashcard.location %>
+				<% if (0 != (col_count % col)) %>
+				  </tr>
+				<% end %>
 
-			<% if (0 == (index % col)) %>
+				<% now_location = flashcard.location %>
+				<% col_count = 0 %>
+				<tr>
+					<td colspan="<%= col %>" style="padding-left: 35px;"><h2>Location: <%= now_location %></h2></td>
+				</tr>
+			<% end %>
+
+
+
+			<% if (0 == (col_count % col)) %>
 				<tr>
 			<% end %>
 
-				<td style="border: 35px solid transparent;">
+				<td style="border: solid transparent; border-width: 5px 35px 5px 35px;">
 					<div style="text-align: center">
 						<img style="max-width: 250px; max-height: 250px;" src="data:image/png;base64,<%= flashcard.image_base64 %>" />
 					</div>
-					<div style="text-align: center">
+					<div>
 						<%= [flashcard.first_name, flashcard.last_name].join(', ') %>
+						<br />
+						RoomSpace: <%= flashcard.room_space %>
+						<br />
+						<%= "Staff: #{flashcard.room_space}" if flashcard.staff.present? %>
 					</div>
 				</td>
 
-			<% if ((col - 1)  == (index % col)) %>
+			<% if ((col - 1)  == (col_count % col)) %>
 				</tr>
 			<% end %>
+
+			<% col_count += 1 %>
 		<% end %>
 	</tbody>
 </table>
