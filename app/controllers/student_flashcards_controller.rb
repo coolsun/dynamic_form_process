@@ -96,7 +96,18 @@ class StudentFlashcardsController < ApplicationController
         elsif (json_message[:error_msg].present?)
           errors << "error: suid: #{suid}, #{json_message[:error_msg]}.";
         else
-          errors << "unknown error.";
+          if (json_message.present? &&
+            json_message["profile"].present? &&
+            json_message["profile"]["demographics"].present?
+            )
+
+            error_msg = "# #{Time.now}, get_student_flashcard_data, suid: #{suid}, lose 'photoImage'.";
+            logger.error(error_msg)
+            errors << error_msg;
+          else
+            errors << "# #{Time.now}, suid: #{suid}, unknown error.";
+
+          end
         end
 
       end
