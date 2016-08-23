@@ -105,7 +105,9 @@ class StudentFlashcardsController < ApplicationController
             logger.error(error_msg)
             errors << error_msg;
           else
-            errors << "# #{Time.now}, suid: #{suid}, unknown error.";
+            error_msg = "# #{Time.now}, suid: #{suid}, unknown error.";
+            logger.error(error_msg)
+            errors << error_msg;
 
           end
         end
