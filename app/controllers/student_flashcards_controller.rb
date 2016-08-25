@@ -128,7 +128,21 @@ class StudentFlashcardsController < ApplicationController
 
     end
 
+
     logger.info(errors);
+
+    system_value_key = 'student_flashcards_file_name'
+    system_value_student_flashcards_file_name = SystemValue.find_by_key(system_value_key);
+    file_neme = File.basename(params['file'].original_filename, ".*")
+    if (system_value_student_flashcards_file_name.present?)
+      system_value_student_flashcards_file_name.value = file_neme;
+      system_value_student_flashcards_file_name.save;
+    else
+      system_value_student_flashcards_file_name = SystemValue.new
+      system_value_student_flashcards_file_name.key = system_value_key;
+      system_value_student_flashcards_file_name.value = file_neme;
+      system_value_student_flashcards_file_name.save;
+    end
 
     File.delete(path)
     render :json => {:errors => errors}
@@ -148,7 +162,7 @@ class StudentFlashcardsController < ApplicationController
 
     logger.info(locations);
 
-    @student_flashcards = StudentFlashcard.where(:location => locations).order([:location, :last_name]);
+    @student_flashcards = StudentFlashcard.where(:location => locations).order([:location, :id]);
 
 
 
@@ -158,8 +172,16 @@ class StudentFlashcardsController < ApplicationController
       :footer => {:center => '[page] / [topage]'}
     )
 
-    s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
-    s_file_name = ("student_flashcards_pdf_%s_%s.pdf" % [current_user.id, s_time]);
+    s_file_name = ''
+    system_value_student_flashcards_file_name = SystemValue.find_by_key('student_flashcards_file_name');
+    if (system_value_student_flashcards_file_name.present? && system_value_student_flashcards_file_name.value.present?)
+      s_file_name = ("%s.pdf" % [system_value_student_flashcards_file_name.value]);
+    else
+      s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
+      s_file_name = ("student_flashcards_pdf_%s_%s.pdf" % [current_user.id, s_time]);
+    end
+
+
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
 #=end
   end
