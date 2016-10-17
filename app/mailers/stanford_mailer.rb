@@ -8,13 +8,13 @@ class StanfordMailer < ActionMailer::Base
     default from: 'Stanford Email Send Test'
   end
 
-  def self.send_shipped(email, title, message, bcc=[], cc=[])
+  def self.send_shipped(email, title, message, bcc=[], cc=[], reply_to = '')
     success = false;
 
     begin
       email = [email] if !email.kind_of?(Array)
       email.each do |mail|
-        StanfordMailer.shipped(mail, title, message, bcc, cc).deliver;
+        StanfordMailer.shipped(mail, title, message, bcc, cc, reply_to).deliver;
       end
       success = true;
     rescue => e
@@ -26,11 +26,16 @@ class StanfordMailer < ActionMailer::Base
     return success;
   end
 
-  def shipped(email, title, message, bcc=[], cc=[])
+  def shipped(email, title, message, bcc=[], cc=[], reply_to = '')
     @greeting = message
     logger.info("== bcc #{bcc} ==")
+    if (reply_to.present?)
+      logger.info("reply_to: #{reply_to}");
+      mail(:to => mail_confirm(email), :cc => mail_confirm(cc), :bcc => mail_confirm(ADMIN_MAIL + bcc), :subject => title, :reply_to => reply_to)
+    else
+      mail(:to => mail_confirm(email), :cc => mail_confirm(cc), :bcc => mail_confirm(ADMIN_MAIL + bcc), :subject => title)
+    end
 
-    mail(:to => mail_confirm(email), :cc => mail_confirm(cc), :bcc => mail_confirm(ADMIN_MAIL + bcc), :subject => title)
   end
 
   def send_admin(title,message)

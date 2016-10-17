@@ -1475,13 +1475,14 @@ class InterviewsController < ApplicationController
     email_info = params[:email_info];
     email_subject = email_info[:subject];
     email_content = email_info[:content];
+    email_content = "Email From: #{current_user.email}<br />" + email_content;
 
     i_interview_id = email_info[:interview_id].to_i;
 
     interviewers = User.joins(:interviewers)
                        .where(:interviewers => {:interview_id => i_interview_id});
 
-    send_success = StanfordMailer.send_shipped(interviewers.collect(&:email), email_subject, email_content);
+    send_success = StanfordMailer.send_shipped(interviewers.collect(&:email), email_subject, email_content, [], [], current_user.email);
 
     if (send_success.present?)
       render :json => {:success => true, :msg => "Email delivery success"}
