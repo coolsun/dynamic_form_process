@@ -108,103 +108,128 @@ class DownloadPdfsController < ApplicationController
     #logger.info("b_transcripts_form_check : #{b_transcripts_form_check}");
 
     interview = Interview.find_by_id(i_interview_id);
-    i_round_id = interview.round_id;
-    s_interview_name = interview.name;
-    round = Round.find_by_id(i_round_id);
-    s_round_name = round.title;
-    i_procedure_id = round.procedure_id;
 
-    join_list = [:interviewees => [:time_slot => [:interview]]];
+    if (interview.present?)
+      i_round_id = interview.round_id;
+      s_interview_name = interview.name;
+      round = Round.find_by_id(i_round_id);
+      s_round_name = round.title;
+      i_procedure_id = round.procedure_id;
 
-    scheduled_users = User.joins(join_list)
-                          .where(:interviews => {:id => i_interview_id});
+      join_list = [:interviewees => [:time_slot => [:interview]]];
 
-    logger.info("scheduled_users : #{scheduled_users.to_json}");
+      b_senior_manager = check_user_permission("SeniorManager")[0];
 
-    scheduled_users.each do |user|
-      i_user_id = user.id;
-      s_user_name = user.name;
 
-      obj = {}
-      obj["name"] = s_user_name;
-      obj["forms"] = []
+      scheduled_users = User.joins(join_list)
+                            .where(:interviews => {:id => i_interview_id});
 
-      system_forms = [];
-      attachable_forms = [];
-      recommendation_forms = [];
 
-      if (b_system_form_check)
-        join_list = [:form];
-        system_forms = UserForm.joins(join_list)
-                               .where(:user_id => i_user_id)
-                               .where(:procedure_id => i_procedure_id)
-                               .where(:forms => {:form_type => 'System'});
+
+      #ST936 [High]bug: LM: Interview>Download Scheduled Applicant's PDFs: Access Error: if I download the applications of invited students, it shows the supplemental questions (attachable forms) of other houses for which I am not a Location Manager. Should not be able to view[bug: 當我是某location的LM, 我去下載被invited的學生的applications, 系統讓我會也把其它Location的的attachable form也一併下載下來, 我應該只能下載屬於我的Loation的attachable form才對]
+      if (!b_senior_manager)
+        position_ids = [];
+        current_user.locations.each do |location|
+          position_ids |= location.positions.pluck(:id);
+        end
+
+        current_user.roles.each do |role|
+          position_ids |= role.positions.pluck(:id);
+        end
+
+        mgr_position_ids = position_ids
+
+        logger.info(mgr_position_ids);
+
+        join_list = [:applications];
+        scheduled_users = scheduled_users.joins(join_list)
+                                          .where(:applications => {:position_id => mgr_position_ids});
       end
 
-      if (b_attachable_form_check)
-        join_list = [:form];
-        attachable_forms = UserForm.joins(join_list)
-                                   .where(:user_id => i_user_id)
-                                   .where(:procedure_id => i_procedure_id)
-                                   .where(:forms => {:form_type => 'Application'});
-      end
+      scheduled_users.each do |user|
+        i_user_id = user.id;
+        s_user_name = user.name;
 
-      if (b_recommendations_form_check)
-        join_list = [:recommendation_record];
-        recommendation_forms = RecommendationForm.joins(join_list)
-                                                 .where(:recommendation_records => {:user_id => i_user_id})
-                                                 .where(:recommendation_records => {:procedure_id => i_procedure_id});
-      end
+        obj = {}
+        obj["name"] = s_user_name;
+        obj["forms"] = []
 
-      if (b_transcripts_form_check)
-        transcripts = Transcript.applicant_transcripts(i_user_id) if current_user.is_staff
-        obj["transcripts"] = transcripts;
-      end
+        system_forms = [];
+        attachable_forms = [];
+        recommendation_forms = [];
+
+        if (b_system_form_check)
+          join_list = [:form];
+          system_forms = UserForm.joins(join_list)
+                                 .where(:user_id => i_user_id)
+                                 .where(:procedure_id => i_procedure_id)
+                                 .where(:forms => {:form_type => 'System'});
+        end
+
+        if (b_attachable_form_check)
+          join_list = [:form];
+          attachable_forms = UserForm.joins(join_list)
+                                     .where(:user_id => i_user_id)
+                                     .where(:procedure_id => i_procedure_id)
+                                     .where(:forms => {:form_type => 'Application'});
+        end
+
+        if (b_recommendations_form_check)
+          join_list = [:recommendation_record];
+          recommendation_forms = RecommendationForm.joins(join_list)
+                                                   .where(:recommendation_records => {:user_id => i_user_id})
+                                                   .where(:recommendation_records => {:procedure_id => i_procedure_id});
+        end
+
+        if (b_transcripts_form_check)
+          transcripts = Transcript.applicant_transcripts(i_user_id) if current_user.is_staff
+          obj["transcripts"] = transcripts;
+        end
 
 =begin
-      s_forms = []
-      system_forms.each do |form|
-        form.schema = Form.data_binding(form.schema, form.user_id, session[:user_id])
-        s_forms << form
-      end
-      r_forms = []
-      recommendation_forms.each do |form|
-        r_forms << RecommendationForm.schema_add_name_relationship(form)
-      end
+        s_forms = []
+        system_forms.each do |form|
+          form.schema = Form.data_binding(form.schema, form.user_id, session[:user_id])
+          s_forms << form
+        end
+        r_forms = []
+        recommendation_forms.each do |form|
+          r_forms << RecommendationForm.schema_add_name_relationship(form)
+        end
 =end
 
 
-      forms = (system_forms + attachable_forms + recommendation_forms)
+        forms = (system_forms + attachable_forms + recommendation_forms)
 
-      logger.info("forms : #{forms}");
-
-      forms.each do |user_form|
-        schema = JSON.parse(user_form.schema)
-        arr = []
-        maxColumn = 0
-        current_row = 0
-        blocks = []
-        schema.each do |item|
-          if current_row != item["row"]
-            blocks << OpenStruct.new({"column" => maxColumn + 1, "items" => arr})
-            maxColumn = 0
-            arr = []
-            current_row = item["row"]
+        forms.each do |user_form|
+          schema = JSON.parse(user_form.schema)
+          arr = []
+          maxColumn = 0
+          current_row = 0
+          blocks = []
+          schema.each do |item|
+            if current_row != item["row"]
+              blocks << OpenStruct.new({"column" => maxColumn + 1, "items" => arr})
+              maxColumn = 0
+              arr = []
+              current_row = item["row"]
+            end
+            maxColumn = item["column"] if item["column"] > maxColumn
+            if item["type"] == "file"
+              item["files"] = UploadFile.where(:user_form_id => user_form.id)
+            end
+            arr << OpenStruct.new(item)
           end
-          maxColumn = item["column"] if item["column"] > maxColumn
-          if item["type"] == "file"
-            item["files"] = UploadFile.where(:user_form_id => user_form.id)
-          end
-          arr << OpenStruct.new(item)
+          blocks << OpenStruct.new({"column" => maxColumn + 1, "items" => arr})
+          logger.info "blocks #{blocks.to_json}"
+          obj["forms"] << {"form_name" => user_form.form_name, "blocks" => blocks}
         end
-        blocks << OpenStruct.new({"column" => maxColumn + 1, "items" => arr})
-        logger.info "blocks #{blocks.to_json}"
-        obj["forms"] << {"form_name" => user_form.form_name, "blocks" => blocks}
-      end
-      if obj["forms"].present? || obj["transcripts"].present?
-        @applicants << obj
+        if obj["forms"].present? || obj["transcripts"].present?
+          @applicants << obj
+        end
       end
     end
+
 
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/pdf_form.html.erb'),

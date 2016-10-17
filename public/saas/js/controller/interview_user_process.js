@@ -441,6 +441,14 @@ interviewUserProcessApp
     }
   };
 
+  $scope.interviewUserProcess.interview.timeSlot.isFull = function(dt)
+  {
+
+
+
+
+  };
+
   $scope.interviewUserProcess.interview.emailInterviewers.init = function(interview)
   {
     $scope.interviewUserProcess.interview.emailInterviewers.interview = angular.copy(interview);
