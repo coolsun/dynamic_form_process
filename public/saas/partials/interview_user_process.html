@@ -82,7 +82,7 @@
                           </p>
                           <p>
                             <div ng-if="!interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end)" ng-click="interviewUserProcess.interview.timeSlot.checkActive(interviewUserProcess.round.permission.active);">
-                              <button class="btn btn-primary" ng-hide="timeSlot.id==tblTr.applied.timeSlotId" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end) || tblTr.b_before_schedule_due_time==false">Apply</button>
+                              <button class="btn btn-primary" ng-hide="timeSlot.id==tblTr.applied.timeSlotId" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end) || tblTr.b_before_schedule_due_time==false || 0==timeSlot.remaining">Apply</button>
                               <button class="btn btn-danger" ng-show="tblTr.applied.isApplied && (timeSlot.id==tblTr.applied.timeSlotId)" ng-click="interviewUserProcess.interview.timeSlot.click(timeSlot, tblTr.name, tblTr.applied)" ng-disabled="!interviewUserProcess.round.permission.active || interviewUserProcess.interview.timeSlot.isOvertime(timeSlot.t_end) || tblTr.b_before_schedule_due_time==false">Cancel</button>
                             </div>
                           </p>

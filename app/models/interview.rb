@@ -644,6 +644,9 @@ class Interview < ActiveRecord::Base
       :include => [
         {
           :time_slots => {
+            :methods => [
+              :remaining
+            ],
             :include => [
               :interviewees
             ]

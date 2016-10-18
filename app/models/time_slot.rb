@@ -38,13 +38,7 @@ class TimeSlot < ActiveRecord::Base
                           .per(table_params.i_page_count);
 
     time_slots_list = time_slots;
-=begin
-    time_slots_list = time_slots.as_json({
-      :include => [
-        :interview
-      ]
-    });
-=end
+
     return ({
       :now => table_params.i_page,
       :total => time_slots.total_count,
@@ -53,8 +47,11 @@ class TimeSlot < ActiveRecord::Base
   end
 
 
-  def self.check_clash
+  def remaining
+    vacancy = self.interview.vacancy;
+    remaining = self.interviewees.count();
 
+    return(vacancy - remaining);
   end
 
 
@@ -85,13 +82,14 @@ class TimeSlot < ActiveRecord::Base
     procedure_mgrs = User.joins(:procedure_mgrs)
                          .where(:procedure_mgrs => {:procedure_id => i_procedure_id});
 
-    b_would_send_mail_to_mgrs_which_related_role_location = false;
+    b_would_send_mail_to_mgrs_which_related_role_location = true;
+    b_would_send_mail_to_mgrs_which_related_location = true;
+    b_would_send_mail_to_mgrs_which_related_role = false;
 
     if (b_would_send_mail_to_mgrs_which_related_role_location)
       positions = Position.joins(:positions_in_interviews)
                           .where(:positions => {:procedure_id => i_procedure_id})
                           .where(:positions_in_interviews => {:interview_id => i_interview_id});
-
 
       positions.each do |position|
         location_mgrs = User.joins(:location_mgrs)
@@ -100,11 +98,16 @@ class TimeSlot < ActiveRecord::Base
         role_mgrs = User.joins(:role_mgrs)
                         .where(:role_mgrs => {:role_id => position.role_id});
 
-        total_location_mgrs = (total_location_mgrs | location_mgrs);
-        total_role_mgrs = (total_role_mgrs | role_mgrs);
+        if (b_would_send_mail_to_mgrs_which_related_location)
+          total_location_mgrs = (total_location_mgrs | location_mgrs);
+        end
 
+        if (b_would_send_mail_to_mgrs_which_related_role)
+          total_role_mgrs = (total_role_mgrs | role_mgrs);
+        end
       end
     end
+
 
 
 
