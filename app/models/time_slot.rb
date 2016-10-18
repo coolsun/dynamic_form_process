@@ -92,17 +92,17 @@ class TimeSlot < ActiveRecord::Base
                           .where(:positions_in_interviews => {:interview_id => i_interview_id});
 
       positions.each do |position|
-        location_mgrs = User.joins(:location_mgrs)
-                            .where(:location_mgrs => {:location_id => position.location_id});
-
-        role_mgrs = User.joins(:role_mgrs)
-                        .where(:role_mgrs => {:role_id => position.role_id});
-
         if (b_would_send_mail_to_mgrs_which_related_location)
+          location_mgrs = User.joins(:location_mgrs)
+                              .where(:location_mgrs => {:location_id => position.location_id});
+
           total_location_mgrs = (total_location_mgrs | location_mgrs);
         end
 
         if (b_would_send_mail_to_mgrs_which_related_role)
+          role_mgrs = User.joins(:role_mgrs)
+                          .where(:role_mgrs => {:role_id => position.role_id});
+
           total_role_mgrs = (total_role_mgrs | role_mgrs);
         end
       end
