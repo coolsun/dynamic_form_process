@@ -108,9 +108,6 @@ class TimeSlot < ActiveRecord::Base
       end
     end
 
-
-
-
     users = admins | procedure_mgrs | total_location_mgrs | total_role_mgrs;
     emails = users.collect{|user| user.email};
 

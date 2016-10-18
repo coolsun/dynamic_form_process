@@ -116,18 +116,16 @@ class DownloadPdfsController < ApplicationController
       s_round_name = round.title;
       i_procedure_id = round.procedure_id;
 
-      join_list = [:interviewees => [:time_slot => [:interview]]];
 
       b_senior_manager = check_user_permission("SeniorManager")[0];
 
 
-      scheduled_users = User.joins(join_list)
-                            .where(:interviews => {:id => i_interview_id});
-
-
-
       #ST936 [High]bug: LM: Interview>Download Scheduled Applicant's PDFs: Access Error: if I download the applications of invited students, it shows the supplemental questions (attachable forms) of other houses for which I am not a Location Manager. Should not be able to view[bug: 當我是某location的LM, 我去下載被invited的學生的applications, 系統讓我會也把其它Location的的attachable form也一併下載下來, 我應該只能下載屬於我的Loation的attachable form才對]
-      if (!b_senior_manager)
+      if (b_senior_manager)
+        join_list = [:interviewees => [:time_slot => [:interview]]];
+        scheduled_users = User.joins(join_list)
+                              .where(:interviews => {:id => i_interview_id});
+      else
         position_ids = [];
         current_user.locations.each do |location|
           position_ids |= location.positions.pluck(:id);
@@ -141,9 +139,9 @@ class DownloadPdfsController < ApplicationController
 
         logger.info(mgr_position_ids);
 
-        join_list = [:applications];
-        scheduled_users = scheduled_users.joins(join_list)
-                                          .where(:applications => {:position_id => mgr_position_ids});
+        join_list = [:applications, :interviewees => [:time_slot => [:interview]]];
+        scheduled_users = User.joins(join_list)
+                              .where(:applications => {:position_id => mgr_position_ids}).distinct;
       end
 
       scheduled_users.each do |user|
