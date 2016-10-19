@@ -1336,11 +1336,17 @@ interviewAdminProcessApp
   {
     var quantity = $scope.interviewAdminProcess.interview.timeSlot.timepicker.quantity;
     var interval = parseInt($scope.interviewAdminProcess.interview.timeSlot.timepicker.interval) * 60000;
+    var time_between =  parseInt($scope.interviewAdminProcess.interview.timeSlot.timepicker.time_between) * 60000;
     var checkStartTime = Date.parse($scope.interviewAdminProcess.interview.timeSlot.timepicker.start);
     //var checkEndTime = Date.parse($scope.interviewAdminProcess.interview.timeSlot.timepicker.end);
     var timeList = $scope.interviewAdminProcess.interview.timeSlot.timeList;
     var place = $scope.interviewAdminProcess.interview.timeSlot.place;
     var isRun = true;
+
+    if(!time_between)
+    {
+      time_between = 0;
+    }
 
     if (!checkStartTime)
     {
@@ -1403,7 +1409,7 @@ interviewAdminProcessApp
         }
 
         isPush = true;
-        timeSlotStart = new Date(timeSlotStart.getTime() + interval);
+        timeSlotStart = new Date(timeSlotStart.getTime() + interval + time_between);
         timeSlotEnd = new Date(timeSlotStart.getTime() + interval);
         counter++;
       }
