@@ -1192,6 +1192,13 @@
                 <input type="text" class="form-control" ng-class="interviewAdminProcess.interview.timeSlot.noQuantityCss" name="interviewAdminProcessInterviewTimeSlotQuantity" id="interviewAdminProcessInterviewTimeSlotQuantity" ng-model="interviewAdminProcess.interview.timeSlot.timepicker.quantity" ng-change="interviewAdminProcess.interview.timeSlot.quantityOnChange();">
               </span>
             </div>
+            <div class="form-group" ng-show="1 < interviewAdminProcess.interview.timeSlot.timepicker.quantity">
+              <label for="interviewAdminProcessInterviewTimeBetween" class="col-md-4 control-label" style="width: 250px;">*Time between time slots (minutes):</label>
+              <span class="col-md-8">
+                <input type="text" class="form-control" name="interviewAdminProcessInterviewTimeBetween" id="interviewAdminProcessInterviewTimeBetween" ng-model="interviewAdminProcess.interview.timeSlot.timepicker.time_between">
+              </span>
+            </div>
+
             <div class="form-group">
               <label for="interviewAdminProcessInterviewTimeSlotStartTimePicker" class="col-md-2 control-label pull-left text-align-left">*Start Time:</label>
               <span class="col-md-10">
