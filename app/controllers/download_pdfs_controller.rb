@@ -429,6 +429,90 @@ class DownloadPdfsController < ApplicationController
 
   end
 
+
+
+####################################################################################################
+  def interview_admin_calendar_view_pdf
+    logger.info("# #{Time.now} IP:#{request.remote_ip}, action: interview admin_calendar_view_pdf, params: #{params}");
+    response = [];
+
+    i_round_id = params[:roundId].to_i;
+
+    round = Round.find_by_id(i_round_id);
+
+    manager = current_user();
+
+    if (round)
+      include_list = [
+                      :round,
+                      :interviewers,
+                      :time_slots => [
+                        :time_slot_interviewers
+                      ]
+                     ];
+
+      interviews = Interview.includes(include_list)
+                            .references(include_list)
+                            .where(:rounds => {:id => i_round_id})
+                            .where(:interviewers => {:user_id => manager.id});
+
+      interviews_list = interviews.as_json({
+        :include => [
+          {
+            :time_slots => {
+              :include => [
+                :time_slot_interviewers
+              ]
+            }
+          },
+          :interviewers
+        ]
+      });
+
+      if (interviews_list.present?)
+        interviews_list.each do |interview|
+          if (interview["time_slots"].present? && interview["interviewers"])
+            interview["time_slots"].each do |time_slot|
+              if (time_slot["time_slot_interviewers"].present?)
+                time_slot["time_slot_interviewers"].each do |time_slot_interviewer|
+                  interview["interviewers"].each do |interviewer|
+                    if (interviewer["id"] == time_slot_interviewer["interviewer_id"])
+                      time_slot["check"] = true;
+                      interview["has_scheduled"] = true;
+                      break;
+                    end
+                  end
+                  if (true == time_slot["check"])
+                    break;
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+      @response = interviews_list;
+    end
+
+if(params[:pdf].present?)
+#=begin
+    pdf = WickedPdf.new.pdf_from_string(
+      render_to_string('download_pdfs/interview_admin_calendar_view_pdf.html.erb'),
+      :footer => {:center => '[page] / [topage]'}
+    )
+
+    s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
+    s_file_name = ("schedule.pdf");
+    send_data(pdf, :filename => s_file_name, :type => "application/pdf");
+#=end
+end
+
+
+
+
+  end
+
 end
 
 

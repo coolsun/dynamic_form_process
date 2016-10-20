@@ -348,6 +348,7 @@ Rails.application.routes.draw do
       get :interview_scheduled_applicant_list_pdf
       post :review_pdf
       #get :review_pdf
+      get :interview_admin_calendar_view_pdf
     end
   end
 

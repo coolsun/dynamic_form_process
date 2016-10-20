@@ -558,7 +558,7 @@ interviewAdminProcessApp
       //editable: true,
       eventDurationEditable: false,
       disableResizing: true,
-      timeFormat: 'HH:mm{-HH:mm}',
+      timeFormat: 'hh:mm TT {-hh:mm TT}',
       header:{
         left: 'title',
         center: '',
