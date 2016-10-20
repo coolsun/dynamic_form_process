@@ -505,6 +505,15 @@
                   <p class="pull-right lead">
                     Interview
                   </p>
+
+                  <div style="margin-top: 10px;">
+                    <form method="post" action="/download_pdfs/interview_admin_calendar_view_pdf">
+                      <button class="btn btn-primary" style="margin-bottom: 3px;">Download Scheduled PDF</button>
+                      <div ng-show='false'>
+                        <input type="hidden" name="roundId" value="{{interviewAdminProcess.roundId}}">
+                      </div>
+                    </form>
+                  </div>
                 </div>
                 <div class="calendar" ng-model="interviewAdminProcess.calendar.eventSources" calendar="calendarAdminProcess" config="interviewAdminProcess.calendar.uiConfig.calendar" ui-calendar="interviewAdminProcess.calendar.uiConfig.calendar"></div>
               </div>

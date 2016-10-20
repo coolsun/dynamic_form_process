@@ -495,7 +495,7 @@ class DownloadPdfsController < ApplicationController
       @response = interviews_list;
     end
 
-if(params[:pdf].present?)
+#if(params[:pdf].present?)
 #=begin
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/interview_admin_calendar_view_pdf.html.erb'),
@@ -506,7 +506,7 @@ if(params[:pdf].present?)
     s_file_name = ("schedule.pdf");
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
 #=end
-end
+#end
 
 
 
