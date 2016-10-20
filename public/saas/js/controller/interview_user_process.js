@@ -218,7 +218,7 @@ interviewUserProcessApp
       eventDurationEditable: false,
       disableResizing: true,
       disableDragging: true,
-      timeFormat: 'HH:mm{-HH:mm}',
+      timeFormat: 'hh:mm TT {-hh:mm TT}',
       header:{
         left: 'title',
         center: '',

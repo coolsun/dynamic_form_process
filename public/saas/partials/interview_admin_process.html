@@ -443,7 +443,7 @@
                               <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</b></p>
                             </p>
                             <p>
-                              <p><b>Place: {{time_slot.place}}</b></b></p>
+                              <p><b>Place: {{time_slot.place}}</b></p>
                             </p>
                             <p ng-show="0 < time_slot.interviewees.length"><b>Applicants:</b></p>
                             <p ng-repeat="interviewee in time_slot.interviewees">

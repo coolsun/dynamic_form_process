@@ -1,0 +1,105 @@
+<style type="text/css">
+
+.tableRsasPanel > .panel-heading {
+    color: #fff;
+    background-color: #8c1515;
+    border-color: #8c1515;
+}
+.panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 1px solid #ddd;
+ }
+
+ .tableRsas > thead > tr {
+    border-top: 1px solid #ddd;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.42857143;
+ }
+
+</style>
+
+<div class="col-md-12 padding-0">
+  <div class="panel tableRsasPanel" style="width: 750px;">
+    <div class="panel-heading" style="height: 20px;">
+      <span>
+        <label></label>
+      </span>
+    </div>
+    <div class="table-responsive">
+
+			<table class="table table-bordered table-hover tableRsas"
+				style="border: 0;
+						    width: 750px;
+								margin-bottom: 0;
+								max-width: 100%;
+								background-color: transparent;
+		    				border-collapse: collapse;
+    						border-spacing: 0;
+						    display: table;
+			">
+			  <thead style="    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;">
+			    <tr style="line-height: 35px;">
+			    	<th>Interview</th>
+			    	<th>Time Slots</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  	<% @response.each do |interview| %>
+				  	<% if(interview["interviewer_can_schedule"]) %>
+							<% if(interview["has_scheduled"]) %>
+								<tr>
+				      		<td><%= interview["name"] %></td>
+				      		<td>
+										<% interview["time_slots"].each do |time_slot| %>
+											<% if(time_slot["check"]) %>
+							        <div>
+							          <p>
+							            <p><b><%= (time_slot["t_start"] - 8.hours).strftime("%I:%M %p") %></b> ~ <b><%= (time_slot["t_end"] - 8.hours).strftime("%I:%M %p") %></b></p>
+							          </p>
+							          <p>
+							            <p><b>Place: <%= time_slot["place"] %></b></p>
+							          </p>
+							        </div>
+							        <% end %>
+										<% end %>
+				      		</td>
+								</tr>
+							<% end %>
+				  	<% else %>
+							<tr>
+			      		<td><%= interview["name"] %></td>
+			      		<td>
+									<% interview["time_slots"].each do |time_slot| %>
+						        <div>
+						          <p>
+						            <p><b><%= (time_slot["t_start"] - 8.hours).strftime("%I:%M %p") %></b> ~ <b><%= (time_slot["t_end"] - 8.hours).strftime("%I:%M %p") %></b></p>
+						          </p>
+						          <p>
+						            <p><b>Place: <%= time_slot["place"] %></b></p>
+						          </p>
+						        </div>
+									<% end %>
+			      		</td>
+							</tr>
+				  	<% end %>
+			    <% end %>
+			  </tbody>
+			</table>
+
+    </div>
+  </div>
+</div>
+
+
+
