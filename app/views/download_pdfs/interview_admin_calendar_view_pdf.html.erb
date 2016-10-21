@@ -26,7 +26,6 @@
  }
 
 </style>
-
 <div class="col-md-12 padding-0">
   <div class="panel tableRsasPanel" style="width: 750px;">
     <div class="panel-heading" style="height: 20px;">
@@ -46,11 +45,12 @@
     						border-spacing: 0;
 						    display: table;
 			">
-			  <thead style="    display: table-header-group;
+			  <thead style="display: table-header-group;
     vertical-align: middle;
     border-color: inherit;">
 			    <tr style="line-height: 35px;">
 			    	<th>Interview</th>
+			    	<th>Positions</th>
 			    	<th>Time Slots</th>
 			    </tr>
 			  </thead>
@@ -61,16 +61,31 @@
 								<tr>
 				      		<td><%= interview["name"] %></td>
 				      		<td>
+										<% interview["positions_in_interviews"].each do |positions_in_interview| %>
+				            	<p><b><%= positions_in_interview["position"]["name"] %></b></p>
+										<% end %>
+				      		</td>
+				      		<td>
 										<% interview["time_slots"].each do |time_slot| %>
 											<% if(time_slot["check"]) %>
-							        <div>
-							          <p>
-							            <p><b><%= (time_slot["t_start"] - 8.hours).strftime("%I:%M %p") %></b> ~ <b><%= (time_slot["t_end"] - 8.hours).strftime("%I:%M %p") %></b></p>
-							          </p>
-							          <p>
-							            <p><b>Place: <%= time_slot["place"] %></b></p>
-							          </p>
-							        </div>
+							        	<div>
+							            <p><b><%= (time_slot["t_start"] - 8.hours).strftime("%m/%d/%Y %I:%M %p") %></b> ~ <b><%= (time_slot["t_end"] - 8.hours).strftime("%m/%d/%Y %I:%M %p") %></b></p>
+							            <p><b>Place</b>: <%= time_slot["place"] %></p>
+
+							            <% if(0 < time_slot["interviewees"].length) %>
+								            <p><b>Applicants:</b></p>
+								            <% time_slot["interviewees"].each do |interviewee| %>
+								            	<p><%= interviewee['user'].present? ? interviewee['user']['name'] : '' %></p>
+	                          <% end %>
+                          <% end %>
+
+							            <% if(0 < time_slot["interviewer_users"].length) %>
+	                          <p><b>Interviewers:</b></p>
+								            <% time_slot["interviewer_users"].each do |interviewer| %>
+								            		<p><%= interviewer["name"] %></p>
+	                          <% end %>
+                          <% end %>
+							        	</div>
 							        <% end %>
 										<% end %>
 				      		</td>
@@ -80,14 +95,26 @@
 							<tr>
 			      		<td><%= interview["name"] %></td>
 			      		<td>
+									<% interview["positions_in_interviews"].each do |positions_in_interview| %>
+			            	<p><b><%= positions_in_interview["position"]["name"] %></b></p>
+									<% end %>
+			      		</td>
+			      		<td>
 									<% interview["time_slots"].each do |time_slot| %>
 						        <div>
 						          <p>
-						            <p><b><%= (time_slot["t_start"] - 8.hours).strftime("%I:%M %p") %></b> ~ <b><%= (time_slot["t_end"] - 8.hours).strftime("%I:%M %p") %></b></p>
+						            <p><b><%= (time_slot["t_start"] - 8.hours).strftime("%m/%d/%Y %I:%M %p") %></b> ~ <b><%= (time_slot["t_end"] - 8.hours).strftime("%m/%d/%Y %I:%M %p") %></b></p>
 						          </p>
 						          <p>
-						            <p><b>Place: <%= time_slot["place"] %></b></p>
+						            <p><b>Place</b>: <%= time_slot["place"] %></p>
 						          </p>
+
+					            <% if(0 < time_slot["interviewees"].length) %>
+						            <p><b>Applicants:</b></p>
+						            <% time_slot["interviewees"].each do |interviewee| %>
+						            	<p><%= interviewee['user'].present? ? interviewee['user']['name'] : '' %></p>
+                        <% end %>
+                      <% end %>
 						        </div>
 									<% end %>
 			      		</td>
