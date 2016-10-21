@@ -439,6 +439,7 @@ class DownloadPdfsController < ApplicationController
     i_round_id = params[:roundId].to_i;
 
     round = Round.find_by_id(i_round_id);
+    @round_name = round.title;
 
     manager = current_user();
 
@@ -539,7 +540,7 @@ class DownloadPdfsController < ApplicationController
     )
 
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
-    s_file_name = ("schedule.pdf");
+    s_file_name = ("#{@round_name}_schedule.pdf");
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
 #=end
 #end
