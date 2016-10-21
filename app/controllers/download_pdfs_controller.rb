@@ -447,9 +447,20 @@ class DownloadPdfsController < ApplicationController
                       :round,
                       :interviewers,
                       :time_slots => [
-                        :time_slot_interviewers
+                        :time_slot_interviewers,
+                        :interviewees => [
+                          :user
+                        ]
+                      ],
+                      :positions_in_interviews => [
+                        {
+                          :position => [
+                            :role,
+                            :location
+                          ]
+                        }
                       ]
-                     ];
+                    ];
 
       interviews = Interview.includes(include_list)
                             .references(include_list)
@@ -461,7 +472,23 @@ class DownloadPdfsController < ApplicationController
           {
             :time_slots => {
               :include => [
-                :time_slot_interviewers
+                :time_slot_interviewers,
+                {
+                  :interviewees => {
+                    :include => [
+                      :user => {
+                        :methods => :name
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            :positions_in_interviews => {
+              :include => [
+                :position
               ]
             }
           },
@@ -486,6 +513,15 @@ class DownloadPdfsController < ApplicationController
                     break;
                   end
                 end
+
+                interviewer_ids = time_slot["time_slot_interviewers"].collect{|time_slot_interviewer| time_slot_interviewer["interviewer_id"]};
+
+                interviewer_users = User.joins(:interviewers)
+                                        .where(:interviewers => {:id => interviewer_ids});
+
+                time_slot["interviewer_users"] = interviewer_users.as_json({
+                  :methods => :name
+                });
               end
             end
           end
@@ -495,7 +531,7 @@ class DownloadPdfsController < ApplicationController
       @response = interviews_list;
     end
 
-#if(params[:pdf].present?)
+if(params[:pdf].present?)
 #=begin
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/interview_admin_calendar_view_pdf.html.erb'),
@@ -506,7 +542,7 @@ class DownloadPdfsController < ApplicationController
     s_file_name = ("schedule.pdf");
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
 #=end
-#end
+end
 
 
 
