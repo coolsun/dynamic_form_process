@@ -349,7 +349,7 @@ Rails.application.routes.draw do
       post :review_pdf
       #get :review_pdf
       post :interview_admin_calendar_view_pdf
-      get :interview_admin_calendar_view_pdf
+      #get :interview_admin_calendar_view_pdf
     end
   end
 
