@@ -409,8 +409,7 @@ class InterviewsController < ApplicationController
       i_applicant_user_ids_remove = RsasTools.arr_attr_to_int(us_applicant_user_ids_remove);
     end
 
-
-    manager_emails = Procedure.admin_and_hiring_mgr_emails(i_current_process_id);
+#    manager_emails = Procedure.admin_and_hiring_mgr_emails(i_current_process_id);
 
     i_remove_success_user_ids = [];
     if (i_applicant_user_ids_remove.length)
@@ -429,9 +428,9 @@ class InterviewsController < ApplicationController
       end
     end
 
-    if i_remove_success_user_ids.present?
-      Interview.email_at_mgr_cancel_select_applicant(i_interview_id, i_remove_success_user_ids, manager_emails);
-    end
+#    if i_remove_success_user_ids.present?
+#      Interview.email_at_mgr_cancel_select_applicant(i_interview_id, i_remove_success_user_ids, manager_emails);
+#    end
 
     i_invite_success_user_ids = [];
     if (i_applicant_user_ids_add.length)
@@ -452,10 +451,36 @@ class InterviewsController < ApplicationController
       end
     end
 
-    if i_invite_success_user_ids.present?
-      Interview.email_at_mgr_select_applicant(i_interview_id, i_invite_success_user_ids, manager_emails);
-    end
+#    if i_invite_success_user_ids.present?
+#      Interview.email_at_mgr_select_applicant(i_interview_id, i_invite_success_user_ids, manager_emails);
+#    end
 
+
+    render :json => {:success => success};
+  end
+
+  def send_invite_email_to_applicants
+    permission_to_show, permission_to_active, permission_message = check_user_permission("select_applicant")
+    render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
+
+    success = false;
+
+    i_current_year_id = params[:current_year_id].to_i;
+    i_current_process_id = params[:current_process_id].to_i;
+    i_interview_id = params[:interviewId].to_i;
+
+    invited_email_subject = params[:invited_email_subject];
+    invited_email_content = params[:invited_email_content];
+    #canceled_email_subject = params[:canceled_email_subject];
+    #canceled_email_content = params[:canceled_email_content];
+
+    manager_emails = Procedure.admin_and_hiring_mgr_emails(i_current_process_id);
+    i_applicant_user_ids = Invite.where(:interview_id => i_interview_id).pluck(:invitee_user_id);
+
+    if (i_applicant_user_ids.present? && invited_email_subject.present? && invited_email_content.present?)
+      Interview.email_at_mgr_select_applicant_customized_content(i_interview_id, i_applicant_user_ids, manager_emails, invited_email_subject, invited_email_content);
+      success = true;
+    end
 
     render :json => {:success => success};
   end
@@ -1340,6 +1365,28 @@ class InterviewsController < ApplicationController
 
     render :json => {
       :applicants => users_as_json
+    };
+
+
+  end
+
+####################################################################################################
+  def get_email_templates
+    # interview_mgr_select_applicant
+    # interview_mgr_cancel_select_applicant
+    # interview_mgr_schedule_applicant
+    # interview_mgr_cancel_schedule_applicant
+
+    i_procedure_id = params[:current_process_id].to_i;
+
+    email_types = ['interview_mgr_select_applicant', 'interview_mgr_cancel_select_applicant', 'interview_mgr_schedule_applicant', 'interview_mgr_cancel_schedule_applicant'];
+
+    email_templates = EmailTemplate.where(:procedure_id => i_procedure_id)
+                                  .where(:email_type => email_types)
+                                  .where(:is_active => true);
+
+    render :json => {
+      :email_templates => email_templates
     };
 
 

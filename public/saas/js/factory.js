@@ -489,6 +489,19 @@ factoryModule.factory('interviewFactory', function($http) {
       );
     };
 
+    interviewFactory.getEmailTemplates = function(current_year_id, current_process_id){
+      return (
+        $http({
+          url: interviewURL + "/get_email_templates/",
+          method: "GET",
+          params: {
+            "current_year_id": current_year_id,
+            "current_process_id": current_process_id
+          }
+        })
+      );
+    };
+
     interviewFactory.getProcessRounds = function(p, current_year_id, current_process_id){
       return (
         $http({
@@ -702,6 +715,16 @@ factoryModule.factory('interviewFactory', function($http) {
       return (
         $http({
           url: interviewURL + "/set_invitees/",
+          method: "POST",
+          data: postData
+        })
+      );
+    };
+
+    interviewFactory.sendInviteEmailToApplicants = function(postData){
+      return (
+        $http({
+          url: interviewURL + "/send_invite_email_to_applicants/",
           method: "POST",
           data: postData
         })

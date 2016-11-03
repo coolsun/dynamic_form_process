@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       get :get_interview_applicant_list
       get :get_interview_scheduled_applicants
       get :get_interview_selected_applicants
+      get :get_email_templates
       post :set_positions
       post :set_interviewers
       post :set_invitees
@@ -71,6 +72,7 @@ Rails.application.routes.draw do
       post :send_email_to_applicants
       post :send_email_to_interviewers
       post :get_positions
+      post :send_invite_email_to_applicants
     end
   end
 
