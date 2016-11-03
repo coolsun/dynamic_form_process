@@ -225,6 +225,28 @@ interviewAdminProcessApp
 
   };
 
+
+  $scope.interviewAdminProcess.getInterviewScheduledApplicants = function(interviewId, recipients)
+  {
+    waitingIcon.open();
+    interviewFactory.getInterviewScheduledApplicants(interviewId, $rootScope.current_year.id, $rootScope.current_process.id)
+    .success(function (data, status, headers, config) {
+      applicants = data.applicants;
+
+      for (var i = 0; i < applicants.length; i++)
+      {
+        var user = applicants[i];
+        recipients.push({name: user.name, email: user.email});
+      }
+
+      waitingIcon.close();
+    })
+    .error(function (data, status, headers, config) {
+      waitingIcon.close();
+    });
+
+  };
+
   $scope.interviewAdminProcess.checkManager = function()
   {
     waitingIcon.open();
@@ -2353,28 +2375,7 @@ interviewAdminProcessApp
 
     $("#interviewAdminProcessEmail").modal('toggle');
     $scope.email.init();
-    $scope.interviewAdminProcess.applicantList.emailScheduled.getInterviewScheduledApplicants(interviewId, $scope.rsas_email.recipients);
-  };
-
-  $scope.interviewAdminProcess.applicantList.emailScheduled.getInterviewScheduledApplicants = function(interviewId, recipients)
-  {
-    waitingIcon.open();
-    interviewFactory.getInterviewScheduledApplicants(interviewId, $rootScope.current_year.id, $rootScope.current_process.id)
-    .success(function (data, status, headers, config) {
-      applicants = data.applicants;
-
-      for (var i = 0; i < applicants.length; i++)
-      {
-        var user = applicants[i];
-        recipients.push({name: user.name, email: user.email});
-      }
-
-      waitingIcon.close();
-    })
-    .error(function (data, status, headers, config) {
-      waitingIcon.close();
-    });
-
+    $scope.interviewAdminProcess.getInterviewScheduledApplicants(interviewId, $scope.rsas_email.recipients);
   };
 
   $scope.interviewAdminProcess.applicantList.emailScheduled.send = function()
@@ -2908,34 +2909,9 @@ interviewAdminProcessApp
     $scope.interviewAdminProcess.myInterview.email.interview = angular.copy(interview);
     var interviewId = interview.id;
 
-    //$("#interviewAdminProcessMyInterviewEmail").modal('toggle');
-
     $("#interviewAdminProcessEmail").modal('toggle');
     $scope.email.init();
-    $scope.interviewAdminProcess.myInterview.email.getInterviewScheduledApplicants(interviewId, $scope.rsas_email.recipients);
-    //$scope.rsas_email.recipients.push({name: user.name, email: user.email});
-  };
-
-  $scope.interviewAdminProcess.myInterview.email.getInterviewScheduledApplicants = function(interviewId, recipients)
-  {
-    //$scope.interviewAdminProcess.myInterview.email.mail = {};
-    waitingIcon.open();
-    interviewFactory.getInterviewScheduledApplicants(interviewId, $rootScope.current_year.id, $rootScope.current_process.id)
-    .success(function (data, status, headers, config) {
-      applicants = data.applicants;
-
-      for (var i = 0; i < applicants.length; i++)
-      {
-        var user = applicants[i];
-        recipients.push({name: user.name, email: user.email});
-      }
-
-      waitingIcon.close();
-    })
-    .error(function (data, status, headers, config) {
-      waitingIcon.close();
-    });
-
+    $scope.interviewAdminProcess.getInterviewScheduledApplicants(interviewId, $scope.rsas_email.recipients);
   };
 
   $scope.interviewAdminProcess.myInterview.email.send = function()
