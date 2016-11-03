@@ -12,8 +12,6 @@ class TimeSlotsController < ApplicationController
     error_code = 'xSYS00000';
     logger.info("# #{Time.now} IP:#{request.remote_ip}, action: TimeSlotsController update, params: #{params}");
 
-
-
     i_time_slot_id = params[:id].to_i;
     us_place = params[:place];
     us_t_start = params[:t_start];
@@ -301,8 +299,6 @@ class TimeSlotsController < ApplicationController
   end
 
 
-
-
 ####################################################################################################
   def set_interviewees
     permission_to_show, permission_to_active, permission_message = check_user_permission("schedule_applicant")
@@ -310,6 +306,12 @@ class TimeSlotsController < ApplicationController
 
     i_current_year_id = params[:current_year_id].to_i;
     i_current_process_id = params[:current_process_id].to_i;
+
+
+    invited_email_subject = params[:invited_email_subject];
+    invited_email_content = params[:invited_email_content];
+    canceled_email_subject = params[:canceled_email_subject];
+    canceled_email_content = params[:canceled_email_content];
 
     success = true;
     i_time_slot_id = params[:timeSlotId].to_i;
@@ -351,7 +353,8 @@ class TimeSlotsController < ApplicationController
     end
 
     if (i_cancel_success_user_ids.present?)
-      Interview.email_at_mgr_cancel_schedule_applicant(i_cancel_success_user_ids, time_slot, manager_emails);
+      #Interview.email_at_mgr_cancel_schedule_applicant(i_cancel_success_user_ids, time_slot, manager_emails);
+      Interview.email_at_mgr_cancel_schedule_applicant_customized_content(i_cancel_success_user_ids, time_slot, manager_emails, canceled_email_subject, canceled_email_content);
     end
 
 
@@ -405,7 +408,8 @@ class TimeSlotsController < ApplicationController
     end
 
     if (i_schedule_success_user_ids.present?)
-      Interview.email_at_mgr_schedule_applicant(i_schedule_success_user_ids, time_slot, manager_emails);
+      #Interview.email_at_mgr_schedule_applicant(i_schedule_success_user_ids, time_slot, manager_emails);
+      Interview.email_at_mgr_schedule_applicant_customized_content(i_schedule_success_user_ids, time_slot, manager_emails, invited_email_subject, invited_email_content);
     end
 
     success = (not_set_interviewee_users.present?)? false : success;

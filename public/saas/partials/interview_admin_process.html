@@ -141,6 +141,11 @@
                                 <button class="btn_li">Select Applicants</button>
                               </a>
                             </li>
+                            <li ng-show="tblTr.permissions.select_applicant.show">
+                              <a ng-click="interviewAdminProcess.interview.dropdownClick.sendInviteEmailApplicant(tblTr);">
+                                <button class="btn_li">Send Invite Emails</button>
+                              </a>
+                            </li>
                             <li ng-show="tblTr.permissions.interview_delete.show">
                               <a ng-click="interviewAdminProcess.interview.dropdownClick.remove(tblTr);">
                                 <button class="btn_li">Delete</button>
@@ -1145,6 +1150,87 @@
   </div>
 
 
+  <!-- alert admin select applicant form -->
+  <div class="modal fade" id="interviewAdminProcessSendInviteEmailToApplicantForm">
+    <div class="modal-dialog modal-lg">
+      <!-- interviewers -->
+      <div ng-show="950==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Send Invited Email</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="col-lg-12"><h3>Send Invited Email To All Selected Applicant</h3></div>
+              <div class="col-lg-12">
+                <h5>Subject: </h5>
+                <input type="text" class="form-control" ng-model="select_invited_email.subject">
+              </div>
+              <div class="col-lg-12">
+                <h5>Content: </h5>
+                <textarea class="tinymce" ui-tinymce ng-model="select_invited_email.content" style="height: 300px"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary" ng-click="interviewAdminProcess.nextFlow(950,955);">
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Success -->
+      <div ng-show="958==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Sent Invited Email - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Success</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+      <!-- Fail -->
+      <div ng-show="959==interviewAdminProcess.flow" class="modal-content">
+        <form class="form-horizontal">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4>Sent Invited Email - Server Message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="col-md-2 control-label"></label>
+              <span class="col-md-10">
+                <h2>Sent fail</h2>
+              </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
   <!------------------------------------------------------------------------------->
   <!-- alert admin edit time slots -->
   <div class="modal fade" id="interviewAdminProcessInterviewTimeSlotEditForm">
@@ -1580,7 +1666,7 @@
 
   <!-- alert admin schedule applicant form -->
   <div class="modal fade" id="interviewAdminProcessInterviewScheduleApplicantForm">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <!-- interviewers -->
       <div ng-show="2200==interviewAdminProcess.flow" class="modal-content">
         <form class="form-horizontal">
@@ -1597,6 +1683,30 @@
             </h4>
           </div>
           <div class="modal-body">
+            <div class="form-group">
+              <div class="col-lg-12"><h3>Schedule - Scheduled Email</h3></div>
+              <div class="col-lg-12">
+                <h5>Subject: </h5>
+                <input type="text" class="form-control" ng-model="schedule_invited_email.subject">
+              </div>
+              <div class="col-lg-12">
+                <h5>Content: </h5>
+                <textarea class="tinymce" ui-tinymce ng-model="schedule_invited_email.content" style="height: 300px"></textarea>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-lg-12"><h3>Schedule - Cancel Email</h3></div>
+              <div class="col-lg-12">
+                <h5>Subject: </h5>
+                <input type="text" class="form-control" ng-model="schedule_canceled_email.subject">
+              </div>
+              <div class="col-lg-12">
+                <h5>Content: </h5>
+                <textarea class="tinymce" ui-tinymce ng-model="schedule_canceled_email.content" style="height: 300px"></textarea>
+              </div>
+            </div>
+
             <div class="form-group">
               <label class="col-md-2 control-label">Filter:</label>
               <span class="col-md-10">

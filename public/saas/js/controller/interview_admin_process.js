@@ -7,8 +7,26 @@ interviewAdminProcessApp
   $scope.inputNotSetCss = 'hasErrorInput';
   $scope.eCode = '';
 
+  $scope.default_email_templates = {};
+  $scope.default_email_templates.interview_mgr_select_applicant = {};
+  $scope.default_email_templates.interview_mgr_cancel_select_applicant = {};
+  $scope.default_email_templates.interview_mgr_schedule_applicant = {};
+  $scope.default_email_templates.interview_mgr_cancel_schedule_applicant = {};
+
   $scope.email = {};
   $scope.email.sendType = '';
+
+  $scope.select_invited_email = {};
+  $scope.select_invited_email.subject = '';
+  $scope.select_invited_email.content = '';
+
+  $scope.schedule_invited_email = {};
+  $scope.schedule_invited_email.subject = '';
+  $scope.schedule_invited_email.content = '';
+
+  $scope.schedule_canceled_email = {};
+  $scope.schedule_canceled_email.subject = '';
+  $scope.schedule_canceled_email.content = '';
 
   $scope.interviewAdminProcess = {};
   $scope.interviewAdminProcess.processId = $rootScope.current_process.id;
@@ -56,6 +74,8 @@ interviewAdminProcessApp
   $scope.interviewAdminProcess.interview.selectApplicant.add = [];
   $scope.interviewAdminProcess.interview.selectApplicant.remove = [];
   $scope.interviewAdminProcess.interview.selectApplicant.radioApplicantType = 1;
+
+  $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant = {};
 
   $scope.interviewAdminProcess.interview.timeSlot = {};
   $scope.interviewAdminProcess.interview.timeSlot.remove = [];
@@ -292,6 +312,41 @@ interviewAdminProcessApp
               $scope.interviewAdminProcess.roles.push(role);
             }
           }
+        }
+      }
+      waitingIcon.close();
+    })
+    .error(function (data, status, headers, config) {
+      waitingIcon.close();
+    });
+  };
+
+
+  $scope.interviewAdminProcess.getEmailTemplates = function()
+  {
+    waitingIcon.open();
+    interviewFactory.getEmailTemplates($rootScope.current_year.id, $rootScope.current_process.id)
+    .success(function (data, status, headers, config) {
+      var templates = data.email_templates;
+
+      for(var i = 0; i < templates.length; i++)
+      {
+        eType = templates[i].email_type;
+
+        switch(eType)
+        {
+          case 'interview_mgr_select_applicant':
+            $scope.default_email_templates.interview_mgr_select_applicant = templates[i];
+            break;
+          case 'interview_mgr_cancel_select_applicant':
+            $scope.default_email_templates.interview_mgr_cancel_select_applicant = templates[i];
+            break;
+          case 'interview_mgr_schedule_applicant':
+            $scope.default_email_templates.interview_mgr_schedule_applicant = templates[i];
+            break;
+          case 'interview_mgr_cancel_schedule_applicant':
+            $scope.default_email_templates.interview_mgr_cancel_schedule_applicant = templates[i];
+            break;
         }
       }
       waitingIcon.close();
@@ -592,6 +647,11 @@ interviewAdminProcessApp
 
   $scope.interviewAdminProcess.interview.tableFieldTimeSlot.scheduleApplicant = function(interview, timeSlot)
   {
+    $scope.schedule_invited_email.subject = $scope.default_email_templates.interview_mgr_schedule_applicant.title;
+    $scope.schedule_invited_email.content = $scope.default_email_templates.interview_mgr_schedule_applicant.content;
+    $scope.schedule_canceled_email.subject = $scope.default_email_templates.interview_mgr_cancel_schedule_applicant.title;
+    $scope.schedule_canceled_email.content = $scope.default_email_templates.interview_mgr_cancel_schedule_applicant.content;
+
     $scope.interviewAdminProcess.interview.schedule.interview = interview;
     $scope.interviewAdminProcess.interview.schedule.scheduleApplicant.init(timeSlot);
   };
@@ -1657,6 +1717,39 @@ interviewAdminProcessApp
     });
   };
 
+  $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant.init = function(interview)
+  {
+    $scope.interviewAdminProcess.flow = 950;
+    $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant.interview = angular.copy(interview);
+
+    $scope.select_invited_email.subject = $scope.default_email_templates.interview_mgr_select_applicant.title;
+    $scope.select_invited_email.content = $scope.default_email_templates.interview_mgr_select_applicant.content;
+
+    $("#interviewAdminProcessSendInviteEmailToApplicantForm").modal('toggle');
+  };
+
+  $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant.send = function()
+  {
+    var postData = {
+      "current_year_id": $rootScope.current_year.id,
+      "current_process_id": $rootScope.current_process.id,
+      interviewId: $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant.interview.id,
+      invited_email_subject: $scope.select_invited_email.subject,
+      invited_email_content: $scope.select_invited_email.content
+    };
+
+    waitingIcon.open();
+    interviewFactory.sendInviteEmailToApplicants(postData)
+    .success(function (data, status, headers, config) {
+      $scope.interviewAdminProcess.flow = 958;
+      waitingIcon.close();
+    })
+    .error(function (data, status, headers, config) {
+      $scope.interviewAdminProcess.flow = 959;
+      waitingIcon.close();
+    });
+  };
+
   $scope.interviewAdminProcess.interview.schedule.refresh = function()
   {
     if ($scope.interviewAdminProcess.interview.schedule.interview)
@@ -2082,7 +2175,11 @@ interviewAdminProcessApp
       applicantIdAdd: (applicantIdAdd.length == 0 ? null : applicantIdAdd),
       applicantIdRemove: (applicantIdRemove.length == 0 ? null : applicantIdRemove),
       "current_year_id": $rootScope.current_year.id,
-      "current_process_id": $rootScope.current_process.id
+      "current_process_id": $rootScope.current_process.id,
+      invited_email_subject: $scope.schedule_invited_email.subject,
+      invited_email_content: $scope.schedule_invited_email.content,
+      canceled_email_subject: $scope.schedule_canceled_email.subject,
+      canceled_email_content: $scope.schedule_canceled_email.content
     };
 
     waitingIcon.open();
@@ -2632,8 +2729,13 @@ interviewAdminProcessApp
   };
 
   $scope.interviewAdminProcess.interview.dropdownClick.selectApplicant = function(interview)
-  {;
+  {
     $scope.interviewAdminProcess.interview.selectApplicant.init(interview);
+  };
+
+  $scope.interviewAdminProcess.interview.dropdownClick.sendInviteEmailApplicant = function(interview)
+  {
+    $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant.init(interview);
   };
 
   $scope.interviewAdminProcess.interview.dropdownClick.timeSlot = function(interview)
@@ -2890,6 +2992,7 @@ interviewAdminProcessApp
       case 700:
       case 800:
       case 900:
+      case 950:
       case 1000:
       case 2000:
       case 2100:
@@ -2940,6 +3043,11 @@ interviewAdminProcessApp
           }
 
           break;
+        case 955:
+          $scope.interviewAdminProcess.interview.sendInviteEmailToApplicant.send();
+
+
+          break;
         case 1010:
           $scope.interviewAdminProcess.interview.position.send();
           break;
@@ -2968,6 +3076,7 @@ interviewAdminProcessApp
       if ($scope.interviewAdminProcess.getRoundSuccess)
       {
         $scope.interviewAdminProcess.getRoundInterviews($scope.interviewAdminProcess.roundId);
+        $scope.interviewAdminProcess.getEmailTemplates();
         //$scope.interviewAdminProcess.interview.create.hideDiv();
         $scope.interviewAdminProcess.checkManager();
       }

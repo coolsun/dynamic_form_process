@@ -708,6 +708,35 @@ class Interview < ActiveRecord::Base
   end
 
 ####################################################################################################
+  def self.email_at_mgr_select_applicant_customized_content(i_interview_id, i_mail_to_user_ids, manager_emails, subject, content)
+    #1
+    interview = Interview.email_get_interview_info(i_interview_id);
+
+    if (interview)
+      round = interview["round"];
+      i_round_id = round["id"].to_i;
+      procedure = round["procedure"];
+      i_procedure_id = procedure["id"].to_i;
+      s_interview_url = ("%s/%s/%d" %['apply_now', 'interview', i_round_id]);
+
+      s_title = subject;
+      s_content = content;
+      s_content = Interview.email_replace_interview_info(s_content, interview);
+      s_content = Interview.email_replace_hiring_mgr(s_content, i_procedure_id);
+      s_content = Interview.email_replace_url(s_content, 'SignUpInterviewURL', procedure, s_interview_url);
+
+      i_mail_to_user_ids.each do |i_user_id|
+        user = User.find_by_id(i_user_id);
+        s_send_content = email_replace_dear_users(s_content, 'ApplicantName', user);
+
+        StanfordMailer.send_shipped(user.email, s_title, s_send_content, manager_emails);
+
+        #logger.info("s_send_content : #{s_send_content}");
+      end
+    end
+  end
+
+####################################################################################################
   def self.email_at_mgr_cancel_select_applicant(i_interview_id, i_mail_to_user_ids, manager_emails)
     #2
     interview = Interview.email_get_interview_info(i_interview_id);
@@ -776,6 +805,37 @@ class Interview < ActiveRecord::Base
   end
 
 ####################################################################################################
+  def self.email_at_mgr_schedule_applicant_customized_content(i_mail_to_user_ids, time_slot, manager_emails, subject, content)
+    #3
+    i_interview_id = time_slot.interview_id
+    interview = Interview.email_get_interview_info(i_interview_id);
+
+    if (interview)
+      round = interview["round"];
+      i_round_id = round["id"].to_i;
+      procedure = round["procedure"];
+      i_procedure_id = procedure["id"].to_i;
+      s_interview_url = ("%s/%s/%d" %['apply_now', 'interview', i_round_id]);
+
+
+      s_title = subject;
+      s_content = content;
+      s_content = Interview.email_replace_interview_info(s_content, interview);
+      s_content = Interview.email_replace_hiring_mgr(s_content, i_procedure_id);
+      s_content = Interview.email_replace_url(s_content, 'ViewInterviewURL', procedure, s_interview_url);
+      s_content = Interview.email_replace_time_slot_time(s_content, time_slot);
+
+      i_mail_to_user_ids.each do |i_user_id|
+        user = User.find_by_id(i_user_id);
+        s_send_content = email_replace_dear_users(s_content, 'ApplicantName', user);
+        StanfordMailer.send_shipped(user.email, s_title, s_send_content, manager_emails);
+
+        #logger.info("s_send_content : #{s_send_content}");
+      end
+    end
+  end
+
+####################################################################################################
   def self.email_at_mgr_cancel_schedule_applicant(i_mail_to_user_ids, time_slot, manager_emails)
     #4
     i_interview_id = time_slot.interview_id
@@ -795,6 +855,36 @@ class Interview < ActiveRecord::Base
 
       s_title = email_template.title;
       s_content = email_template.content;
+      s_content = Interview.email_replace_interview_info(s_content, interview);
+      s_content = Interview.email_replace_hiring_mgr(s_content, i_procedure_id);
+      s_content = Interview.email_replace_url(s_content, 'ViewInterviewURL', procedure, s_interview_url);
+      s_content = Interview.email_replace_time_slot_time(s_content, time_slot);
+
+      i_mail_to_user_ids.each do |i_user_id|
+        user = User.find_by_id(i_user_id);
+        s_send_content = email_replace_dear_users(s_content, 'ApplicantName', user);
+        StanfordMailer.send_shipped(user.email, s_title, s_send_content, manager_emails);
+
+        #logger.info("s_send_content : #{s_send_content}");
+      end
+    end
+  end
+
+####################################################################################################
+  def self.email_at_mgr_cancel_schedule_applicant_customized_content(i_mail_to_user_ids, time_slot, manager_emails, subject, content)
+    #4
+    i_interview_id = time_slot.interview_id
+    interview = Interview.email_get_interview_info(i_interview_id);
+
+    if (interview)
+      round = interview["round"];
+      i_round_id = round["id"].to_i;
+      procedure = round["procedure"];
+      i_procedure_id = procedure["id"].to_i;
+      s_interview_url = ("%s/%s/%d" %['apply_now', 'interview', i_round_id]);
+
+      s_title = subject;
+      s_content = content;
       s_content = Interview.email_replace_interview_info(s_content, interview);
       s_content = Interview.email_replace_hiring_mgr(s_content, i_procedure_id);
       s_content = Interview.email_replace_url(s_content, 'ViewInterviewURL', procedure, s_interview_url);
