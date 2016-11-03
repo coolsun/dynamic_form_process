@@ -19,6 +19,7 @@ interviewAdminProcessApp
   $scope.select_invited_email = {};
   $scope.select_invited_email.subject = '';
   $scope.select_invited_email.content = '';
+  $scope.select_invited_email.recipients = [];
 
   $scope.schedule_invited_email = {};
   $scope.schedule_invited_email.subject = '';
@@ -201,6 +202,27 @@ interviewAdminProcessApp
       $rootScope.rsasAlert({type: 'danger', msg: "Email delivery failure"});
       waitingIcon.close();
     });
+  };
+
+  $scope.interviewAdminProcess.getInterviewSelectApplicants = function(interviewId, recipients)
+  {
+    waitingIcon.open();
+    interviewFactory.getInterviewSelectApplicants(interviewId, $rootScope.current_year.id, $rootScope.current_process.id)
+    .success(function (data, status, headers, config) {
+      applicants = data.applicants;
+
+      for (var i = 0; i < applicants.length; i++)
+      {
+        var user = applicants[i];
+        recipients.push({name: user.name, email: user.email});
+      }
+
+      waitingIcon.close();
+    })
+    .error(function (data, status, headers, config) {
+      waitingIcon.close();
+    });
+
   };
 
   $scope.interviewAdminProcess.checkManager = function()
@@ -1725,6 +1747,8 @@ interviewAdminProcessApp
     $scope.select_invited_email.subject = $scope.default_email_templates.interview_mgr_select_applicant.title;
     $scope.select_invited_email.content = $scope.default_email_templates.interview_mgr_select_applicant.content;
 
+    $scope.interviewAdminProcess.getInterviewSelectApplicants(interview.id, $scope.select_invited_email.recipients);
+
     $("#interviewAdminProcessSendInviteEmailToApplicantForm").modal('toggle');
   };
 
@@ -1749,6 +1773,8 @@ interviewAdminProcessApp
       waitingIcon.close();
     });
   };
+
+
 
   $scope.interviewAdminProcess.interview.schedule.refresh = function()
   {
@@ -2369,28 +2395,7 @@ interviewAdminProcessApp
 
     $("#interviewAdminProcessEmail").modal('toggle');
     $scope.email.init();
-    $scope.interviewAdminProcess.applicantList.emailAllApplicant.getInterviewSelectApplicants(interviewId, $scope.rsas_email.recipients);
-  };
-
-  $scope.interviewAdminProcess.applicantList.emailAllApplicant.getInterviewSelectApplicants = function(interviewId, recipients)
-  {
-    waitingIcon.open();
-    interviewFactory.getInterviewSelectApplicants(interviewId, $rootScope.current_year.id, $rootScope.current_process.id)
-    .success(function (data, status, headers, config) {
-      applicants = data.applicants;
-
-      for (var i = 0; i < applicants.length; i++)
-      {
-        var user = applicants[i];
-        recipients.push({name: user.name, email: user.email});
-      }
-
-      waitingIcon.close();
-    })
-    .error(function (data, status, headers, config) {
-      waitingIcon.close();
-    });
-
+    $scope.interviewAdminProcess.getInterviewSelectApplicants(interviewId, $scope.rsas_email.recipients);
   };
 
   $scope.interviewAdminProcess.applicantList.emailAllApplicant.send = function()
