@@ -222,9 +222,7 @@ interviewAdminProcessApp
     .error(function (data, status, headers, config) {
       waitingIcon.close();
     });
-
   };
-
 
   $scope.interviewAdminProcess.getInterviewScheduledApplicants = function(interviewId, recipients)
   {
@@ -254,8 +252,6 @@ interviewAdminProcessApp
     .success(function (data) {
       waitingIcon.close();
       $scope.interviewAdminProcess.isManager = data.isManager;
-      //$scope.interviewAdminProcess.interview.tbl.init($scope, $scope.interviewAdminProcess.interview.tbl);
-      //$scope.interviewAdminProcess.myInterview.tbl.init($scope, $scope.interviewAdminProcess.myInterview.tbl);
     })
     .error(function (data) {
       $rootScope.rsasAlert({type: 'danger', msg: "Connect server error."});
@@ -403,7 +399,6 @@ interviewAdminProcessApp
   $scope.interviewAdminProcess.refreshAll = function()
   {
     $scope.interviewAdminProcess.interview.refresh();
-    //$scope.interviewAdminProcess.calendar.calendarRefresh();
   };
 
   $scope.interviewAdminProcess.interview.tbl.setDataAndRequest = function()
@@ -514,10 +509,6 @@ interviewAdminProcessApp
     }
   };
 
-  $scope.interviewAdminProcess.tab.calendarSelect = function()
-  {
-  };
-
   $scope.interviewAdminProcess.setDatetimepicker = function()
   {
     var setDatetimepickers = $('.setDatetimepicker');
@@ -536,7 +527,6 @@ interviewAdminProcessApp
         setTimeout(function(){$('.setDatetimepicker').css('z-index', 1000);}, 0);
       })
     });
-
   };
 
   $scope.interviewAdminProcess.calendar.calendarRefresh = function()
@@ -562,7 +552,6 @@ interviewAdminProcessApp
         waitingIcon.close();
       });
     }
-
   };
 
   $scope.interviewAdminProcess.calendar.interviewsTransToCalender = function(interviews)
@@ -663,14 +652,10 @@ interviewAdminProcessApp
         center: '',
         right: 'today prev,next'
       },
-      //dayClick: $scope.interviewAdminProcess.alertOnDayClick,
       eventClick: $scope.interviewAdminProcess.calendar.alertOnEventClick,
-      //eventDrop: $scope.interviewAdminProcess.alertOnDrop,
       viewRender: $scope.interviewAdminProcess.calendar.renderView
     }
   };
-
-
 
   $scope.interviewAdminProcess.interview.refresh = function()
   {
@@ -800,7 +785,6 @@ interviewAdminProcessApp
       var interviewerVacancy = $scope.interviewAdminProcess.interview.create.interviewerVacancyPerTimeSlot;
       var maxTimeSlotPerInterviewer = $scope.interviewAdminProcess.interview.create.maxNumTimeSlotPerInterviewer;
       var oneTimeSlotPerApplicant = $scope.interviewAdminProcess.interview.create.oneTimeSlotPerApplicant;
-      //var timeList = [];
       var positionIds = [];
 
       for (var i = 0; i < $scope.interviewAdminProcess.interview.create.positionList.length; i++)
@@ -819,7 +803,6 @@ interviewAdminProcessApp
         interviewerVacancy: interviewerVacancy,
         maxTimeSlotPerInterviewer: maxTimeSlotPerInterviewer,
         oneTimeSlotPerApplicant: oneTimeSlotPerApplicant,
-        //timeList: timeList,
         positionIds: positionIds,
         "current_year_id": $rootScope.current_year.id,
         "current_process_id": $rootScope.current_process.id
@@ -845,7 +828,6 @@ interviewAdminProcessApp
           }
         }
 
-        //$scope.interviewAdminProcess.interview.interviewer.clear();
         $scope.interviewAdminProcess.refreshAll();
         waitingIcon.close();
       })
@@ -945,7 +927,6 @@ interviewAdminProcessApp
         {
           case 'xSYS00000':
             $scope.interviewAdminProcess.flow = 680;
-            //$scope.interviewAdminProcess.getProcessRoundInterviews($scope.interviewAdminProcess.processId);
             break;
           default:
             $scope.interviewAdminProcess.flow = 690;
@@ -1109,7 +1090,6 @@ interviewAdminProcessApp
     $scope.interviewAdminProcess.interview.interviewer.sunetInterviewInit();
 
     $scope.interviewAdminProcess.interview.schedule.interviewer.notSetInterviewerUsers = [];
-    //$scope.interviewAdminProcess.interview.interviewer.selectAll = false;
     $scope.interviewAdminProcess.interview.interviewer.clear();
     $scope.interviewAdminProcess.interview.interviewer.interview = angular.copy(interview);
     $scope.interviewAdminProcess.interview.interviewer.getInterviewers($scope.interviewAdminProcess.interview.interviewer.interview.id);
@@ -1201,7 +1181,6 @@ interviewAdminProcessApp
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.firstName = '';
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.middleName = '';
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.lastName = '';
-
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.noSunetIdCss = '';
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.noEmailCss = '';
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.noFirstNameCss = '';
@@ -1342,7 +1321,6 @@ interviewAdminProcessApp
     });
   };
 
-
   $scope.interviewAdminProcess.interview.timeSlot.init = function(interview)
   {
     $scope.interviewAdminProcess.flow = 900;
@@ -1364,7 +1342,6 @@ interviewAdminProcessApp
   $scope.interviewAdminProcess.interview.timeSlot.clear = function()
   {
     $scope.interviewAdminProcess.interview.clear();
-    //$scope.interviewAdminProcess.interview.timeSlot.add = [];
     $scope.interviewAdminProcess.interview.timeSlot.remove = [];
   };
 
@@ -1442,7 +1419,6 @@ interviewAdminProcessApp
     var interval = parseInt($scope.interviewAdminProcess.interview.timeSlot.timepicker.interval) * 60000;
     var time_between =  parseInt($scope.interviewAdminProcess.interview.timeSlot.timepicker.time_between) * 60000;
     var checkStartTime = Date.parse($scope.interviewAdminProcess.interview.timeSlot.timepicker.start);
-    //var checkEndTime = Date.parse($scope.interviewAdminProcess.interview.timeSlot.timepicker.end);
     var timeList = $scope.interviewAdminProcess.interview.timeSlot.timeList;
     var place = $scope.interviewAdminProcess.interview.timeSlot.place;
     var isRun = true;
@@ -1518,7 +1494,6 @@ interviewAdminProcessApp
         counter++;
       }
       while (counter < quantity);
-      //while (timeSlotEnd <= end);
 
       $scope.interviewAdminProcess.interview.timeSlot.timepicker.start = '';
       $scope.interviewAdminProcess.interview.timeSlot.timepicker.end = '';
@@ -1529,7 +1504,6 @@ interviewAdminProcessApp
     {
       $scope.interviewAdminProcess.interview.timeSlot.noEndTimeCss = $scope.inputNotSetCss;
     }
-    //$scope.interviewAdminProcess.interview.timeSlot.noTimeListCss = (0 < $scope.interviewAdminProcess.interview.timeSlot.timeList.length)? '' : $scope.inputNotSetCss;
   };
 
   $scope.interviewAdminProcess.interview.timeSlot.addTimeSlotToTimeList = function(timeSlots)
@@ -1544,12 +1518,8 @@ interviewAdminProcessApp
         t_start: transDateTimeAtZoneUTCToSub8ExistClientZone(new Date(Date.parse(timeSlots[i].t_start))),
         t_end: transDateTimeAtZoneUTCToSub8ExistClientZone(new Date(Date.parse(timeSlots[i].t_end)))
       };
-
-      //rsasTime = $scope.interviewAdminProcess.startAndEndTimeChangeRsasTimeFormat(newTime);
-
       timeList.push(newTime);
     }
-
   };
 
   $scope.interviewAdminProcess.interview.timeSlot.send = function()
@@ -2083,7 +2053,6 @@ interviewAdminProcessApp
     });
   };
 
-
   $scope.interviewAdminProcess.interview.schedule.scheduleApplicant.init = function(timeSlot)
   {
     $scope.interviewAdminProcess.flow = 2200;
@@ -2261,7 +2230,6 @@ interviewAdminProcessApp
     });
   };
 
-
   $scope.interviewAdminProcess.applicantList.refleshInterviewSelect = function(roundId)
   {
     $scope.interviewAdminProcess.applicantList.applicants = [];
@@ -2273,7 +2241,6 @@ interviewAdminProcessApp
       waitingIcon.close();
 
       var round = data[0];
-
       if (round && round.id == roundId)
       {
         $scope.interviewAdminProcess.applicantList.round = round;
@@ -2332,7 +2299,6 @@ interviewAdminProcessApp
     var interviewId = $scope.interviewAdminProcess.applicantList.interview.id;
 
     $scope.interviewAdminProcess.applicantList.refresh();
-    //$scope.interviewAdminProcess.applicantList.getInterviewApplicantList(interviewId);
   };
 
   $scope.interviewAdminProcess.applicantList.radioApplicantTypeClick = function(type)
@@ -2570,7 +2536,6 @@ interviewAdminProcessApp
     }
   };
 
-
   $scope.interviewAdminProcess.applicantList.review.init = function(applicant)
   {
     $scope.interviewAdminProcess.applicantList.review.forms = [];
@@ -2604,12 +2569,10 @@ interviewAdminProcessApp
     });
   };
 
-
   $scope.interviewAdminProcess.applicantList.comment.init = function(applicant)
   {
     $scope.interviewAdminProcess.applicantList.comment.applicant = angular.copy(applicant);
   };
-
 
   $scope.interviewAdminProcess.applicantList.application.form.init = function()
   {
@@ -2673,7 +2636,6 @@ interviewAdminProcessApp
     });
   };
 
-
   $scope.interviewAdminProcess.applicantList.tags.init = function(applicant){
     waitingIcon.open();
     $scope.interviewAdminProcess.applicantList.tags.edit_applicant = applicant;
@@ -2716,8 +2678,6 @@ interviewAdminProcessApp
       waitingIcon.close();
     });
   };
-
-
 
   $scope.interviewAdminProcess.interview.dropdownClick.setting = function(interview)
   {
@@ -2822,9 +2782,7 @@ interviewAdminProcessApp
         $scope.interviewAdminProcess.myInterview.timeSlot.cancel(time_slot, interviewerId);
       }
     }
-
   };
-
 
   $scope.interviewAdminProcess.myInterview.timeSlot.click = function(timeSlot, interviewer)
   {
@@ -3173,8 +3131,6 @@ interviewAdminProcessApp
   {
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.noFirstNameCss = ($scope.interviewAdminProcess.interview.interviewer.newInterviewer.firstName)? '' : $scope.inputNotSetCss;
   };
-
-
 
 });
 /* EOF */
