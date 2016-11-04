@@ -11,15 +11,19 @@
 <%= stylesheet_link_tag '/saas/css/tableRsas' %>
 
 <div class="container">
-  <div class="col-md-9" style="float: none; margin: 0 auto;">
+  <div class="col-md-12" style="float: none; margin: 0 auto;">
     <% @applicants.each_with_index do |applicant, applicant_index| %>
       <h1 align="center" style="margin: 0px 0px 10px; padding: 10px; border: 3px black double; word-break: normal;" class="ng-binding">
         <%= applicant["name"] %> <%= applicant["last_name"] %>
       </h1>
       <% applicant["forms"].each_with_index do |form, form_index| %>
-        <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding"><%= form["form_name"] %></h4>
 				<% if form["reviewer"].present? %>
-					<div class="rsas-div-right">Reviewer: <%= form["reviewer"] %></div>
+					<h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding">
+						Review
+						<div>Reviewer: <%= form["reviewer"] %></div>
+					</h4>
+				<% else %>
+					<h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding"><%= form["form_name"] %></h4>
 				<% end %>
         <% form["blocks"].each do |block| %>
           <table style="width: 100%; table-layout: fixed;">
