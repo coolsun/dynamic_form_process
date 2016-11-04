@@ -134,4 +134,11 @@ class ReportsController < ApplicationController
     end
   end
 
+  def rank_list_report
+    respond_to do |format|
+      format.xlsx {
+        response.headers['Content-Disposition'] = "attachment; filename='Rank List'"
+      }
+    end
+  end
 end

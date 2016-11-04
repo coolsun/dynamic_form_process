@@ -40,7 +40,9 @@ class SaasController < ApplicationController
       "post_match_invitation",
       "remind_recommender",
       "submission_application",
-      "withdraw_application"
+      "withdraw_application",
+      "applicants_submit_ranked_list",
+      "location_managers_submit_ranked_list"
     ]
     repairs = []
     Procedure.all.order("id asc").each do |process|

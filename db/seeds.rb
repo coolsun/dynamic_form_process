@@ -4585,7 +4585,7 @@ EOF
 <p>Stanford University</p>
 EOF
   },
-  # The two emails about submitting application.
+  # The four emails about submitting application.
   { #1
     "title" => "Thank you for the submission of your application",
     "email_type" => "submission_application",
@@ -4609,18 +4609,41 @@ EOF
     "title" => "Withdrawal of your application",
     "email_type" => "withdraw_application",
     "content" => <<-EOF
-Dear [[FirstName]],<br>
+<p><strong>Dear [[ApplicantName]],</strong><br />
+<br />
+You have submitted a ranked list successfully. Please see the attached copy of ranked list you have submitted.</p>
+<p><br />Sincerely Yours,</p>
+<p><br />Hiring Manager</p>
+<p>[[HiringManagerName]]</p>
+<p>Stanford University</p>
+EOF
+  },
+  { #3
+    "title" => "Ranked List Notice for Applicant",
+    "email_type" => "applicants_submit_ranked_list",
+    "content" => <<-EOF
+<p><strong>Dear [[ApplicantName]],</strong><br />
+<br />
+You have submitted a ranked list successfully.  Please see the attached copy of ranked list you have submitted.
+<p><br />Sincerely Yours,</p>
+<p><br />Hiring Manager</p>
+<p>[[HiringManagerName]]</p>
+<p>Stanford University</p>
+EOF
+  },
+  { #4
+    "title" => "Ranked List Notice for Location Manager",
+    "email_type" => "location_managers_submit_ranked_list",
+    "content" => <<-EOF
+<strong>Dear [[LocationManagerName]],</strong><br>
 <br>
-You have withdrawn your application for the following position(s).<br>
-<br>
-[[Positions]]<br>
-<br>
-You can re-submit your application before the application deadline.<br>
+You have submitted a ranked list successfully.  Please see the attached copy of ranked list you have submitted.<br>
 <br>
 Sincerely Yours,<br>
 <br>
 Hiring Manager<br>
 [[HiringManagerName]]<br>
+Stanford University
 EOF
   },
   # The one email about offer.
@@ -5152,7 +5175,11 @@ help_landings = [
 
 
 system_messages = [
-  {:name => "One year up", :identify_name => "one_year_up", :message =>  "<p>You have to have more than one year of</p>\n<p>guaranteed housing remaining in order to select this job.</p>\n<p>If you have further question, please contact the hiring manager</p>\n<p>has_hiring@stanfordtest.edu.</p>"}
+  {:name => "One year up", :identify_name => "one_year_up", :message =>  "<p>You have to have more than one year of</p>\n<p>guaranteed housing remaining in order to select this job.</p>\n<p>If you have further question, please contact the hiring manager</p>\n<p>has_hiring@stanfordtest.edu.</p>"},
+  {:name => "Offer Status - Accept", :identify_name => "offer_status_accept", :message =>  "Congratulations! You have officially accepted the offer."},
+  {:name => "Offer Status - Decline", :identify_name => "offer_status_decline", :message =>  "You have officially declined the offer."},
+  {:name => "Rank Position - Applicant View", :identify_name => "rank_position_applicant_view", :message =>  "Rank by dragging"},
+  {:name => "Rank Position - Manager View", :identify_name => "rank_position_manager_view", :message =>  "Rank by dragging"}
 ]
 ###########################################################################################
 ###########################################################################################
@@ -5213,13 +5240,15 @@ people_soft_users.each do |people_soft_user|
    PeoplesoftDetail.create(:user_id => user.id, :academics => people_soft_user["academics"].to_json, :addresses => people_soft_user["addresses"].to_json, :phones => people_soft_user["phones"].to_json, :academic_standings => people_soft_user["academicStandings"].to_json)
 end
 
-applicant_names = ["kimi_applicant", "dev_role_applicant", "dev_location_applicant"]
+applicant_names = ["kimi_applicant", "dev_role_applicant", "dev_location_applicant","bill_applicant"]
 applicant_names.each_with_index do |name, i|
   id = i + 2000;
   suid = "%08d" % id;
   user = User.create(:id => id, :year_id => 1, :first_name => name, :last_name => "applicant", :suid => suid, :sunet_id => name + id.to_s)
   if ('kimi_applicant' == user.first_name)
     user.email = "kimi@trillioninnovations.com"
+  elsif ('bill_applicant' == user.first_name)
+    user.email = "bill@trillioninnovations.com"
   else
     user.email = user.name.gsub(" ", "_") + "@applicant.standford.edu"
   end

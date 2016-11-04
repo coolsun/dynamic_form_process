@@ -19,6 +19,8 @@ rsasApp.controller('EmailTemplateList',
         // About application submit
         {email_type:"withdraw_application", name: "Edit (withdraw application) email", pop_text: "Applicants receive this email after they withdrew application."},
         {email_type:"interview_mgr_select_applicant", name: "Edit (interview_mgr_select_applicant) email", pop_text: "Applicants receive this email after managers selected them for an interview."},
+        {email_type:"applicants_submit_ranked_list", name: " Edit Ranked List Notice for Applicant email", pop_text: "Applicants receive this email after they submitted a ranked list."},
+        {email_type:"location_managers_submit_ranked_list", name: " Edit Ranked List Notice for Location Manager email ", pop_text: "Location managers receive this email after they submitted a ranked list."},
         // About interview
         {email_type:"interview_mgr_cancel_select_applicant", name: "Edit (interview_mgr_cancel_select_applicant) email", pop_text: "Applicants receive this email after managers cancelled the action to select them for an interview."},
         {email_type:"interview_mgr_schedule_applicant", name: "Edit (interview_mgr_schedule_applicant) email", pop_text: "Applicants receive this email after managers scheduled them for an interview."},
