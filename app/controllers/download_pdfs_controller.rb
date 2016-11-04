@@ -100,12 +100,7 @@ class DownloadPdfsController < ApplicationController
     b_attachable_form_check = params[:attachableFormsCheck];
     b_recommendations_form_check = params[:recommendationsFormCheck];
     b_transcripts_form_check = params[:transcriptsFormCheck];
-
-    #logger.info("i_interview_id : #{i_interview_id}");
-    #logger.info("b_system_form_check : #{b_system_form_check}");
-    #logger.info("b_attachable_form_check : #{b_attachable_form_check}");
-    #logger.info("b_recommendations_form_check : #{b_recommendations_form_check}");
-    #logger.info("b_transcripts_form_check : #{b_transcripts_form_check}");
+    b_review_form_check = params[:reviewFormCheck];
 
     interview = Interview.find_by_id(i_interview_id);
 
@@ -115,7 +110,7 @@ class DownloadPdfsController < ApplicationController
       round = Round.find_by_id(i_round_id);
       s_round_name = round.title;
       i_procedure_id = round.procedure_id;
-
+      procedure = Procedure.find_by_id(i_procedure_id)
 
       b_senior_manager = check_user_permission("SeniorManager")[0];
 
@@ -155,6 +150,7 @@ class DownloadPdfsController < ApplicationController
         system_forms = [];
         attachable_forms = [];
         recommendation_forms = [];
+        reviews = [];
 
         if (b_system_form_check)
           join_list = [:form];
@@ -184,6 +180,32 @@ class DownloadPdfsController < ApplicationController
           obj["transcripts"] = transcripts;
         end
 
+        if (b_review_form_check)
+          interviewee = user;
+
+          if interviewee && interview && procedure
+            forms = Form.where(:procedure_id => procedure.id, :display => true, :form_type => "Interview").order(:rank)
+
+            forms.each do |form|
+              interview_evaluates = InterviewEvaluate.includes(:interview_evaluate_form, :reviewer).where(:interview_id => interview.id, :interviewee_user_id => interviewee.id, :form_id => form.id).order(:id);
+
+              if (interview_evaluates)
+                interview_evaluates.each do |evaluate|
+                  if evaluate.interview_evaluate_form.present?
+                    interview_evaluate_form = evaluate.interview_evaluate_form.as_json();
+                    interview_evaluate_form["reviewer"] = evaluate.reviewer.as_json({
+                      :methods => :name
+                    })["name"];
+                    reviews << interview_evaluate_form;
+
+                  end
+                end
+              end
+            end
+          end
+
+        end
+
 =begin
         s_forms = []
         system_forms.each do |form|
@@ -197,10 +219,11 @@ class DownloadPdfsController < ApplicationController
 =end
 
 
-        forms = (system_forms + attachable_forms + recommendation_forms)
+        logger.info(reviews);
+        forms = (system_forms + attachable_forms + recommendation_forms + reviews)
 
         forms.each do |user_form|
-          schema = JSON.parse(user_form.schema)
+          schema = JSON.parse(user_form["schema"])
           arr = []
           maxColumn = 0
           current_row = 0
@@ -220,14 +243,13 @@ class DownloadPdfsController < ApplicationController
           end
           blocks << OpenStruct.new({"column" => maxColumn + 1, "items" => arr})
           logger.info "blocks #{blocks.to_json}"
-          obj["forms"] << {"form_name" => user_form.form_name, "blocks" => blocks}
+          obj["forms"] << {"form_name" => user_form["form_name"], "blocks" => blocks, "reviewer" => user_form["reviewer"]}
         end
         if obj["forms"].present? || obj["transcripts"].present?
           @applicants << obj
         end
       end
     end
-
 
     pdf = WickedPdf.new.pdf_from_string(
       render_to_string('download_pdfs/pdf_form.html.erb'),
@@ -247,9 +269,6 @@ class DownloadPdfsController < ApplicationController
     mgr_user = User.find_by_id(i_mgr_user_id);
 
     interview = Interview.find_by_id(i_interview_id);
-
-
-
 
     @applicant_list = [];
     @s_round_name = '';
@@ -423,7 +442,7 @@ class DownloadPdfsController < ApplicationController
     )
 
     s_time = Time.now().in_time_zone("Pacific Time (US & Canada)").strftime("%m_%d_%Y_%H%M");
-    s_file_name = ("review_$s_%s_%s_%s.pdf" % [s_interviewee_name, s_interview_name, s_time]);
+    s_file_name = ("review_%s_%s_%s.pdf" % [s_interviewee_name, s_interview_name, s_time]);
     send_data(pdf, :filename => s_file_name, :type => "application/pdf");
 #=end
 

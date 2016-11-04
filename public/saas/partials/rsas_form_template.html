@@ -39,7 +39,7 @@
           </div>
           <div ng-if="item.type=='textarea'">
             <h5><span style="color: red" ng-show="item.rq">* </span>{{item.description}}</h5>
-            <textarea style="width: 100%; min-height: 200px; resize: none;" ng-model="item.value" ng-bind="item.value" ng-required="item.rq" rsas-maxlength="{{item.maxlength}}"></textarea>
+            <textarea style="width: 100%; min-height: 200px; resize: none;" ng-model="item.value" ng-required="item.rq" rsas-maxlength="{{item.maxlength}}"></textarea>
             <div style="color: red;" ng-show="item.value.length == item.maxlength">Maxlength = {{item.maxlength}} characters (around 250 words).</div>
           </div>
           <div ng-if="item.type=='description'">
