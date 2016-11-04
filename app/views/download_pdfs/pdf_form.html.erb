@@ -18,6 +18,9 @@
       </h1>
       <% applicant["forms"].each_with_index do |form, form_index| %>
         <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding"><%= form["form_name"] %></h4>
+				<% if form["reviewer"].present? %>
+					<div class="rsas-div-right">Reviewer: <%= form["reviewer"] %></div>
+				<% end %>
         <% form["blocks"].each do |block| %>
           <table style="width: 100%; table-layout: fixed;">
             <tr>
@@ -114,11 +117,11 @@
             </tr>
           </table>
         <% end %>
-        <% if @applicants.length > (applicant_index + 1) || (@applicants.length == (applicant_index + 1) && (applicant["forms"].length != (form_index + 1) || (applicant["forms"].length == (form_index + 1) && applicant["transcripts"]))) %>
+        <% if @applicants.length > (applicant_index + 1) || (@applicants.length == (applicant_index + 1) && (applicant["forms"].length != (form_index + 1) || (applicant["forms"].length == (form_index + 1) && applicant["transcripts"].present?))) %>
           <div style="display:block; clear:both; page-break-after:always;"></div>
         <% end %>
       <% end %>
-      <% if applicant["transcripts"] %>
+      <% if applicant["transcripts"].present? %>
         <h4 align="center" style="margin: 0px; padding: 10px 0px; font-weight: bold; background-color: yellow" class="ng-binding">Transcripts</h4>
         <table style="width: 100%; table-layout: fixed; font-size: 12px; text-align: left;" class="table">
           <thead>
