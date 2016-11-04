@@ -1,0 +1,40 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+
+#rows
+wb.add_worksheet do |sheet|
+
+  	if @type == "mgr"
+		sheet.add_row [
+		  "New Rank",
+		  "SUNet ID",
+		  "Name",
+		  "Position"
+		], style: title_style
+
+		@rank_list[:rank_applications].each do |rank|
+			sheet.add_row [
+				rank[:rank],
+				rank[:suid],
+				rank[:name],
+				rank[:position_name]
+			]
+		end
+
+	elsif @type == "user"
+		sheet.add_row [
+		  "New Rank",
+		  "Position"
+		], style: title_style
+
+		@rank_list[:rank_applications].each do |rank|
+			sheet.add_row [
+				rank[:rank],
+				rank[:position_name]
+			]
+		end
+	end
+end

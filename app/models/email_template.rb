@@ -4,11 +4,12 @@ class EmailTemplate < ActiveRecord::Base
   def self.replace_keyworld(txt, procedure, positions, step, user, admin_emails = nil, applicant_user = nil)
     current_year = Year.where(:is_current_year => true).select(:name, :next_year).first
     txt = txt.gsub('[[CurrentYear]]', current_year.name)
-    txt = txt.gsub('[[NextYear]]', current_year.next_year)
+    txt = txt.gsub('[[NextYear]]', current_year.next_year.to_s)
     if procedure
       txt = txt.gsub('[[ProcessName]]', procedure.name)
       txt = txt.gsub('[[ContactEmail]]', procedure.contact_email ? procedure.contact_email : "")
       txt = txt.gsub('[[HiringManagerName]]', procedure.get_all_hiring_mgr_name)
+      txt = txt.gsub('[[LocationManagerName]]', user.first_name)
     end
 
     txt = txt.gsub('[[Positions]]', positions.collect{|position| position.name}.join(", ")) if positions
