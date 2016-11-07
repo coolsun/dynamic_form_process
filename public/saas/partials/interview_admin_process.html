@@ -88,26 +88,32 @@
                         </div>
                       </td>
                       <td class="rsas-table-interview-vacancy-field">{{tblTr.vacancy}}</td>
-                      <td>
+                      <td class="rsas-table-interview-time-slot-field">
                         <div ng-repeat="time_slot in tblTr.time_slots">
-                          <p>
-                            <p><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</b></p>
-                          </p>
-                          <p>
-                            <p><b>Place: {{time_slot.place}}</b></p>
-                          </p>
-                          <p ng-show="0 < time_slot.interviewees.length"><b>Applicants:</b></p>
-                          <p ng-repeat="interviewee in time_slot.interviewees">
-                            {{interviewee.user.name}}
-                          </p>
-                          <p ng-show="0 < time_slot.time_slot_interviewers.length"><b>Interviewers:</b></p>
-                          <p ng-repeat="time_slot_interviewer in time_slot.time_slot_interviewers">
-                            {{time_slot_interviewer.interviewer.user.name}}
-                          </p>
-                          <p>
-                            <button ng-show="tblTr.permissions.schedule_interviewer.show && tblTr.interviewer_can_schedule" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleInterviewer(tblTr, time_slot);">Schedule Interviewers</button>
-                            <button ng-show="tblTr.permissions.schedule_applicant.show" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleApplicant(tblTr, time_slot);">Schedule Applicants</button>
-                          </p>
+                          <accordion close-others="false">
+                            <accordion-group is-open="timeSlot.open">
+                              <accordion-heading>
+                                <span class="pt"><b>{{time_slot.t_start | datetimeFormatUTC2ZoneSub8 | s_time_12hr}}</b> ~ <b>{{time_slot.t_end | timeFormatUTC2ZoneSub8 | s_time_12hr_only_time}}</b></span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': timeSlot.open, 'glyphicon-chevron-right': !timeSlot.open}"></i>
+                              </accordion-heading>
+                                <div>
+                                  <p>
+                                    <p><b>Place: {{time_slot.place}}</b></p>
+                                  </p>
+                                  <p ng-show="0 < time_slot.interviewees.length"><b>Applicants:</b></p>
+                                  <p ng-repeat="interviewee in time_slot.interviewees">
+                                    {{interviewee.user.name}}
+                                  </p>
+                                  <p ng-show="0 < time_slot.time_slot_interviewers.length"><b>Interviewers:</b></p>
+                                  <p ng-repeat="time_slot_interviewer in time_slot.time_slot_interviewers">
+                                    {{time_slot_interviewer.interviewer.user.name}}
+                                  </p>
+                                  <p>
+                                    <button ng-show="tblTr.permissions.schedule_interviewer.show && tblTr.interviewer_can_schedule" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleInterviewer(tblTr, time_slot);">Schedule Interviewers</button>
+                                    <button ng-show="tblTr.permissions.schedule_applicant.show" ng-click="interviewAdminProcess.interview.tableFieldTimeSlot.scheduleApplicant(tblTr, time_slot);">Schedule Applicants</button>
+                                  </p>
+                                </div>
+                            </accordion-group>
+                          </accordion>
                         </div>
                       </td>
                       <td class="rsas-table-dropdown-field">
@@ -1979,13 +1985,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
               &times;
             </button>
-            <h4>Sign up time slot</h4>
+            <h4>Sign up as an interviewer</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
               <label class="col-md-2 control-label"></label>
               <span class="col-md-10">
-                <h4>Are you sure to <b>Sign up</b> this schedule?</h4>
+                <h4>Are you sure you want to serve as an interviewer for this time slot?</h4>
               </span>
             </div>
           </div>
@@ -2009,13 +2015,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
               &times;
             </button>
-            <h4>Cancel time slot</h4>
+            <h4>Decline as an interviewer</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
               <label class="col-md-2 control-label"></label>
               <span class="col-md-10">
-                <h4>Do you want to <b>Cancel</b> this schedule?</h4>
+                <h4>Are you sure you don't want to server as an interviewer for this time slot?</h4>
               </span>
             </div>
           </div>

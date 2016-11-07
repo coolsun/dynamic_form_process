@@ -5,6 +5,7 @@ recommendationFormModule.controller('RecommendationForm',
     $scope.after_submit = false;
     $scope.show_recommendation_option = false;
     $scope.message = "";
+    $scope.applicant_name = "";
 
     if($location.search().rid) {
       waitingIcon.open();
@@ -20,6 +21,7 @@ recommendationFormModule.controller('RecommendationForm',
           angular.forEach(data.recommendation_form, function(form_obj){
             form_obj.schema = eval(form_obj.schema);
             $scope.get_form_file(form_obj.id);
+            $scope.applicant_name = data.applicant_name;
           });
           $scope.forms = data.recommendation_form;
         }
