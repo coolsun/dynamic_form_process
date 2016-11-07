@@ -35,6 +35,7 @@ rsasApp.controller('EmailTemplateList',
         {email_type:"interview_interviewer_cancel_schedule_to_self", name: "Edit (interview_interviewer_cancel_schedule_to_self) email", pop_text: "Interviewers receive this email after they cancelled the action to attend an interview."},
         // About offer
         {email_type:"offer_email", name: "Edit Offer email", pop_text: "Applicants receive this email after manager offered them jobs."},
+        {email_type:"offer_confirm_notice_email", name: "Edit Offer Confirmed Notice email", pop_text: "Applicants receive this email after they accept an assignment of a position."},
         // About post match
         {email_type:"post_match_invitation", name: "Edit Post Match Invitation email", pop_text: "Applicants receive this email after managers send them Post Match invitation."},
       ];

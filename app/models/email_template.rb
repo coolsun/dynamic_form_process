@@ -1,7 +1,8 @@
 class EmailTemplate < ActiveRecord::Base
   has_paper_trail
 
-  def self.replace_keyworld(txt, procedure, positions, step, user, admin_emails = nil, applicant_user = nil)
+  def self.replace_keyworld(txt, procedure, positions, step, user, admin_emails = nil, applicant_user = nil, options = {})
+    offer_position = options.fetch(:offer_position, '')
     current_year = Year.where(:is_current_year => true).select(:name, :next_year).first
     txt = txt.gsub('[[CurrentYear]]', current_year.name)
     txt = txt.gsub('[[NextYear]]', current_year.next_year.to_s)
@@ -45,6 +46,8 @@ class EmailTemplate < ActiveRecord::Base
       txt = txt.gsub('[[Interview]]', "Post Match Interview")
       txt = txt.gsub('[[AlreadySelectedPositions]]', Position.includes(:applications).where(:procedure_id => procedure.id, :applications => {:user_id => user.id}).pluck(:name).join(", "))
     end
+
+    txt = txt.gsub('[[OfferPosition]]', offer_position) if offer_position
     return txt
   end
 

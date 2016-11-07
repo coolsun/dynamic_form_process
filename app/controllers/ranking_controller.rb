@@ -36,31 +36,8 @@ class RankingController < ApplicationController
     user_rank_list = Application.get_user_rank_list(procedure_id, user_id)
 
     #Send notifi email after applicant update rank position
-    begin
-      procedure = Procedure.find_by_id(procedure_id)
-      position_ids = Application.where(:user_id => user_id).pluck(:position_id)
-      positions = Position.includes(:role, :location).where(:id => position_ids, :procedure_id => procedure_id)
-      user = applicant.user
-      bcc = Procedure.admin_and_hiring_mgr_emails(procedure_id)
-      email_type = "applicants_submit_ranked_list"
-      logger.info("============================================")
-      logger.info("procedure: #{procedure}")
-      logger.info("positions: #{positions}")
-      logger.info("user: #{user}")
-      logger.info("bcc: #{bcc}")
-      logger.info("============================================")
-      mail_template = EmailTemplate.where(:email_type => email_type, :procedure_id => procedure_id, :is_active => true).first
-      logger.info("== user_rank_list: #{user_rank_list} ==")
-      new_title = EmailTemplate.replace_keyworld(mail_template.title, procedure, positions, nil, user)
-      new_content = EmailTemplate.replace_keyworld(mail_template.content, procedure, positions, nil, user)
-      StanfordMailer.send_shipped(applicant.user.email, new_title, new_content, bcc, "", "", "", user_rank_list)
-      render :json => {:success => true, :msg => "send submit_ranked_list mail successfully.", :user_rank_list => user_rank_list}
-    rescue Exception => e
-      logger.info "===== send submit_ranked_list mail error #{e.message} ====="
-      render :json => {:success => false, :msg => "Email delivery failed."}
-    end
-
-    # render :json => {:success => true, :msg => "The rank has been updated successfully.", :user_rank_list => user_rank_list}
+    send_success, msg, data = Application.send_email(current_user, procedure_id, "applicants_submit_ranked_list", user_rank_list: user_rank_list)
+    render :json => {:success => send_success, :msg => msg , :user_rank_list => data}
   end
 
   def get_mgr_rank_list
@@ -138,40 +115,13 @@ class RankingController < ApplicationController
       mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id)
     end
 
-    # rank position xlsx attachment
-    # view_context.render "test/test.txt"
     # Send notifi email after manager update rank position
     location_mgrs = LocationMgr.where(:location_id => selected_location_id, :user_id => current_user.id)
-    logger.info("====location_mgrs: #{location_mgrs}====")
-    logger.info("====current_user_id: #{current_user_id}====")
     if location_mgrs.present?
-      begin
-        procedure = Procedure.find_by_id(procedure_id)
-        position_ids = Application.where(:user_id => current_user_id).pluck(:position_id)
-        positions = Position.includes(:role, :location).where(:id => position_ids, :procedure_id => procedure_id)
-        all_location_mgrs = LocationMgr.joins(:user).where(location_id: selected_location_id).pluck(:email)
-        bcc = (Procedure.admin_and_hiring_mgr_emails(procedure_id) + all_location_mgrs).uniq
-        email_type = "location_managers_submit_ranked_list"
-        logger.info("============================================")
-        logger.info("procedure: #{procedure}")
-        logger.info("positions: #{positions}")
-        logger.info("current_user: #{current_user_name}")
-        logger.info("bcc: #{bcc}")
-        logger.info("============================================")
-        mail_template = EmailTemplate.where(:email_type => email_type, :procedure_id => procedure_id, :is_active => true).first
-
-        location_mgrs_emails = "Bill@trillioninnovations.com"
-        new_title = EmailTemplate.replace_keyworld(mail_template.title, procedure, positions, nil, current_user)
-        new_content = EmailTemplate.replace_keyworld(mail_template.content, procedure, positions, nil, current_user)
-        StanfordMailer.send_shipped(location_mgrs_emails, new_title, new_content, bcc, "", "", mgr_rank_list)
-        render :json => {:success => true, :msg => "send submit_ranked_list mail successfully.", :mgr_rank_list => mgr_rank_list}
-      rescue Exception => e
-        logger.info "== send submit_ranked_list mail error #{e.message} =="
-        logger.info "#{e.backtrace} =="
-        render :json => {:success => false, :msg => "Email delivery failed."}
-      end
-    else
-      render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list}
+      all_location_mgrs = LocationMgr.joins(:user).where(location_id: selected_location_id).pluck(:email)
+      bcc = all_location_mgrs
+      send_success, msg, data = Application.send_email(current_user, procedure_id, "location_managers_submit_ranked_list", add_bcc: bcc, mgr_rank_list: mgr_rank_list)
+      render :json => {:success => send_success, :msg => msg , :mgr_rank_list => data}
     end
   end
 

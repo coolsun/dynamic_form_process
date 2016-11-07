@@ -346,7 +346,14 @@ class OfferController < ApplicationController
         "position_name" => offered_applicant.position.name,
         "offer_msg" => offered_applicant.offer_msg(params[:sub_step]),
       }
-      render :json => {:success => true, :permission_to_active => !params[:attitude], :msg => "The result has been submitted successfully.", :offer => offered_applicant, :success_html => success_html}
+
+      offer_position = offered_applicant["position_name"]
+      send_success, msg, data = Application.send_email(current_user, params[:current_process_id], "offer_confirm_notice_email", offer_position: offer_position)
+      if send_success
+        render :json => {:success => send_success, :permission_to_active => !params[:attitude], :msg => "The result has been submitted successfully.", :offer => offered_applicant, :success_html => success_html}
+      else
+        render :json => {:success => send_success, :msg => msg}
+      end
     else
       render :json => {:success => false, :msg => "Failed to submit the result."}
     end
