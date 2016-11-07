@@ -120,9 +120,9 @@ class RankingController < ApplicationController
       bcc = all_location_mgrs
       send_success, msg, data = Application.send_email(current_user, procedure_id, "location_managers_submit_ranked_list", add_bcc: bcc, mgr_rank_list: mgr_rank_list)
       render :json => {:success => send_success, :msg => msg , :mgr_rank_list => data}
+    else
+      render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list}
     end
-
-    render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list}
   end
 
 end
