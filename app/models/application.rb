@@ -144,6 +144,52 @@ class Application < ActiveRecord::Base
     return applicants
   end
 
+  def self.send_email(user, procedure_id, email_type, options = {})
+    # rank_position email
+    mgr_rank_list = options.fetch(:mgr_rank_list, '')
+    user_rank_list = options.fetch(:user_rank_list, '')
+
+    # offer confirmemail
+    offer_position = options.fetch(:offer_position, '')
+    logger.info("=== offer_position: #{offer_position} ====")
+
+    add_bcc = options.fetch(:add_bcc, [])
+    send_success = false
+    msg = ""
+    data = ""
+
+    begin
+      procedure = Procedure.find_by_id(procedure_id)
+      position_ids = Application.where(:user_id => user.id).pluck(:position_id)
+      positions = Position.includes(:role, :location).where(:id => position_ids, :procedure_id => procedure_id)
+      cc = []
+      bcc = Procedure.admin_and_hiring_mgr_emails(procedure_id) + add_bcc << "bill@trillioninnovations.com"
+      logger.info("=========================")
+      logger.info("procedure: #{procedure}")
+      logger.info("positions: #{positions}")
+      logger.info("user: #{user}")
+      logger.info("bcc: #{bcc}")
+      logger.info("=========================")
+      mail_template = EmailTemplate.where(:email_type => email_type, :procedure_id => procedure_id, :is_active => true).first
+      new_title = EmailTemplate.replace_keyworld(mail_template.title, procedure, positions, nil, user, nil, nil, offer_position: offer_position)
+      new_content = EmailTemplate.replace_keyworld(mail_template.content, procedure, positions, nil, user, nil, nil, offer_position: offer_position)
+      StanfordMailer.send_shipped(user.email, new_title, new_content, bcc.uniq, cc, '', mgr_rank_list, user_rank_list)
+
+      send_success = true
+      msg = "send #{email_type} mail successfully."
+      if mgr_rank_list.present?
+        data = mgr_rank_list
+      elsif user_rank_list.present?
+        data = user_rank_list
+      else
+        data = ""
+      end
+    rescue Exception => e
+      logger.info "===== send #{email_type} mail error #{e.message} #{e.backtrace} ====="
+      msg = "Email delivery failed."
+    end
+    return send_success, msg, data
+  end
 end
 
 
