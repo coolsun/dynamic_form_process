@@ -20,6 +20,7 @@ class RecommendationFormsController < ApplicationController
       render :json => {:success => false, :msg => "Invalid Recommender(s) out of Stanford"} and return
     end
     recommendation_forms = RecommendationForm.where(:recommendation_record_id => record_inside.id)
+    user_id = record_inside.user_id;
 
     if recommendation_forms.length == 0
       recommendation_forms = Form.where(:id => record_inside.recommendation_form_id).select(:id, :form_name, :schema)
@@ -28,9 +29,16 @@ class RecommendationFormsController < ApplicationController
       end
     end
 
+
     recommendation_forms.each do |form|
       form.schema = Form.data_binding(form.schema, nil, nil)
     end
+
+    applicant = User.find_by_id(user_id);
+    if (applicant.present?)
+      s_applicant_name = applicant.name;
+    end
+
     show_recommendation_option = RecommendationSetting.where(:procedure_id => record_inside.procedure_id).select(:show_recommendation).first.show_recommendation
 
     render :json => {
@@ -38,7 +46,8 @@ class RecommendationFormsController < ApplicationController
              :this_record => record_inside,
              :recommendation_form => recommendation_forms,
              :show_recommendation_option => show_recommendation_option,
-             :permission_to_active => permission_to_active
+             :permission_to_active => permission_to_active,
+             :applicant_name => s_applicant_name
            }
   end
 

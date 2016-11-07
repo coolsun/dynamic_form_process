@@ -218,6 +218,10 @@ div#EAIM>button {
   width: 65px;
 }
 
+.rsas-table-interview-time-slot-field{
+	width: 350px !important;
+}
+
 .rsas-table-applicant-select-field{
   width: 65px;
 }

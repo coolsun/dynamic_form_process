@@ -4,6 +4,10 @@
     <input type="checkbox" ng-model="show_for_std_interviewers"> YES
   </div>
 
+	<div ng-show="applicant_name">
+    <h4>Applicant: {{applicant_name}}</h4>
+	</div>
+
   <div ng-repeat="form in forms" ng-show="!after_submit">
     <h3 class="alert alert-warning alert-dismissable">{{form.form_name}}</h3>
     <form ng-submit="submit($index)">
