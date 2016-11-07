@@ -103,8 +103,6 @@ class RankingController < ApplicationController
       Application.update(application[:id], {:mgr_rank => 999999, :disable_mgr_rank => true, :mgr_ranked_at => Time.now, :mgr_ranked_user_id => current_user.id})
     end if disable_rank_applications.present?
 
-
-
     selected_location = selected_location_id ? Location.find_by_id(selected_location_id) : nil
 
     mgr_rank_list = []
@@ -123,6 +121,8 @@ class RankingController < ApplicationController
       send_success, msg, data = Application.send_email(current_user, procedure_id, "location_managers_submit_ranked_list", add_bcc: bcc, mgr_rank_list: mgr_rank_list)
       render :json => {:success => send_success, :msg => msg , :mgr_rank_list => data}
     end
+
+    render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list}
   end
 
 end
