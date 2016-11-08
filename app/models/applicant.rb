@@ -76,7 +76,7 @@ class Applicant < ActiveRecord::Base
   end
 
   def application_submit_at_string
-    return self.application_submit_at.kind_of?(Time) ? self.application_submit_at.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M") : ""
+    return self.application_submit_at.kind_of?(Time) ? self.application_submit_at.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p") : ""
   end
 
   def self.apply(i_user_id, i_procedure_id)
@@ -148,7 +148,7 @@ class Applicant < ActiveRecord::Base
 
     # applicants each do
     applicants_length = 0
-    applicants.each do |applicant|     
+    applicants.each do |applicant|
       applicant_offerd_position = applicant.user.applications.select{|application| application.offered == "offered" || application.offered == "post_offered" }
       if applicant_offerd_position.present?
         applicant_offerd = "Y"

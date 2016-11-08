@@ -6,8 +6,8 @@ class LimitPeriodsController < ApplicationController
 
     new_limit = LimitPeriod.create(
       :procedure_id => params[:current_process_id],
-      :t_start => params[:limit][:t_start].blank? ? nil : Time.strptime(params[:limit][:t_start] + " PST", "%m/%d/%Y %H:%M %Z"),
-      :t_end => params[:limit][:t_end].blank? ? nil : Time.strptime(params[:limit][:t_end] + " PST", "%m/%d/%Y %H:%M %Z")
+      :t_start => params[:limit][:t_start].blank? ? nil : Time.strptime(params[:limit][:t_start] + " PST", "%m/%d/%Y %I:%M %p %Z"),
+      :t_end => params[:limit][:t_end].blank? ? nil : Time.strptime(params[:limit][:t_end] + " PST", "%m/%d/%Y %I:%M %p %Z")
     )
 
     params[:limit][:roles].each do |role|
@@ -30,8 +30,8 @@ class LimitPeriodsController < ApplicationController
 
     update_limit = LimitPeriod.find_by_id(params[:id])
     update_limit.update_attributes(
-      :t_start => limit["t_start_string"].blank? ? nil : Time.strptime(limit["t_start_string"] + " PST", "%m/%d/%Y %H:%M %Z"),
-      :t_end => limit["t_end_string"].blank? ? nil : Time.strptime(limit["t_end_string"] + " PST", "%m/%d/%Y %H:%M %Z")
+      :t_start => limit["t_start_string"].blank? ? nil : Time.strptime(limit["t_start_string"] + " PST", "%m/%d/%Y %I:%M %p %Z"),
+      :t_end => limit["t_end_string"].blank? ? nil : Time.strptime(limit["t_end_string"] + " PST", "%m/%d/%Y %I:%M %p %Z")
     )
 
     update_limit_mgrs = LimitManager.where(:limit_period_id => params[:id])

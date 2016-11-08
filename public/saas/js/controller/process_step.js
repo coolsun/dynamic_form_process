@@ -163,6 +163,7 @@ rsasApp.controller('ProcessSteps',function($scope, $sce, $location, $rootScope, 
   $scope.setDatetimepicker = function(){
     $(".setDatetimepicker").datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: (function(){
         setTimeout(function(){$('.ui-datepicker').css('z-index', 1000);}, 0);

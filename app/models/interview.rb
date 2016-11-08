@@ -18,7 +18,7 @@ class Interview < ActiveRecord::Base
 
 
   def s_schedule_due_time
-    return ((self.schedule_due_time.present?) ? self.schedule_due_time.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M") : '');
+    return ((self.schedule_due_time.present?) ? self.schedule_due_time.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p") : '');
 
   end
 
@@ -1292,7 +1292,7 @@ class Interview < ActiveRecord::Base
   def self.email_replace_time_slot_time(s_content, time_slot)
     t_start = time_slot.t_start - 8.hours;
     t_end = time_slot.t_end - 8.hours;
-    s_time_during = "From " + t_start.strftime("%m/%d/%Y %H:%M") + " to " + t_end.strftime("%m/%d/%Y %H:%M");
+    s_time_during = "From " + t_start.strftime("%m/%d/%Y %I:%M %p") + " to " + t_end.strftime("%m/%d/%Y %I:%M %p");
 
     s_content = s_content.gsub("[[InterviewTime]]", s_time_during);
 

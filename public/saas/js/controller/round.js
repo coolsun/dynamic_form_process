@@ -118,6 +118,7 @@ roundApp
     var endTimePicker = $('#roundCreateEndTimePicker');
     startTimePicker.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: (function() {
         setTimeout(function(){$('.ui-datepicker').css('z-index', 1000);}, 0);
@@ -132,6 +133,7 @@ roundApp
 
     endTimePicker.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: function() {
         setTimeout(function(){$('.ui-datepicker').css('z-index', 1000);}, 0);
@@ -322,6 +324,7 @@ roundApp
 
     startTimePicker.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: (function() {
         setTimeout(function(){startTimePicker.css('z-index', 1000);}, 0);
@@ -334,6 +337,7 @@ roundApp
 
     endTimePicker.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: function() {
         setTimeout(function(){endTimePicker.css('z-index', 1000);}, 0);

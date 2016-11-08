@@ -19,11 +19,11 @@ class LimitPeriod < ActiveRecord::Base
   end
 
   def t_start_string
-    return self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
+    return self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p")
   end
 
   def t_end_string
-    return self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
+    return self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p")
   end
 
 end
