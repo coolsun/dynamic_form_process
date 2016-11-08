@@ -6,29 +6,29 @@ class ProcedureStep < ActiveRecord::Base
 
   def t_start_string
     #self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
-    (self.t_start - 8.hours).strftime("%m/%d/%Y %H:%M")
+    (self.t_start - 8.hours).strftime("%m/%d/%Y %I:%M %p")
   end
 
   def t_end_string
     #self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M")
-    (self.t_end - 8.hours).strftime("%m/%d/%Y %H:%M")
+    (self.t_end - 8.hours).strftime("%m/%d/%Y %I:%M %p")
   end
 
   def t_start_string_for_landing
-    self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y,%l:%M %p")
+    self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y,%I:%M %p")
   end
 
   def t_end_string_for_landing
-    self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y,%l:%M %p")
+    self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y,%I:%M %p")
   end
 
   def t_start_string=(string)
-    self.t_start = DateTime.strptime(string + " PST", "%m/%d/%Y %H:%M %z")
+    self.t_start = DateTime.strptime(string + " PST", "%m/%d/%Y %I:%M %p %z")
   end
 
   def t_end_string=(string)
     logger.info(string);
-    self.t_end = DateTime.strptime(string + " PST", "%m/%d/%Y %H:%M %z")
+    self.t_end = DateTime.strptime(string + " PST", "%m/%d/%Y %I:%M %p %z")
   end
 
   def self.get_procedure_steps_list(where_condition)
@@ -62,10 +62,10 @@ class ProcedureStep < ActiveRecord::Base
     #logger.info("t_end               : #{t_end}");
     #logger.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
-    rm_sec_step_start_time = Time.parse(step_start_time.strftime("%Y/%m/%d %H:%M"));
-    rm_sec_step_end_time = Time.parse(step_end_time.strftime("%Y/%m/%d %H:%M"));
-    rm_sec_start_time = Time.parse(t_start.strftime("%Y/%m/%d %H:%M"));
-    rm_sec_end_time = Time.parse(t_end.strftime("%Y/%m/%d %H:%M"));
+    rm_sec_step_start_time = Time.parse(step_start_time.strftime("%Y/%m/%d %I:%M %p"));
+    rm_sec_step_end_time = Time.parse(step_end_time.strftime("%Y/%m/%d %I:%M %p"));
+    rm_sec_start_time = Time.parse(t_start.strftime("%Y/%m/%d %I:%M %p"));
+    rm_sec_end_time = Time.parse(t_end.strftime("%Y/%m/%d %I:%M %p"));
 
     #logger.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     #logger.info("rm_sec_sub_step_start_time : #{rm_sec_sub_step_start_time}");

@@ -441,8 +441,8 @@ class Procedure < ActiveRecord::Base
     round_times = Round.where(:procedure_id => self.id).select(:title, :t_start, :t_end) # If just need interview not post match, add where condition :erasable => true
     round_times.each do |round_time|
       round_title_no_space = round_time.title.gsub(" ","")
-      landing_replace_word = landing_replace_word.gsub("[[Round-#{round_title_no_space}-StartTime]]", round_time.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y, %l:%M %p"))
-      landing_replace_word = landing_replace_word.gsub("[[Round-#{round_title_no_space}-EndTime]]",round_time.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y, %l:%M %p"))
+      landing_replace_word = landing_replace_word.gsub("[[Round-#{round_title_no_space}-StartTime]]", round_time.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y, %I:%M %p"))
+      landing_replace_word = landing_replace_word.gsub("[[Round-#{round_title_no_space}-EndTime]]",round_time.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y, %I:%M %p"))
     end
     # ..
     #current_year_name = Year.where(:id => year_id).pluck(:name).first
@@ -460,7 +460,7 @@ class Procedure < ActiveRecord::Base
     else
       application_submit_at = Applicant.where(:user_id => current_user_id, :procedure_id => self.id).pluck(:application_submit_at).first
       if !application_submit_at.nil?
-        submitted_message = "Your application materials were officially submitted for review on #{application_submit_at.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y, %l:%M %p")}"
+        submitted_message = "Your application materials were officially submitted for review on #{application_submit_at.in_time_zone("Pacific Time (US & Canada)").strftime("%A, %B %d, %Y, %I:%M %p")}"
       elsif application_submit_at.nil? && Time.now > submit_end_time
         submitted_message = "The due date has passed. Application materials are no longer being accepted. According to our records, you did NOT officially submit your application materials for review."
       else

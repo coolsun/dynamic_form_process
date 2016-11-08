@@ -9,7 +9,7 @@
           </div>
           <div ng-show="$root.applicantApplicationStatus.submit_application">
             <h5>Thank you for applying this job. You may cancel your application by clicking the ''Withdraw Application'' button below no later than</h5>
-            <h5>{{$root.applicant_sub_step.t_end | date : 'MM/dd/yyyy hh:mm'}} (application end time).</h5>
+            <h5>{{$root.applicant_sub_step.t_end | date : 'MM/dd/yyyy hh:mm a'}} (application end time).</h5>
             <button ng-disabled="!$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitApplication()">Withdraw Application</button>
           </div>
         </div>

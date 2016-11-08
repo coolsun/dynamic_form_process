@@ -518,6 +518,7 @@ interviewAdminProcessApp
 
     setDatetimepickers.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       minDate: start,
       minDateTime: start,
@@ -1354,6 +1355,7 @@ interviewAdminProcessApp
     var endTimePicker = $('#interviewAdminProcessInterviewTimeSlotEndTimePicker');
     startTimePicker.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: (function() {
         $scope.interviewAdminProcess.interview.timeSlot.noStartTimeCss = '';
@@ -1376,6 +1378,7 @@ interviewAdminProcessApp
 
     endTimePicker.datetimepicker({
       dateFormat: "mm/dd/yy",
+      timeFormat: "hh:mm TT",
       closeText: "Close",
       beforeShow: function() {
         setTimeout(function(){endTimePicker.css('z-index', 1000);}, 0);
