@@ -91,6 +91,8 @@ class FilesController < ApplicationController
               break if !(File.exist?(folder))
             end
             FileUtils.mkdir folder
+          else
+            folder = "./public/saas/app/uploads/zip/" + hex + "/"
           end
           applicant_folder = folder + user.id.to_s + "_" + user.sunet_id.to_s + "/"
           FileUtils.mkdir applicant_folder if !(File.exist?(applicant_folder))
