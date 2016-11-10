@@ -721,7 +721,7 @@ class ApplicantsController < ApplicationController
       logger.info " == query_detail['question'] #{query_detail['question'].as_json} =="
     end
 
-    @titles = ["Name", "SUNet Id", "SUID", "Status", "Interview(selected)", "Location", "Role"] + questions
+    @titles = ["First Name", "Middle Name", "Last Name", "SUNet Id", "SUID", "Status", "Interview(selected)", "Location", "Role"] + questions
     @data_types = [nil, nil , :string, nil]
     @user_record = []
 
@@ -774,7 +774,8 @@ class ApplicantsController < ApplicationController
         applicant_select_locations = applicant_select_roles = "Only admin or LM can see that."
       end
 
-      @user_record << [user_data.name, user_data.sunet_id, user_data.suid, applicant.status, round_titles, applicant_select_locations, applicant_select_roles] + answers
+      @user_record << [user_data.first_name, user_data.middle_name, user_data.last_name, user_data.sunet_id, user_data.suid, applicant.status, round_titles, applicant_select_locations, applicant_select_roles] + answers
+      @user_record = @user_record.sort
     end
 
     respond_to do |format|
