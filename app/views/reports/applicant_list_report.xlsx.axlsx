@@ -7,7 +7,9 @@ title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
 #rows
 wb.add_worksheet do |sheet|
   sheet.add_row [
-    "Full Name",
+    "First Name",
+    "Middle Name",
+    "Last Name",
     "Preferred Name",
     "SUNetID",
     "SUID",
@@ -20,7 +22,9 @@ wb.add_worksheet do |sheet|
   @applicants.each do |applicant|
     user = applicant.user
     sheet.add_row [
-      user.name,
+      user.first_name,
+      user.middle_name,
+      user.last_name,
       applicant.preferred_name,
       user.sunet_id,
       user.suid,
