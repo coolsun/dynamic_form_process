@@ -189,6 +189,14 @@
           <!-- Applicant List -->
           <!-- option -->
           <div class="form-group col-md-12 padding-0 rsas-margin-10-0">
+            <div class="col-md-12" style="margin-bottom: 30px; border-bottom: 1px solid #dddddd;">
+                <form method="post" action="/download_pdfs/interview_scheduled_report_for_rm.xlsx">
+                  <button class="btn btn-info" style="margin-bottom: 3px;">Download Scheduled Report for RM</button>
+                  <div ng-show='false'>
+                    <input type="hidden" name="procedureId" value="{{$root.current_process.id}}">
+                  </div>
+                </form>
+            </div>
             <div class="col-md-12">
               <label class="control-label pull-left text-align-left rsas-radio-lable-font" style="margin-right: 10px;">Interview: </label>
               <select class="form-control" width="300" style="width: 300px; display: inline;" ng-model="interviewAdminProcess.applicantList.interviewSelect" ng-options="interview.name for interview in interviewAdminProcess.applicantList.round.interviews" ng-change="interviewAdminProcess.applicantList.init();"></select>

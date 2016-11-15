@@ -154,7 +154,7 @@ class Position < ActiveRecord::Base
                     .where("positions.vacancy - (SELECT COUNT(id) FROM applications WHERE offered = 'offered' AND offer_accept = 'accepted' AND position_id = positions.id) > 0")
                     .where(:procedure_id => procedure_id)
                     .where.not(:id => full_positions)
-        
+
     else
 
       offered_applications = Application.includes(:position).where(:offered => "offered", :positions => {:procedure_id => procedure_id})
@@ -262,6 +262,15 @@ class Position < ActiveRecord::Base
                                 .pluck(:id);
 
     return (location_positions_ids | role_position_ids);
+  end
+
+  def self.get_under_manage_position_ids_only_role(i_procedure_id, i_mgr_user_id)
+    role_position_ids = Position.joins(:role => :role_mgrs)
+                                .where(:positions => {:procedure_id => i_procedure_id})
+                                .where(:role_mgrs => {:user_id => i_mgr_user_id})
+                                .pluck(:id);
+
+    return (role_position_ids);
   end
 
   def attachable_forms

@@ -1,0 +1,37 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true, :bg_color => "A9D08E")
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row @title_row, style: title_style
+
+  @applicant_list.each do |applicant|
+  	data = []
+  	data << applicant[:name]
+  	data << applicant[:location_name]
+  	data << applicant[:position_name]
+  	data << applicant[:position_vacancy]
+  	data << applicant[:interview_name]
+  	
+
+  	s_scheduled = ''
+	  applicant[:time_slots].each_with_index do |time_slot, index|
+   		if (index != 0)
+				s_scheduled += "\n"
+  		
+  		end
+			s_scheduled += (time_slot.t_start - 8.hours).format_s('%m/%d/%Y %H:%M:%S')
+		end
+		
+		data << s_scheduled		
+  	data << applicant[:interview_vacancy]
+    
+    sheet.add_row data   
+        
+  	sheet.column_widths 40, 30, 40, nil, 40
+    
+  end
+end
+
