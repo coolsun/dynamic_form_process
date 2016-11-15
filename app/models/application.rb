@@ -133,7 +133,8 @@ class Application < ActiveRecord::Base
   def self.get_offered_response_applicants(position_id)
     applicants = []
 
-    Application.where(:position_id => position_id, :offered => "offered").each do |application|
+    applications = Application.where(:position_id => position_id).where("offered = 'offered' OR offered = 'post_offered'")
+    applications.each do |application|
       applicants << {
         :application_id => application.id,
         :applicant_name => application.user.name,
