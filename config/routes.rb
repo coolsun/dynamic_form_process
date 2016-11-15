@@ -353,6 +353,8 @@ Rails.application.routes.draw do
       #get :review_pdf
       post :interview_admin_calendar_view_pdf
       #get :interview_admin_calendar_view_pdf
+      post :interview_scheduled_report_for_rm
+      get :interview_scheduled_report_for_rm
     end
   end
 

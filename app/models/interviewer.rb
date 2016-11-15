@@ -60,13 +60,4 @@ class Interviewer < ActiveRecord::Base
     end
   end
 
-  def position_ids
-    i_interview_id = self.id;
-    return(
-      Position.joins(:positions_in_interviews)
-        .where(:positions_in_interviews => {:interview_id => i_interview_id})
-        .pluck(:id)
-    );
-  end
-
 end
