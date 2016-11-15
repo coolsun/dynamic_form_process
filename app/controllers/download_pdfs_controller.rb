@@ -309,7 +309,7 @@ class DownloadPdfsController < ApplicationController
         @applicant_list << interview_applicant_list_pdf_struct(applicant, invitees_user_ids, i_interview_id, b_senior_manager, search_position_ids);
       end
     end
-    @applicant_list = @applicant_list.sort
+
     if (false)
       pdf = WickedPdf.new.pdf_from_string(
         render_to_string('download_pdfs/interview_scheduled_applicant_list_pdf.html.erb'),
