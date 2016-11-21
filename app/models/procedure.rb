@@ -275,7 +275,8 @@ class Procedure < ActiveRecord::Base
         :procedure_id => self.id,
         :number => recommendation_setting.number,
         :show_recommendation => recommendation_setting.show_recommendation,
-        :requirement => recommendation_setting.requirement
+        :requirement => recommendation_setting.requirement,
+        :no_need_recommendation => recommendation_setting.no_need_recommendation
       }
       RecommendationSetting.create(new_recommendation_setting)
       new_application_form_tag_ids = []

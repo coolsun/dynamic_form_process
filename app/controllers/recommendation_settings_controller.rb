@@ -29,6 +29,6 @@ class RecommendationSettingsController < ApplicationController
       @recommendation_setting = RecommendationSetting.find_by_id(params[:id])
     end
     def recommendation_setting_params
-      params.require(:recommendation_setting).permit(:number, :show_recommendation, :requirement)
+      params.require(:recommendation_setting).permit(:number, :show_recommendation, :requirement, :no_need_recommendation)
     end
 end
