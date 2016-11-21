@@ -13,7 +13,7 @@
         <td ng-bind-html="to_html((!selected || offer.offer_accept) ? offer.offer_msg : '')"></td>
         <td>
           <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && offer.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && offer.offered == 'post_offered')) && !selected">
-            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="check_again(offer, true)">Confirm</button>
+            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="check_again(offer, true)">Accept and Confirm</button>
             <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="check_again(offer, false)">Withdraw</button>
           </div>
         </td>

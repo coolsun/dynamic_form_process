@@ -19,7 +19,7 @@ class Application < ActiveRecord::Base
       elsif self.offer_accept == "rejected"
         return "Regret.  You have reject the offer."
       else
-        return "Congratulations! You have been appointed to this position.  Please confirm your placement to continue to the next step in which you will need to read and accept the terms of your appointment. Note: If you withdraw yourself from this placement, you will not be guaranteed housing in that house, nor will you be eligible for any other residential student staff appointment on campus."
+        return "Congratulations! You have been appointed to this position. Please read and accept the Terms of Appointment to confirm your placement. NOTE: if you withdraw yourself from this placement, you will not be guaranteed housing in the house which you have been offered placement, nor will you be eligible for any other residential student staff appointment on campus."
       end
     else
       return "You were not appointed to this position."
