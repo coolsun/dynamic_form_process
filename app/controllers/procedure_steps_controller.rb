@@ -172,14 +172,14 @@ class ProcedureStepsController < ApplicationController
             if check_no_need_recommendation && positions.length == 1
               year_id = params[:current_year_id]
               this_year_name = Year.find(year_id).name
-              last_year = Year.where(next_year: this_year_name).first.id
+              last_year = Year.where(next_year: this_year_name).first
               sunet_id = User.find(user_id).sunet_id
               logger.info("this_year_name: #{this_year_name}")
               logger.info("last_year: #{last_year}")
               logger.info("sunet_id: #{sunet_id}")
 
-              if sunet_id.present?
-                user_last_year_id = User.where(sunet_id: sunet_id, year_id: last_year).first.id
+              if sunet_id.present? && last_year.present?
+                user_last_year_id = User.where(sunet_id: sunet_id, year_id: last_year.id).first.id
                 logger.info("user_last_year_id: #{user_last_year_id}")
                 if user_last_year_id.present?
                   last_year_offerd_position = Position.includes(:applications).where(applications: {user_id: user_last_year_id, offer_accept: "accepted"}).first
