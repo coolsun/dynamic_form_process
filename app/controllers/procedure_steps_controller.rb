@@ -160,43 +160,28 @@ class ProcedureStepsController < ApplicationController
             records = RecommendationRecord.where(:user_id => user_id, :procedure_id => procedure_id)
             logger.info "== RecommendationRecord #{records.length} =="
             r_number = RecommendationSetting.find_by_procedure_id(procedure_id)
-
-            logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             #ST958 if only select one position, check this position whether offered last year or not. If true, no need recommendation.
             check_no_need_recommendation = r_number.no_need_recommendation
-            logger.info("check_no_need_recommendation: #{check_no_need_recommendation}")
             check_last_offer = false
             positions = Application.includes(:position).where({:user_id => user_id, :positions => {:procedure_id => procedure_id}})
-            logger.info("positions: #{positions.to_json}")
-
             if check_no_need_recommendation && positions.length == 1
               year_id = params[:current_year_id]
               this_year_name = Year.find(year_id).name
               last_year = Year.where(next_year: this_year_name).first
               sunet_id = User.find(user_id).sunet_id
-              logger.info("this_year_name: #{this_year_name}")
-              logger.info("last_year: #{last_year}")
-              logger.info("sunet_id: #{sunet_id}")
-
               if sunet_id.present? && last_year.present?
                 user_last_year_id = User.where(sunet_id: sunet_id, year_id: last_year.id).first.id
                 logger.info("user_last_year_id: #{user_last_year_id}")
                 if user_last_year_id.present?
                   last_year_offerd_position = Position.includes(:applications).where(applications: {user_id: user_last_year_id, offer_accept: "accepted"}).first
-                  logger.info("last_year_offerd_position: #{last_year_offerd_position.to_json}")
                   if last_year_offerd_position.present?
                     last_year_offerd_position_name = last_year_offerd_position.name
                     this_year_selected_position = Position.includes(:applications).where(procedure_id: procedure_id, name: last_year_offerd_position_name, applications: {user_id: user_id})
                     check_last_offer = true if this_year_selected_position.present?
-                    logger.info("last_year_offerd_position_name: #{last_year_offerd_position_name}")
-                    logger.info("this_year_selected_position: #{this_year_selected_position}")
-                    logger.info("check_last_offer: #{check_last_offer}")
                   end
                 end
               end
             end
-            logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-
             if r_number && (records.length >= r_number.number || check_last_offer)
               status[procedure_sub_step.identify_name] = true
             else
