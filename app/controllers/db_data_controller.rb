@@ -1,5 +1,11 @@
 class DbDataController < ApplicationController
 
+  def create_email_template
+    EmailTemplate.create(procedure_id: 0, email_type: "offer_confirm_notice_email", title: "Offer Confirmed Notice to [[ApplicantName]] for [[OfferPostion]]", content: "<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p><strong>Dear&nbsp;</strong><strong>[[ApplicantName]],</strong>&nbsp;<br /><br /> <br /> You have accepted the assignment of the following position. <br /> <br /> <strong>Process:</strong>&nbsp;[[ProcessName]]</p>\n<p><strong>Position:&nbsp;</strong>[[OfferPostion]]</p>\n<p>&nbsp;</p>\n<p>Welcome to the [[ProcessName]] Program. We're very excited to have you join our team, and look forward to be working with you .</p>\n<p>&nbsp;</p>\n<p>Sincerely Yours,</p>\n<p>Hiring Manager</p>\n<p>[[HiringManagerName]]</p>\n<p>Stanford University</p>\n</body>\n</html>")
+    EmailTemplate.create(procedure_id: 0, email_type: "applicants_submit_ranked_list", title: "Ranked List Notice for Applicant", content: "<p><strong>Dear [[ApplicantName]],</strong><br />\n<br />\nYou have submitted a ranked list successfully.  Please see the attached copy of ranked list you have submitted.\n<p><br />Sincerely Yours,</p>\n<p><br />Hiring Manager</p>\n<p>[[HiringManagerName]]</p>\n<p>Stanford University</p>\n")
+    EmailTemplate.create(procedure_id: 0, email_type: "location_managers_submit_ranked_list", title: "Ranked List Notice for Location Manager", content: "<strong>Dear [[LocationManagerName]],</strong><br>\n<br>\nDear [[LocationManagerName]],<br>\n<br>\nYou have submitted a ranked list successfully.  Please see the attached copy of ranked list you have submitted.<br>\n<br>\nSincerely Yours,<br>\n<br>\nHiring Manager<br>\n[[HiringManagerName]]<br>\nStanford University\n")
+  end
+
   def insert_ranking_explanation
     SystemMessage.create(:procedure_id => 0, :name => "Rank Position-Applicant View", :identify_name => "rank_position_applicant_view", :message => "Rank by dragging")
     SystemMessage.create(:procedure_id => 0, :name => "Rank Position-Manager View", :identify_name => "rank_position_manager_view", :message => "Rank by dragging")

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :db_data do
     collection do
       get :insert_ranking_explanation
+      get :create_email_template
       #get :insert_post_match_position_notification
       #get :update_application_disqualify_to_wait
       #get :insert_offer_status
