@@ -189,14 +189,6 @@
           <!-- Applicant List -->
           <!-- option -->
           <div class="form-group col-md-12 padding-0 rsas-margin-10-0">
-            <div class="col-md-12" style="margin-bottom: 30px; border-bottom: 1px solid #dddddd;">
-                <form method="post" action="/download_pdfs/interview_scheduled_report_for_rm.xlsx">
-                  <button class="btn btn-info" style="margin-bottom: 3px;">Download Scheduled Report for RM</button>
-                  <div ng-show='false'>
-                    <input type="hidden" name="procedureId" value="{{$root.current_process.id}}">
-                  </div>
-                </form>
-            </div>
             <div class="col-md-12">
               <label class="control-label pull-left text-align-left rsas-radio-lable-font" style="margin-right: 10px;">Interview: </label>
               <select class="form-control" width="300" style="width: 300px; display: inline;" ng-model="interviewAdminProcess.applicantList.interviewSelect" ng-options="interview.name for interview in interviewAdminProcess.applicantList.round.interviews" ng-change="interviewAdminProcess.applicantList.init();"></select>
@@ -223,6 +215,12 @@
               <div>
                 <form method="post" action="/download_pdfs/interview_scheduled_applicant_list_pdf.xlsx">
                   <button class="btn btn-primary" style="margin-bottom: 3px;">Download Scheduled Applicant List</button>
+                  <input type="hidden" name="interviewId" value="{{interviewAdminProcess.applicantList.interviewSelect.id}}">
+                </form>
+              </div>
+              <div>
+                <form method="post" action="/download_pdfs/interview_scheduled_report_for_rm.xlsx">
+                  <button class="btn btn-primary" style="margin-bottom: 3px;">Download Scheduled Report for RM</button>
                   <input type="hidden" name="interviewId" value="{{interviewAdminProcess.applicantList.interviewSelect.id}}">
                 </form>
               </div>
@@ -1749,10 +1747,10 @@
             </div>
             <div class="form-group rsas-interview-pop-row" ng-show="0 < interviewAdminProcess.interview.schedule.scheduleApplicant.applicants.length && !interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter">
               <span class="col-md-2 control-label">
-                <input type="checkbox" id="scheduleApplicantCheckBox{{$index}}" class="largeCeckBox" ng-model="interviewAdminProcess.interview.schedule.scheduleApplicant.selectAll" ng-change="interviewAdminProcess.interview.schedule.scheduleApplicant.selectAllChange(interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule)" />
+                <input type="checkbox" id="scheduleApplicantALLCheckBox{{$index}}" class="largeCeckBox" ng-model="interviewAdminProcess.interview.schedule.scheduleApplicant.selectAll" ng-change="interviewAdminProcess.interview.schedule.scheduleApplicant.selectAllChange(interviewAdminProcess.interview.schedule.interview.interviewer_can_schedule)" />
               </span>
               <p class="col-md-10">
-                <label for="scheduleApplicantCheckBox{{$index}}" class="control-label">ALL</label>
+                <label for="scheduleApplicantALLCheckBox{{$index}}" class="control-label">ALL</label>
               </p>
             </div>
             <div class="form-group form-inline rsas-interview-pop-row" ng-repeat="applicant in interviewAdminProcess.interview.schedule.scheduleApplicant.applicants | filter:interviewAdminProcess.interview.schedule.scheduleApplicant.applicantFilter | orderBy:'last_name'">
