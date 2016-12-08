@@ -219,7 +219,7 @@ class DownloadPdfsController < ApplicationController
 =end
 
 
-        logger.info(reviews);
+        #logger.info(reviews);
         forms = (system_forms + attachable_forms + recommendation_forms + reviews)
 
         forms.each do |user_form|
@@ -242,7 +242,7 @@ class DownloadPdfsController < ApplicationController
             arr << OpenStruct.new(item)
           end
           blocks << OpenStruct.new({"column" => maxColumn + 1, "items" => arr})
-          logger.info "blocks #{blocks.to_json}"
+          #logger.info "blocks #{blocks.to_json}"
           obj["forms"] << {"form_name" => user_form["form_name"], "blocks" => blocks, "reviewer" => user_form["reviewer"]}
         end
         if obj["forms"].present? || obj["transcripts"].present?
@@ -307,15 +307,9 @@ class DownloadPdfsController < ApplicationController
                               .where(:invites => {:interview_id => i_interview_id})
                               .pluck(:id);
 
-      logger.info("@@@@@@@@@@@@@@@invitees_user_ids : #{invitees_user_ids}");
-      logger.info("@@@@@@@@@@@@@@@have_application_user_ids : #{have_application_user_ids}");
-
       no_application_user_ids = invitees_user_ids - have_application_user_ids;
 
       no_application_users = User.where(:id => no_application_user_ids);
-
-
-      logger.info("@@@@@@@@@@@@@@@no_application_users : #{no_application_users}");
 
       total_show_applicants += no_application_users;
 
