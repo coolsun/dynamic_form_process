@@ -300,14 +300,31 @@ class DownloadPdfsController < ApplicationController
 
       GC.start();
 
+      have_application_user_ids = total_show_applicants.map{|e| e[:id]};
+
 
       invitees_user_ids = User.joins(:invitees)
                               .where(:invites => {:interview_id => i_interview_id})
                               .pluck(:id);
 
+      logger.info("@@@@@@@@@@@@@@@invitees_user_ids : #{invitees_user_ids}");
+      logger.info("@@@@@@@@@@@@@@@have_application_user_ids : #{have_application_user_ids}");
+
+      no_application_user_ids = invitees_user_ids - have_application_user_ids;
+
+      no_application_users = User.where(:id => no_application_user_ids);
+
+
+      logger.info("@@@@@@@@@@@@@@@no_application_users : #{no_application_users}");
+
+      total_show_applicants += no_application_users;
+
       total_show_applicants.each do |applicant|
         @applicant_list << interview_applicant_list_pdf_struct(applicant, invitees_user_ids, i_interview_id, b_senior_manager, search_position_ids);
       end
+
+
+
     end
 
     if (false)
@@ -558,61 +575,70 @@ class DownloadPdfsController < ApplicationController
 #=end
 #end
 
-
-
-
   end
 
 
   def interview_scheduled_report_for_rm
-    i_procedure_id = params[:procedureId].to_i;
+    i_interview_id = params[:interviewId].to_i;
 
     i_mgr_user_id = session[:user_id].to_i;
     mgr_user = User.find_by_id(i_mgr_user_id);
 
+
+    interview = Interview.find_by_id(i_interview_id);
+
     @applicant_list = [];
 
-    under_manage_position_ids = [];
+    if (interview && mgr_user)
+      i_round_id = interview.round_id;
+      round = Round.find_by_id(i_round_id);
+      i_procedure_id = round.procedure_id;
 
-    b_senior_manager = (is_hiring_mgr(i_procedure_id) || is_admin());
+      under_manage_position_ids = [];
 
-    if (b_senior_manager)
-      under_manage_position_ids = Position.where(:procedure_id => i_procedure_id).pluck(:id);
-    else
-      under_manage_position_ids = Position.get_under_manage_position_ids_only_role(i_procedure_id, i_mgr_user_id);
-    end
+      b_senior_manager = (is_hiring_mgr(i_procedure_id) || is_admin());
 
-    search_position_ids = under_manage_position_ids;
+      if (b_senior_manager)
+        under_manage_position_ids = Position.where(:procedure_id => i_procedure_id).pluck(:id);
+      else
+        under_manage_position_ids = Position.get_under_manage_position_ids_only_role(i_procedure_id, i_mgr_user_id);
+      end
 
-    total_show_applicants = [];
+      interviewee_user_ids = interview.interviewees.pluck(:user_id);
 
-    positions = Position.includes(:location).where(:id => search_position_ids).order("locations.name asc");
+      all_interviewees = User.includes([:interviewees]).where(:interviewees => {:user_id => interviewee_user_ids});
+      no_application_users = all_interviewees;
 
-    positions.each do |position|
-      interviews = position.interviews;
+      interview_positions = interview.positions.includes(:location).order("locations.name asc");
 
-      interviews.each do |interview|
-        interviewee_user_ids = interview.interviewees.pluck(:user_id);
-
+      interview_positions.each do |position|
         users = User.includes([:applications, :interviewees])
                      .where(:applications => {:position_id => position.id})
                      .where(:interviewees => {:user_id => interviewee_user_ids});
 
-        users.each do |applicant|
-          @applicant_list << interview_scheduled_report_for_rm_struct(applicant, interview, position);
+        if (under_manage_position_ids.include?(position.id))
+          users.each do |applicant|
+            @applicant_list << interview_scheduled_report_for_rm_struct(applicant, interview, position);
+          end
         end
+
+        no_application_users -= users;
       end
 
+      no_application_users.each do |applicant|
+        @applicant_list << interview_scheduled_report_for_rm_struct(applicant, interview, nil);
+      end
 
+      GC.start();
     end
 
     @title_row = ["Applicant full name", "Location", "Position", "Vacancy of this position", "Interview", "Scheduled", "Applicant vacancy per time slot"]
-    s_file_name = ("%s" % [mgr_user.name]);
+    s_file_name = ("interview_scheduled_report_for_rm_%s.xlsx" % [mgr_user.name]);
 
 
     respond_to do |format|
       format.xlsx {
-        response.headers['Content-Disposition'] = "attachment; filename='interview_scheduled_report_for_rm_#{s_file_name}.xlsx'"
+        response.headers['Content-Disposition'] = "attachment; filename='#{s_file_name}'"
       }
     end
 
@@ -622,10 +648,20 @@ class DownloadPdfsController < ApplicationController
     i_user_id = user.id;
     user_hash = user.as_json();
 
+    location_name = '';
+    position_name = '';
+    position_vacancy = '';
+
+    if (position.present?)
+      location_name = position.location.name;
+      position_name = position.name;
+      position_vacancy = position.vacancy;
+    end
+
     user_hash[:name] = user.name;
-    user_hash[:location_name] = position.location.name;
-    user_hash[:position_name] = position.name;
-    user_hash[:position_vacancy] = position.vacancy;
+    user_hash[:location_name] = location_name;
+    user_hash[:position_name] = position_name;
+    user_hash[:position_vacancy] = position_vacancy;
     user_hash[:interview_name] = interview.name;
     user_hash[:time_slots] = TimeSlot.includes(:interviewees).where(:interview_id => interview.id, :interviewees => {:user_id => i_user_id});
     user_hash[:interview_vacancy] = interview.vacancy;
