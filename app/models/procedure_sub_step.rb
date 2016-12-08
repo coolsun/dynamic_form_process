@@ -4,14 +4,13 @@ class ProcedureSubStep < ActiveRecord::Base
   belongs_to :procedure_step;
 
   def t_start_string
-    #return self.t_start.kind_of?(Time) ? self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M") : ""
+    #return self.t_start.kind_of?(Time) ? self.t_start.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p") : ""
     return self.t_start.kind_of?(Time) ? (self.t_start - 8.hours).strftime("%m/%d/%Y %I:%M %p") : ""
   end
 
   def t_end_string
-    #return self.t_end.kind_of?(Time) ? self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %H:%M") : ""
+    #return self.t_end.kind_of?(Time) ? self.t_end.in_time_zone("Pacific Time (US & Canada)").strftime("%m/%d/%Y %I:%M %p") : ""
     return self.t_end.kind_of?(Time) ? (self.t_end - 8.hours).strftime("%m/%d/%Y %I:%M %p") : ""
-
   end
 
   def t_start_string_for_landing
@@ -23,11 +22,11 @@ class ProcedureSubStep < ActiveRecord::Base
   end
 
   def t_start_string=(string)
-    self.t_start = Time.strptime(string + " PST", "%m/%d/%Y %H:%M %Z") if string.present?
+    self.t_start = Time.strptime(string + " PST", "%m/%d/%Y %I:%M %p %z") if string.present?
   end
 
   def t_end_string=(string)
-    self.t_end = Time.strptime(string + " PST", "%m/%d/%Y %H:%M %Z") if string.present?
+    self.t_end = Time.strptime(string + " PST", "%m/%d/%Y %I:%M %p %z") if string.present?
   end
 
   def self.is_in_active_time(procedure_id, identify_name, user_id)
