@@ -627,7 +627,7 @@ class DownloadPdfsController < ApplicationController
     end
 
     @title_row = ["Applicant full name", "Location", "Position", "Vacancy of this position", "Interview", "Scheduled", "Applicant vacancy per time slot"]
-    s_file_name = ("interview_scheduled_report_for_rm_%s.xlsx" % [mgr_user.name]);
+    s_file_name = ("interview_scheduled_report_for_rm_%s_%s.xlsx" % [mgr_user.name, interview.name]);
 
 
     respond_to do |format|
