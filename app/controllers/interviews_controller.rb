@@ -1214,6 +1214,14 @@ class InterviewsController < ApplicationController
     end
     #########################################################################################
 
+
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
     render :json => {
       :success => success,
       :now => i_page,
