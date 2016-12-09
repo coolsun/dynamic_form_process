@@ -580,10 +580,13 @@ class DownloadPdfsController < ApplicationController
 
 
     interview = Interview.find_by_id(i_interview_id);
-
+    s_interview_name = '';
+    s_mgr_user_name = '';
     @applicant_list = [];
 
     if (interview && mgr_user)
+      s_interview_name = interview.name;
+      s_mgr_user_name = mgr_user.name;
       i_round_id = interview.round_id;
       round = Round.find_by_id(i_round_id);
       i_procedure_id = round.procedure_id;
@@ -627,7 +630,7 @@ class DownloadPdfsController < ApplicationController
     end
 
     @title_row = ["Applicant full name", "Location", "Position", "Vacancy of this position", "Interview", "Scheduled", "Applicant vacancy per time slot"]
-    s_file_name = ("interview_scheduled_report_for_rm_%s_%s.xlsx" % [mgr_user.name, interview.name]);
+    s_file_name = ("interview_scheduled_report_for_rm_%s_%s.xlsx" % [s_mgr_user_name, s_interview_name]);
 
 
     respond_to do |format|

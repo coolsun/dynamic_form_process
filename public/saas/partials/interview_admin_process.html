@@ -218,7 +218,7 @@
                   <input type="hidden" name="interviewId" value="{{interviewAdminProcess.applicantList.interviewSelect.id}}">
                 </form>
               </div>
-              <div>
+              <div ng-show="interviewAdminProcess.applicantList.tbl.b_download_rm_report">
                 <form method="post" action="/download_pdfs/interview_scheduled_report_for_rm.xlsx">
                   <button class="btn btn-primary" style="margin-bottom: 3px;">Download Scheduled Report for RM</button>
                   <input type="hidden" name="interviewId" value="{{interviewAdminProcess.applicantList.interviewSelect.id}}">

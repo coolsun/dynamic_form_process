@@ -855,6 +855,13 @@ class InterviewsController < ApplicationController
         else
           round_interviews << round.get_round_interviews;
         end
+
+        #can_view_interviews = [];
+
+
+
+
+        #round_interviews[:interviews] = can_view_interviews;
       end
 
       response = round_interviews;
@@ -1145,8 +1152,10 @@ class InterviewsController < ApplicationController
       under_manage_role_ids = [];
       under_manage_position_ids = Position.get_under_manage_position_ids(i_procedure_id, i_mgr_user_id);
 
+      b_download_rm_report = false;
       if (is_hiring_mgr(i_procedure_id) || is_admin())
         b_senior_manager = true;
+        b_download_rm_report = true;
       else
         under_manage_location_ids = Location.joins(:location_mgrs)
                                .where(:locations => {:procedure_id => i_procedure_id})
@@ -1157,6 +1166,8 @@ class InterviewsController < ApplicationController
                        .where(:roles => {:procedure_id => i_procedure_id})
                        .where(:role_mgrs => {:user_id => i_mgr_user_id})
                        .pluck(:id);
+
+        b_download_rm_report = under_manage_role_ids.present?;
       end
 
       # list one: interview position's applicant
@@ -1207,7 +1218,8 @@ class InterviewsController < ApplicationController
       :success => success,
       :now => i_page,
       :total => i_total_count,
-      :show => applicant_list
+      :show => applicant_list,
+      :b_download_rm_report => b_download_rm_report
     };
   end
 
@@ -1274,11 +1286,6 @@ class InterviewsController < ApplicationController
                             .where(:forms => {:id => form_ids});
       application_forms = user_forms;
     end
-
-
-
-
-
 
     system_form_join_list = [:form];
     system_forms = UserForm.select(
