@@ -446,6 +446,7 @@ interviewAdminProcessApp
 
   $scope.interviewAdminProcess.applicantList.tbl.successDo = function(data)
   {
+    $scope.interviewAdminProcess.applicantList.tbl.b_download_rm_report = data.b_download_rm_report;
   };
 
 
