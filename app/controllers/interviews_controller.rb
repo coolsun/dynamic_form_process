@@ -843,25 +843,29 @@ class InterviewsController < ApplicationController
                         .references(include_list)
                         .find_by_id(i_round_id);
 
+
+          if (round.present?)
+            round_interviews << round.get_round_interviews;
+          end
+
         else
           round = Round.includes(include_list)
                         .references(include_list)
                         .where(:interviewers => {:user_id => i_user_id})
                         .find_by_id(i_round_id);
+
+          if (round.present?)
+            round_interviews << round.get_round_interviews;
+
+            user = User.find_by_id(i_user_id);
+            result = Interview.get_mgr_interviews(round, user);
+            view_interview_ids = result.view_interview_ids;
+
+            round_interviews.last[:interviews] = Interview.where(:id => view_interview_ids);
+          end
         end
 
-        if (nil == round)
-          #log_error_message();
-        else
-          round_interviews << round.get_round_interviews;
-        end
 
-        #can_view_interviews = [];
-
-
-
-
-        #round_interviews[:interviews] = can_view_interviews;
       end
 
       response = round_interviews;
@@ -1128,6 +1132,8 @@ class InterviewsController < ApplicationController
     applicant_list = [];
     i_total_count = 0;
 
+
+    b_download_rm_report = false;
     if (interview)
       procedure_position_applicants = [];
       location_position_applicants = [];
@@ -1152,7 +1158,6 @@ class InterviewsController < ApplicationController
       under_manage_role_ids = [];
       under_manage_position_ids = Position.get_under_manage_position_ids(i_procedure_id, i_mgr_user_id);
 
-      b_download_rm_report = false;
       if (is_hiring_mgr(i_procedure_id) || is_admin())
         b_senior_manager = true;
         b_download_rm_report = true;
@@ -1215,13 +1220,6 @@ class InterviewsController < ApplicationController
     #########################################################################################
 
 
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
-    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@#{b_download_rm_report}");
     render :json => {
       :success => success,
       :now => i_page,
