@@ -21,28 +21,33 @@
     </tbody>
   </table>
 
-  <table class="table" ng-show="bSelectOffer">
-    <thead>
-      <tr>
-        <th style="width: 20%;">Position</th>
-        <th style="width: 40%;">Terms of Appointment</th>
-        <th>Acceptance of Appointment Terms</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{current_applicant.position_name}}</td>
-        <td ng-bind-html="to_html(current_applicant.position_offer_appointment)"></td>
-        <td>
-          <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && current_applicant.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && current_applicant.offered == 'post_offered')) && !selected">
-            <button ng-show="bSelectAccept" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="submitOffer(current_applicant, true)">Confirm</button>
-            <button ng-show="bSelectDecline" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitOffer(current_applicant, false)">Withdraw</button>
-            <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-default" ng-click="cancelSelectOffer();">Back</button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+	<div ng-show="bSelectOffer">
+	  <table class="table">
+	    <tbody>
+	      <tr>
+	        <td style="width: 20%;"><b>Position</b></td>
+	        <td style="width: 50%;">{{current_applicant.position_name}}</td>
+	        <td></td>
+	      </tr>
+	      <tr>
+	        <td><b>Terms of Appointment</b></td>
+	        <td ng-bind-html="to_html(current_applicant.position_offer_appointment)"></td>
+	        <td>
+            <form method="post" action="/download_pdfs/the_terms_of_appointment.pdf">
+              <button class="btn btn-info" style="margin-bottom: 3px;">Download the Terms of Appointment</button>
+              <input type="hidden" name="position_name" value="{{current_applicant.position_name}}">
+            </form>
+	        </td>
+	      </tr>
+	    </tbody>
+	  </table>
+
+    <div ng-if="(($root.applicant_sub_step.identify_name == 'offer' && current_applicant.offered == 'offered') || ($root.applicant_sub_step.identify_name != 'offer' && current_applicant.offered == 'post_offered')) && !selected" style="text-align: center;">
+      <button ng-show="bSelectAccept" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-info" ng-click="submitOffer(current_applicant, true)">Acceptance of Appointment Terms</button>
+      <button ng-show="bSelectDecline" ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-success" ng-click="submitOffer(current_applicant, false)">Withdraw</button>
+      <button ng-disabled="!permission_to_active || !$root.isInTime($root.applicant_sub_step)" class="btn btn-default" ng-click="cancelSelectOffer();">Back</button>
+    </div>
+	</div>
 
 
 

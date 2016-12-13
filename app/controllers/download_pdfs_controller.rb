@@ -667,6 +667,17 @@ class DownloadPdfsController < ApplicationController
     return (user_hash);
   end
 
+  def the_terms_of_appointment
+    @position_name = params[:position_name];
+
+    pdf = WickedPdf.new.pdf_from_string(
+      render_to_string('download_pdfs/the_terms_of_appointment.html.erb')
+    )
+
+    s_file_name = ("the_terms_of_appointment_#{@position_name}.pdf");
+    send_data(pdf, :filename => s_file_name, :type => "application/pdf");
+  end
+
 
 end
 
