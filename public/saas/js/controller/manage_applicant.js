@@ -567,5 +567,40 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       });
     };
 
+    $scope.addComment = function(applicant_id, commentText, comments) {
+      waitingIcon.open();
+      var data = commentText;
+      var procedure_id = $rootScope.current_process.id;
+
+      if (data) {
+        applicantFactory.addComment(applicant_id, data, procedure_id)
+        .success(function(data){
+          if(data.success) {
+            $rootScope.rsasAlert({type: 'success', msg: "Add comment successfully."});
+            comments.push({comment: commentText, comment_by: data.current_user, can_see: true});
+          }
+          else {
+            $rootScope.rsasAlert({type: 'danger', msg: "Add comment failed."});
+          }
+          waitingIcon.close();
+        })
+        .error(function(){
+          $rootScope.rsasAlert({type: 'danger', msg: "There was a problem to add comment."});
+          waitingIcon.close();
+        });
+      }
+      else
+      {
+        $rootScope.rsasAlert({type: 'danger', msg: "Comment can not be blank."});
+        waitingIcon.close();
+      }
+    };
+
+    $scope.logText = function() {
+      str = JSON.stringify($scope.applicationFormTable.tbl);
+      current_user = $rootScope.current_user;
+      console.log("applicationFormTable.tbl.show: " + str);
+      console.log("current_user: " + current_user.first_name);
+    }
   }
 );

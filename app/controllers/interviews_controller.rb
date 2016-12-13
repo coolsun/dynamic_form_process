@@ -1337,12 +1337,18 @@ class InterviewsController < ApplicationController
     user_hash[:recommendation_forms] = recommendation_forms;
     user_hash[:interview_forms] = interview_forms;
 
+    applicant = Applicant.where(:procedure_id => i_procedure_id, :user_id => i_user_id)
     if check_user_permission("rd_flag_button")[0]
-      user_hash[:rd_flag_color] = Applicant.where(:procedure_id => i_procedure_id, :user_id => i_user_id).pluck(:rd_flag_color).first
+      user_hash[:rd_flag_color] = applicant.pluck(:rd_flag_color).first
     else
       user_hash[:rd_flag_color] = nil
     end
 
+    comments, can_comment = Applicant.get_applicant_comment(applicant.first, current_user, i_procedure_id)
+
+    user_hash[:applicant_id] = applicant.first.id
+    user_hash[:comments] = comments
+    user_hash[:can_comment] = can_comment
 
     return (user_hash);
   end

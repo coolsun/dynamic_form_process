@@ -33,6 +33,7 @@
                 <th>Student ID</th>
                 <th>Name</th>
                 <th>Position</th>
+                <th>Comment</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -47,6 +48,22 @@
                 <td>{{application.suid}}</td>
                 <td>{{application.name}}</td>
                 <td>{{application.position_name}}</td>
+                <td class="comment_field">
+                  <p class="show_comment" ng-click="showComment=true"  ng-hide="showComment">Show</p>
+                  <p class="show_comment" ng-click="showComment=false"  ng-show="showComment">Hide</p>
+                  <div ng-init='showComment=false' ng-show="showComment" style="max-width: 100px;">
+                    <div ng-repeat="comment in application.comments">
+                      <div ng-show="comment.can_see" class="comment_content">
+                        {{comment.comment}} <i class="comment_by"> &nbsp; by {{comment.comment_by}}</i>
+                      </div>
+                    </div>
+                    <span class="add_comment" ng-show="application.can_comment" ng-model="clickShow" ng-init="clickShow=false" ng-click="clickShow=true" ng-hide="clickShow">Add comment</span>
+                    <span ng-show="clickShow">
+                      <textarea ng-model="commentText"></textarea>
+                      <button type="button" ng-click="addComment(application.applicant_id, commentText, application.comments);commentText=''">Add Comment</button>
+                    </span>
+                  </div>
+                </td>
                 <td>
                   <span class="glyphicon glyphicon-trash pt" ng-click="removeFromRank(application.id)"></span>
                 </td>
@@ -80,4 +97,3 @@
     </tabset>
   </form>
 </div>
-

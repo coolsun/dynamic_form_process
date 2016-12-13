@@ -50,6 +50,17 @@ factoryModule.factory('applicantFactory', function($http){
         }
       });
     };
+    applicantFactory.addComment = function(applicant_id, comment, procedure_id){
+      return $http({
+        url: urlBase + '/add_comment',
+        method: "POST",
+        data: {
+          "applicant_id": applicant_id,
+          "comment": comment,
+          "procedure_id": procedure_id
+        }
+      });
+    };
     return applicantFactory;
 });
 

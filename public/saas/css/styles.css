@@ -436,3 +436,31 @@ button[disabled], .btn[disabled]{
 .report_submit > .btn{
   width: 100%;
 }
+i.comment_by{
+  color: gray;
+  font-size: 12px;
+}
+div.comment_line{
+  line-height: 18px;
+  margin-bottom: 2px;
+  word-break: normal;
+}
+
+.add_comment{
+  cursor:pointer;
+  color:#0e6cdf;
+  text-decoration: underline;
+}
+.show_comment{
+  cursor:pointer;
+  color: #428bca;
+}
+.show_comment:hover{
+  text-decoration: underline;
+}
+td.comment_field{
+  min-width: 100px;
+}
+.comment_content{
+  word-break: break-all;
+}

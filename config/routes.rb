@@ -199,6 +199,7 @@ Rails.application.routes.draw do
       get  :get_user_authority
       post :force_submit
       post :download_answer_xls_file
+      post :add_comment
     end
   end
 

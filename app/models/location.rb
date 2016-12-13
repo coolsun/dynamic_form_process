@@ -7,7 +7,7 @@ class Location < ActiveRecord::Base
   has_many :location_mgrs, :dependent => :destroy
   has_many :users, :through => :location_mgrs
   has_many :round_tags;
-
+  has_many :comment_in_locations
   serialize :match_conditions
 
   validates_uniqueness_of :procedure_id, :scope => :name, :message=> "This location already exists."
