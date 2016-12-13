@@ -363,6 +363,24 @@
                               </span>
                             </div>
                           </accordion-group>
+                          <accordion-group is-open="comments.open">
+                            <accordion-heading>
+                                <span class="pt">Comments</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': comments.open, 'glyphicon-chevron-right': !comments.open}"></i>
+                            </accordion-heading>
+
+                            <div ng-init='showComment=false' style="max-width: 150px;">
+                              <div ng-repeat="comment in tblTr.comments">
+                                <div ng-show="comment.can_see">
+                                  {{comment.comment}} <i class="comment_by"> &nbsp; by {{comment.comment_by}}</i>
+                                </div>
+                              </div>
+                              <span class="add_comment" ng-show="tblTr.can_comment" ng-model="clickShow" ng-init="clickShow=false" ng-click="clickShow=true" ng-hide="clickShow">Add comment</span>
+                              <span ng-show="clickShow">
+                                <textarea ng-model="commentText" cols=20></textarea>
+                                <button type="button" ng-click="addComment(tblTr.applicant_id, commentText, tblTr.comments);commentText=''">Add Comment</button>
+                              </span>
+                            </div>
+                          </accordion-group>
                         </accordion>
                       </td>
                       <td style="width: 100px;">

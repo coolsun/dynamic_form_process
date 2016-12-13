@@ -4,6 +4,7 @@ class Applicant < ActiveRecord::Base
   belongs_to :user;
   belongs_to :procedure;
   has_many :applicant_tags, :dependent => :destroy;
+  has_many :comments;
 
   def offer_application
     return Application.joins(:position).where(:user_id => self.user_id, :positions => {:procedure_id => self.procedure_id}, :offered => ["offered", "post_offered"]).first
@@ -89,7 +90,7 @@ class Applicant < ActiveRecord::Base
     return applicant;
   end
 
-  def self.get_applicant_list(table_params, filter_options, current_user_status, display_rd_flag_button)
+  def self.get_applicant_list(table_params, filter_options, current_user_status, display_rd_flag_button, current_user)
     logger.info "== table_params #{table_params} =="
     order_by_hash = {'First Name' => 'lower(users.first_name)', 'Last Name' => 'lower(users.last_name)', 'Name' => 'lower(users.first_name)', 'Email' => 'users.email', 'Submitted' => 'applicants.application_submit_at'}
     search_fields = ['users.first_name', 'users.middle_name', 'users.last_name', 'users.email', 'users.suid', 'users.sunet_id']
@@ -215,6 +216,8 @@ class Applicant < ActiveRecord::Base
       if (['admin', 'RM'].include?(filter_options[:permission]))
         applicant_interviews = Round.joins(:interviews => :invites).where(:procedure_id => procedure_id, :invites => {:invitee_user_id => applicant.user_id}).pluck(:title)
       end
+      location_ids = Location.includes(:positions).where(positions: {name: applicant_poitions}, procedure_id: procedure_id).map(&:id)
+      comments, can_comment = Applicant.get_applicant_comment(applicant, current_user, procedure_id)
 
       applicant_list << {
         :id => applicant.user.id,
@@ -234,11 +237,71 @@ class Applicant < ActiveRecord::Base
         :interviews => applicant_interviews.join(", "),
         :offered => applicant_offerd,
         :accepted => applicant_accepted,
+        :comments => comments,
+        :applicant_id => applicant.id,
+        :location_ids => location_ids,
+        :can_comment => can_comment
       }
 
       applicants_length += 1
     end
     return applicant_list, applicants.total_count, forms_and_questions_hash, all_applicants_emails
+  end
+
+  def self.get_applicant_comment(applicant, current_user, procedure_id)
+    can_comment = false
+    role = ""
+    block = ""
+    comments = []
+
+    # if is_location_mgr, pluck location_ids
+    this_procedure_location_ids = Location.includes(:procedure).where(procedure_id: procedure_id).pluck(:id)
+    current_user_location_ids = LocationMgr.where(:location_id => this_procedure_location_ids, :user_id => current_user.id).pluck(:location_id)
+
+    # location_ids = location_ids.present? ? location_ids : []
+    is_admin = current_user.is_admin
+    is_hiring_mgr = ProcedureMgr.where(:procedure_id => procedure_id, :user_id => current_user.id).present?
+    is_location_mgr = current_user_location_ids.present?
+
+    if is_admin || is_hiring_mgr
+      role = "Admin/HM"
+    elsif is_location_mgr
+      role = "LM"
+    else
+      role = "none"
+    end
+
+    if is_admin || is_hiring_mgr || is_location_mgr
+      can_comment = true
+    end
+
+    all_comments = Comment.includes(:comment_in_locations).where(applicant_id: applicant.id)
+    if all_comments.present?
+      all_comments.each do |comment|
+        comment_tmp = {}
+        comment_tmp[:comment] = comment.comment
+        comment_tmp[:comment_by] = comment.comment_by
+        if role == "Admin/HM"
+          comment_tmp[:can_see] = true
+          comment_tmp[:block] = "A"
+        elsif role == "LM" #location_mgr only can see same location's mgr comment
+          if comment.comment_by == current_user.first_name
+            comment_tmp[:can_see] = true
+            comment_tmp[:block] = "B"
+          else
+            #if can_see_location_ids is empty, means this comment comment by admin or HM
+            can_see_location_ids  = comment.comment_in_locations.pluck(:location_id)
+            comment_tmp[:can_see] = (can_see_location_ids.empty? | (current_user_location_ids & can_see_location_ids).present?) ? true : false
+            comment_tmp[:block] = "C"
+          end
+        else
+          comment_tmp[:can_see] = false
+          comment_tmp[:block] = "D"
+        end
+        comments << comment_tmp
+      end
+    end
+    return comments, can_comment
   end
 
   def self.applicant_list_setting_where_condition(filter_options, procedure_id)

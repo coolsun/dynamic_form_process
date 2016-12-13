@@ -65,7 +65,7 @@ class RankingController < ApplicationController
 
     if selected_location
       match_conditions = selected_location.match_conditions if selected_location.match_conditions
-      mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id)
+      mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id, current_user)
     end
 
     rank_position_manager_view = SystemMessage.where(:procedure_id => procedure_id, :identify_name => "rank_position_manager_view").first.message
@@ -110,7 +110,7 @@ class RankingController < ApplicationController
       logger.info "match_conditions = #{match_conditions.as_json}"
       selected_location.match_conditions = match_conditions
       selected_location.save
-      mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id)
+      mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id, current_user)
     end
 
     # Send notifi email after manager update rank position

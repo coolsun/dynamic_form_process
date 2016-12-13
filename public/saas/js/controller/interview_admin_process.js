@@ -3,7 +3,7 @@
  */
 var interviewAdminProcessApp = angular.module('interviewAdminProcessApp', ['ui.calendar', 'ui.bootstrap', "waitingIconModule"]);
 interviewAdminProcessApp
-.controller('interviewAdminProcessCtrl', function($rootScope, $scope, $sce, $window, CTableRsas, interviewFactory, timeSlotFactory, timeSlotInterviewerFactory, interviewEvaluateFactory, userFormFactory, recommendationFormFactory, applicantTagFactory, userFactory, fileFactory, transcriptFactory, FileUploader, waitingIcon){
+.controller('interviewAdminProcessCtrl', function($rootScope, $scope, $sce, $window, CTableRsas, interviewFactory, timeSlotFactory, timeSlotInterviewerFactory, interviewEvaluateFactory, userFormFactory, recommendationFormFactory, applicantTagFactory, applicantFactory, userFactory, fileFactory, transcriptFactory, FileUploader, waitingIcon){
   $scope.inputNotSetCss = 'hasErrorInput';
   $scope.eCode = '';
 
@@ -3136,5 +3136,31 @@ interviewAdminProcessApp
     $scope.interviewAdminProcess.interview.interviewer.newInterviewer.noFirstNameCss = ($scope.interviewAdminProcess.interview.interviewer.newInterviewer.firstName)? '' : $scope.inputNotSetCss;
   };
 
+  $scope.addComment = function(applicant_id, commentText, comments) {
+    waitingIcon.open();
+    var data = commentText;
+    if (data) {
+      applicantFactory.addComment(applicant_id, data)
+      .success(function(data){
+        if(data.success) {
+          $rootScope.rsasAlert({type: 'success', msg: "Add comment successfully."});
+          comments.push({comment: commentText, comment_by: data.current_user, can_see: true});
+        }
+        else {
+          $rootScope.rsasAlert({type: 'danger', msg: "Add comment failed."});
+        }
+        waitingIcon.close();
+      })
+      .error(function(){
+        $rootScope.rsasAlert({type: 'danger', msg: "There was a problem to add comment."});
+        waitingIcon.close();
+      });
+    }
+    else
+    {
+      $rootScope.rsasAlert({type: 'danger', msg: "Comment can not be blank."});
+      waitingIcon.close();
+    }
+  };
 });
 /* EOF */

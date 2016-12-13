@@ -106,5 +106,4 @@ class ApplicationsController < ApplicationController
       render :json => {:success => false, :msg => "Failed to select the position."}
     end
   end
-
 end

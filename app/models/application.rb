@@ -30,7 +30,7 @@ class Application < ActiveRecord::Base
     return self.user.name
   end
 
-  def self.get_mgr_rank_list(procedure_id, location_id)
+  def self.get_mgr_rank_list(procedure_id, location_id, current_user)
     mgr_rank_list = {
       :rank_applications => [],
       :disable_rank_applications => [],
@@ -38,21 +38,31 @@ class Application < ActiveRecord::Base
     }
     position_ids = Position.where(:location_id => location_id).pluck(:id)
     Application.includes(:user => :applicants, :position => [:location, :role]).references(:user).where(:offered => "wait", :position_id => position_ids, :disable_mgr_rank => nil).order("applications.mgr_rank asc").order("users.last_name asc").each do |application|
+      applicant = application.user.applicants.where(procedure_id: procedure_id).first
+      comments, can_comment = Applicant.get_applicant_comment(applicant, current_user, procedure_id)
       mgr_rank_list[:rank_applications] << {
         :id => application.id,
         :suid => application.user.suid,
         :name => application.user.name,
         :rank => application.mgr_rank,
-        :position_name => application.position.name
+        :position_name => application.position.name,
+        :applicant_id => applicant.id,
+        :comments => comments,
+        :can_comment => can_comment
       } if application.user.applicants.detect{|obj| obj.procedure_id == procedure_id.to_i}.submit_and_not_disqualify
     end
     Application.includes(:user => :applicants, :position => [:location, :role]).references(:user).where(:offered => "wait", :position_id => position_ids, :disable_mgr_rank => true).order("users.last_name asc").each do |application|
+      applicant = application.user.applicants.detect{|o| o.procedure_id == procedure_id}
+      comments, can_comment = Applicant.get_applicant_comment(applicant, current_user, procedure_id)
       mgr_rank_list[:disable_rank_applications] << {
         :id => application.id,
         :suid => application.user.suid,
         :name => application.user.name,
         :rank => application.mgr_rank,
-        :position_name => application.position.name
+        :position_name => application.position.name,
+        :applicant_id => applicant.id,
+        :comments => comments,
+        :can_comment => can_comment
       } if application.user.applicants.detect{|obj| obj.procedure_id == procedure_id.to_i}.submit_and_not_disqualify
     end
     return mgr_rank_list

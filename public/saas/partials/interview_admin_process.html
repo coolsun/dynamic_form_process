@@ -274,7 +274,7 @@
                           <span ng-repeat="tag in applicant.applicant_tags" class="rsas-element-arrangement">{{tag}} </span>
                         </p>
                       </td>
-                      <td style="min-width: 222px;">
+                      <td style="min-width: 222px;max-width: 223px;">
                         <accordion close-others="false">
                           <accordion-group is-open="systems.open">
                             <accordion-heading>
@@ -324,6 +324,23 @@
                                 </a>
                               </span>
                             </div>
+                          </accordion-group>
+                          <accordion-group ng-if="'Staff'==$root.current_user.status" is-open="comments.open">
+                            <accordion-heading>
+                                <span class="pt">Comments</span> <i class="pt pull-right glyphicon" ng-class="{'glyphicon-chevron-down': comments.open, 'glyphicon-chevron-right': !comments.open}"></i>
+                            </accordion-heading>
+                              <div ng-init='showComment=false' style="max-width: 283px;">
+                                <div ng-repeat="comment in applicant.comments">
+                                  <div ng-show="comment.can_see">
+                                    {{comment.comment}} <i class="comment_by"> &nbsp; by {{comment.comment_by}}</i>
+                                  </div>
+                                </div>
+                                <span class="add_comment" ng-show="applicant.can_comment" ng-model="clickShow" ng-init="clickShow=false" ng-click="clickShow=true" ng-hide="clickShow">Add comment</span>
+                                <span ng-show="clickShow">
+                                  <textarea ng-model="commentText" cols=40></textarea>
+                                  <button type="button" ng-click="addComment(applicant.applicant_id, commentText, applicant.comments);commentText=''">Add Comment</button>
+                                </span>
+                              </div>
                           </accordion-group>
 
                         </accordion>

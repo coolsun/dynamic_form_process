@@ -518,7 +518,7 @@ class ApplicantsController < ApplicationController
     logger.info "== question_filters  #{filter_options[:question_filters]}=="
 
     display_rd_flag_button = check_user_permission("rd_flag_button")[0]
-    applicant_list, applicants_total, forms_and_questions, all_applicants_emails = Applicant.get_applicant_list(rsas_table_params, filter_options, current_user.status, display_rd_flag_button)
+    applicant_list, applicants_total, forms_and_questions, all_applicants_emails = Applicant.get_applicant_list(rsas_table_params, filter_options, current_user.status, display_rd_flag_button, current_user)
     #logger.info "== applicant_list #{applicant_list} =="
 
     render :json => {
@@ -782,6 +782,40 @@ class ApplicantsController < ApplicationController
       format.xlsx {
         response.headers['Content-Disposition'] = "attachment; filename='applicants study abroad this year.xlsx'"
       }
+    end
+  end
+
+  def add_comment
+    begin
+      user = current_user.first_name
+      applicant_id = params[:applicant_id]
+      text = params[:comment]
+      procedure_id = params[:procedure_id]
+
+      if text.blank?
+        render :json =>{:success => false, :msg => "Empty comment."}
+      end
+      if !applicant_id.present?
+        render :json =>{:success => false, :msg => "Not found applicant id."}
+      end
+
+      lms = Location.includes(:location_mgrs).where(procedure_id: procedure_id, location_mgrs: {user_id: current_user.id})
+      comment = Comment.new
+      comment.applicant_id = applicant_id
+      comment.comment = text
+      comment.comment_by = user
+      comment.save!
+      lms.each do |lm|
+        CommentInLocation.create(
+          :comment_id => comment.id,
+          :location_id => lm.id
+        )
+      end if lms.present?
+      render :json => {:success => true, :msg => "Comment is added success", :current_user => user}
+    rescue Exception => e
+      logger.error e.message
+      logger.error e.backtrace
+      render :json => {:success => false, :msg => "Failed to add comment."}
     end
   end
 
