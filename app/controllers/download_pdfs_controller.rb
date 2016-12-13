@@ -668,10 +668,20 @@ class DownloadPdfsController < ApplicationController
   end
 
   def the_terms_of_appointment
-    @position_name = params[:position_name];
+    i_position_id = params[:position_id];
+    @position_name = '';
+    @offer_appointment = '';
+
+    position = Position.find_by_id(i_position_id);
+
+    if (position.present?)
+      @position_name = position.name;
+      @offer_appointment = position.role.offer_appointment;
+    end
 
     pdf = WickedPdf.new.pdf_from_string(
-      render_to_string('download_pdfs/the_terms_of_appointment.html.erb')
+      render_to_string('download_pdfs/the_terms_of_appointment.html.erb'),
+      :footer => {:center => '[page] / [topage]'}
     )
 
     s_file_name = ("the_terms_of_appointment_#{@position_name}.pdf");
