@@ -596,11 +596,32 @@ adminEditApplicantModule.controller('AdminApplicationForm',
       }
     };
 
+
+    $scope.applicantsId = function(){
+      appllicants_id = $scope.applicationFormTable.tbl.show.map(function(a){return a.applicant_id;});
+      return appllicants_id;
+    };
+
+    $scope.applicantsComments = function(){
+      $scope.comments = [];
+      comments = $scope.applicationFormTable.tbl.show.comments;
+      comments.forEach(function(comment){
+        if (comment.can_see == true) {
+          $scope.comments.push(this.co)
+        }
+      })
+    };
     $scope.logText = function() {
       str = JSON.stringify($scope.applicationFormTable.tbl);
       current_user = $rootScope.current_user;
+      pluckId = $scope.applicationFormTable.tbl.show.map(function(a){return a.id;});
+      comments = $scope.applicationFormTable.tbl.show.map(function(a){return a.comments;});
+      commentObj = JSON.stringify(comments);
       console.log("applicationFormTable.tbl.show: " + str);
       console.log("current_user: " + current_user.first_name);
+      console.log("pluck applicants id:" + pluckId);
+      console.log("comments:" + commentObj);
+
     }
   }
 );

@@ -4,7 +4,7 @@ class Applicant < ActiveRecord::Base
   belongs_to :user;
   belongs_to :procedure;
   has_many :applicant_tags, :dependent => :destroy;
-  has_many :comments;
+  has_many :comments, :dependent => :destroy;
 
   def offer_application
     return Application.joins(:position).where(:user_id => self.user_id, :positions => {:procedure_id => self.procedure_id}, :offered => ["offered", "post_offered"]).first
@@ -239,7 +239,6 @@ class Applicant < ActiveRecord::Base
         :accepted => applicant_accepted,
         :comments => comments,
         :applicant_id => applicant.id,
-        :location_ids => location_ids,
         :can_comment => can_comment
       }
 
@@ -254,6 +253,11 @@ class Applicant < ActiveRecord::Base
     block = ""
     comments = []
 
+    logger.info("=======================")
+    logger.info("applicant: #{applicant.to_json}")
+    logger.info("current_user: #{current_user.to_json}")
+    logger.info("procedure_id: #{procedure_id}")
+    logger.info("=======================")
     # if is_location_mgr, pluck location_ids
     this_procedure_location_ids = Location.includes(:procedure).where(procedure_id: procedure_id).pluck(:id)
     current_user_location_ids = LocationMgr.where(:location_id => this_procedure_location_ids, :user_id => current_user.id).pluck(:location_id)
@@ -279,6 +283,7 @@ class Applicant < ActiveRecord::Base
     if all_comments.present?
       all_comments.each do |comment|
         comment_tmp = {}
+        comment_tmp[:id] = comment.id
         comment_tmp[:comment] = comment.comment
         comment_tmp[:comment_by] = comment.comment_by
         if role == "Admin/HM"
@@ -430,4 +435,35 @@ class Applicant < ActiveRecord::Base
     return true
   end
 
+  def self.get_applicants(table_params, filter_options)
+    filter_where_condition, filter_where_not_condition = self.applicant_list_setting_where_condition(filter_options, procedure_id)
+    search_condition = RsasTools.get_where_search_condition(search_fields, table_params.us_search_text)
+    order_condition = table_params.us_order_by.present? ? "#{order_by_hash[table_params.us_order_by]} #{table_params.s_asc_or_desc}" : "users.last_name asc"
+
+    if filter_options[:question_filters].present?
+      question_filters_user_ids = FormInput.question_filters_user_ids(filter_options[:question_filters], procedure_id)
+      logger.info "== question_filters_user_ids #{question_filters_user_ids} =="
+      if question_filters_user_ids.blank?
+        filter_match_question_applicants = "applicants.user_id = 0"
+      else
+        query = []
+        question_filters_user_ids = question_filters_user_ids.in_groups_of(1000, false)
+        question_filters_user_ids.each do |question_filters_user_ids_of_1000|
+          #logger.info "== question_filters_user_ids_of_1000 #{question_filters_user_ids_of_1000} =="
+          query << "applicants.user_id in (#{question_filters_user_ids_of_1000.join(',')})"
+        end
+        filter_match_question_applicants = query.join(' or ')
+      end
+    else
+      filter_match_question_applicants = ""
+    end
+
+    applicants = Applicant.includes(:user => [{:applications => {:position => [:location, :role]}}, {:invitees => :interview}])
+                          .where(:procedure_id => procedure_id)
+                          .where(filter_where_condition)
+                          .where.not(filter_where_not_condition)
+                          .where(filter_match_question_applicants)
+                          .where(search_condition)
+                          .order(order_condition)
+  end
 end
