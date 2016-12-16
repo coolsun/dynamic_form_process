@@ -819,6 +819,50 @@ class ApplicantsController < ApplicationController
     end
   end
 
+  def tags_and_comments_report
+    procedure_id = params[:current_process_id]
+    applicants_id = JSON.parse(params[:applicants])
+    applicants    = Applicant.includes(:user).where(id: applicants_id)
+    @comments_report = []
+    applicant_tmp = []
+    applicant_list = applicants.pluck(:id)
+    logger.info("===applicants: #{applicants.to_json}===")
+    # position_ids, location_ids, role_ids, permission = user_can_see_position_location_role_ids(procedure_id)
+
+    applicants.each do |applicant|
+      comments, can_comment = Applicant.get_applicant_comment(applicant, current_user, procedure_id)
+      logger.info("comments: #{comments}")
+      comments.each do |comment|
+        next if comment[:can_see] == false
+        c = comment[:comment]
+        comment_by = comment[:comment_by]
+        can_see = comment[:can_see]
+        @comments_report << {
+          applicant: applicant.user.first_name,
+          comment: c,
+          comment_by: comment_by
+        }
+        applicant_tmp << applicant.id
+      end
+
+    end
+    ids = applicant_list - applicant_tmp.uniq
+    no_in_list_applicants = Applicant.where(id: ids).pluck(:user_id)
+    User.where(id: no_in_list_applicants).each do |n|
+      @comments_report << {
+          applicant: n.first_name,
+          comment: "",
+          comment_by: ""
+        }
+    end
+    logger.info("@comment_report : #{@comments_report}")
+    respond_to do |format|
+      format.xlsx {
+        response.headers['Content-Disposition'] = "attachment; filename='Comment Report.xlsx'"
+      }
+    end
+  end
+
   private
 
     def user_can_see_position_location_role_ids(procedure_id)

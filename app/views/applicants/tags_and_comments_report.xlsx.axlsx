@@ -1,0 +1,20 @@
+wb = xlsx_package.workbook
+
+#styles
+title_style = wb.styles.add_style(:b => true)
+
+#rows
+wb.add_worksheet do |sheet|
+  sheet.add_row ["Comments Report"]
+  sheet.add_row
+  sheet.add_row ["Applicant", "Comments", "Comment by"], style: title_style
+  @comments_report.each do |cp|
+  	sheet.add_row [
+  		cp[:applicant],
+  		cp[:comment],
+  		cp[:comment_by]
+  	]
+  end
+  sheet.merge_cells "A1:B1"
+
+end

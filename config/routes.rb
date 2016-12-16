@@ -201,6 +201,7 @@ Rails.application.routes.draw do
       post :force_submit
       post :download_answer_xls_file
       post :add_comment
+      post :tags_and_comments_report
     end
   end
 
