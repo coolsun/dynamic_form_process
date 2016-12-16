@@ -270,6 +270,11 @@ class ApplicationController < ActionController::Base
       action_group = ['Admin', 'HM']
       permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
 
+    when "role_terms_of_appointment"
+      visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
+      action_group = ['Admin', 'HM']
+      permission_to_show, permission_to_active = check_with_groups(action, options, visibility_group, action_group)
+
     when "Post Match"
       visibility_group = ['Admin', 'HM', 'LM Staff', 'RM Staff', 'LM Student', 'RM Student']
       action_group = ['Admin', 'HM']

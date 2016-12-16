@@ -332,6 +332,9 @@ rsasApp.controller('ProcessSteps',function($scope, $sce, $location, $rootScope, 
       case "post_offer_offer":
         $scope.processSubStepURL.push("/saas/partials/offers.html" + "?sn=" + $scope.url_sn);
         break;
+      case "role_terms_of_appointment":
+        $scope.processSubStepURL.push("/saas/partials/terms_appointment.html" + "?sn=" + $scope.url_sn);
+        break;
       case "ranking":
         $scope.processSubStepURL.push("/saas/partials/ranking.html" + "?sn=" + $scope.url_sn);
         break;
