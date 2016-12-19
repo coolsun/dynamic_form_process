@@ -27,15 +27,15 @@
 				<% end %>
         <% form["blocks"].each do |block| %>
           <table style="width: 100%; table-layout: fixed;">
-            <tr>
+            <tr class="blockTr">
               <% block.column.times.each do |column| %>
-                <td valign="top">
+                <td valign="top" class="blockTd">
                 <% block.items.each do |item| %>
                   <% if column == item.column %>
                     <div style="margin: 5px;">
                       <% if item.ps %>
-                        <h5><%= item.description %></h5>
-                        <%= item.value ? item.value.html_safe : "<br />".html_safe %>
+                          <h5><%= item.description %></h5>
+                          <%= item.value ? item.value.html_safe : "<br />".html_safe %>
                       <% elsif item.type == 'name' %>
                         <h5><%= item.rq ? "<span style='color: red'>* #{item.description}</span>".html_safe : item.description %></h5>
                         <% item.option.each do |part_of_name|%>
@@ -52,7 +52,7 @@
                           YYYY <%= text_field_tag item.description, item.option[2]["value"], :size => 10 %>
                         </span>
                       <% elsif item.type == 'description' %>
-                        <span><%= item.description.html_safe %></span>
+                        <span class="blockD"><%= item.description.html_safe %></span>
                       <% elsif item.type == 'file' %>
                         <h5><%= item.description %></h5>
                         <% item.files.each do |file| %>
@@ -156,3 +156,17 @@
     <% end %>
   </div>
 </div>
+
+
+<style>
+  span.blockD *{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+  td.blockTd, td.blockTd *, tr.blockTr, tr.blockTr *{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+</style>
