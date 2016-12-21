@@ -75,6 +75,8 @@ Rails.application.routes.draw do
       post :send_email_to_interviewers
       post :get_positions
       post :send_invite_email_to_applicants
+      get :export_icalendar
+      post :export_icalendar
     end
   end
 

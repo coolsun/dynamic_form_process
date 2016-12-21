@@ -555,7 +555,6 @@ class InterviewsController < ApplicationController
 
     if (round)
       include_list = [
-                      :round,
                       :interviewers,
                       :time_slots => [
                         :time_slot_interviewers,
@@ -567,7 +566,7 @@ class InterviewsController < ApplicationController
 
       interviews = Interview.includes(include_list)
                             .references(include_list)
-                            .where(:rounds => {:id => i_round_id})
+                            .where(:round_id => i_round_id)
                             .where(:interviewers => {:user_id => manager.id});
 
       interviews_list = interviews.as_json({
@@ -1462,7 +1461,6 @@ class InterviewsController < ApplicationController
       i_procedure_id = round.procedure_id;
 
       include_list = [
-        :round,
         :invites,
         :time_slots,
         :positions_in_interviews => [
@@ -1477,7 +1475,7 @@ class InterviewsController < ApplicationController
 
       interviews = Interview.includes(include_list)
                             .references(include_list)
-                            .where(:rounds => {:id => i_round_id})
+                            .where(:round_id => i_round_id)
                             .where(:invites => {:invitee_user_id => i_user_id});
 
       interviews_as_json = interviews.as_json({
@@ -1555,6 +1553,150 @@ class InterviewsController < ApplicationController
     else
       render :json => {:success => false, :msg => "Email delivery failure"}
     end
+  end
+
+####################################################################################################
+  def export_icalendar
+    i_round_id = params[:roundId].to_i;
+
+    round = Round.find_by_id(i_round_id);
+
+    manager = current_user();
+
+    interviews_list = [];
+    if (round.present? && manager.present?)
+      include_list = [
+                      :round,
+                      :interviewers,
+                      :time_slots => [
+                        :time_slot_interviewers,
+                        :interviewees => [
+                          :user
+                        ]
+                      ]
+                     ];
+
+      interviews = Interview.includes(include_list)
+                            .references(include_list)
+                            .where(:rounds => {:id => i_round_id})
+                            .where(:interviewers => {:user_id => manager.id});
+
+      interviews_list = interviews.as_json({
+        :include => [
+          {
+            :time_slots => {
+              :include => [
+                :time_slot_interviewers,
+                {
+                  :interviewees => {
+                    :include => [
+                      :user => {
+                        :methods => :name
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          :interviewers
+        ]
+      });
+
+      if (interviews_list.present?)
+        interviews_list.each do |interview|
+          if (interview["time_slots"].present? && interview["interviewers"])
+            interview["time_slots"].each do |time_slot|
+              if (time_slot["time_slot_interviewers"].present?)
+                time_slot["time_slot_interviewers"].each do |time_slot_interviewer|
+                  interview["interviewers"].each do |interviewer|
+                    if (interviewer["id"] == time_slot_interviewer["interviewer_id"])
+                      time_slot["check"] = true;
+                      break;
+                    end
+                  end
+                  if (true == time_slot["check"])
+                    break;
+                  end
+                end
+
+                interviewer_ids = time_slot["time_slot_interviewers"].collect{|time_slot_interviewer| time_slot_interviewer["interviewer_id"]};
+
+                interviewer_users = User.joins(:interviewers)
+                                        .where(:interviewers => {:id => interviewer_ids});
+
+                time_slot["interviewer_users"] = interviewer_users.as_json({
+                  :methods => :name
+                });
+
+              end
+            end
+          end
+        end
+      end
+
+    end
+
+    cal = Icalendar::Calendar.new
+
+    interviews_list.each do |interview|
+      interview_name = interview["name"];
+
+      interview["time_slots"].each do |time_slot|
+        s_place = time_slot["place"];
+        interviewers = time_slot["interviewer_users"];
+        interviewees = time_slot["interviewees"];
+
+        # time_slot t_start: 2016-10-21 11:00:00 UTC
+        logger.info("@@ time_slot t_start: #{time_slot['t_start']}");
+        logger.info("@@ time_slot t_end: #{time_slot['t_end']}");
+
+        t_start = DateTime.strptime(time_slot["t_start"].to_s, "%Y-%m-%d %H:%M:%S");
+        t_end = DateTime.strptime(time_slot["t_end"].to_s, "%Y-%m-%d %H:%M:%S");
+
+        logger.info("@@ t_start: #{t_start}");
+        logger.info("@@ t_end: #{t_end}");
+
+        s_summary = "#{interview_name}"
+        s_uid = "#{i_round_id}_#{interview["id"]}_#{time_slot["id"]}_#{manager.id}"
+
+        s_description = '';
+        s_description += interview_name;
+        s_description += "\n<place: #{s_place}>";
+
+        if(interviewees.present?)
+          s_description += "\n<Applicants>";
+          interviewees.each do |interviewee|
+            s_description += "\n#{interviewee["user"]["name"]}";
+          end
+        end
+
+        if(interviewers.present?)
+          s_description += "\n<Interviewers>";
+          interviewees.each do |interviewer|
+            s_description += "\n#{interviewer["user"]["name"]}";
+          end
+        end
+
+        cal.event do |e|
+          e.dtstart     = Icalendar::Values::DateTime.new(t_start);
+          e.dtend       = Icalendar::Values::DateTime.new(t_end);
+          e.summary     = s_summary;
+          e.description = s_description;
+          e.ip_class    = "PRIVATE";
+          e.uid         = s_uid;
+        end
+
+      end
+    end
+
+
+    cal.publish
+
+    filename = "icalendar_#{i_round_id}_#{Time.now.to_i}.ics"
+    send_data cal.to_ical, type: 'text/calendar', disposition: 'attachment', filename: filename
+
+
   end
 
 

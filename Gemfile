@@ -75,3 +75,7 @@ gem 'paper_trail', '~> 3.0.6'
 #peter 20150225 add for read excel file
 gem 'roo'
 
+gem 'icalendar'
+
+
+
