@@ -1651,8 +1651,8 @@ class InterviewsController < ApplicationController
         #logger.info("@@ time_slot t_start: #{time_slot['t_start']}");
         #logger.info("@@ time_slot t_end: #{time_slot['t_end']}");
 
-        t_start = DateTime.strptime(time_slot["t_start"].pst_s, "%Y-%m-%d %H:%M:%S");
-        t_end = DateTime.strptime(time_slot["t_end"].pst_s, "%Y-%m-%d %H:%M:%S");
+        t_start = DateTime.strptime(time_slot["t_start"], "%Y-%m-%d %H:%M:%S") + 8.hours;
+        t_end = DateTime.strptime(time_slot["t_end"], "%Y-%m-%d %H:%M:%S") + 8.hours;
 
         #logger.info("@@ t_start: #{t_start}");
         #logger.info("@@ t_end: #{t_end}");
@@ -1673,7 +1673,7 @@ class InterviewsController < ApplicationController
 
         if(interviewers.present?)
           s_description += "\n<Interviewers>";
-          interviewees.each do |interviewer|
+          interviewers.each do |interviewer|
             s_description += "\n#{interviewer["user"]["name"]}";
           end
         end
