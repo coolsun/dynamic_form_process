@@ -1648,14 +1648,14 @@ class InterviewsController < ApplicationController
         interviewees = time_slot["interviewees"];
 
         # time_slot t_start: 2016-10-21 11:00:00 UTC
-        logger.info("@@ time_slot t_start: #{time_slot['t_start']}");
-        logger.info("@@ time_slot t_end: #{time_slot['t_end']}");
+        #logger.info("@@ time_slot t_start: #{time_slot['t_start']}");
+        #logger.info("@@ time_slot t_end: #{time_slot['t_end']}");
 
         t_start = DateTime.strptime(time_slot["t_start"].pst_s, "%Y-%m-%d %H:%M:%S");
         t_end = DateTime.strptime(time_slot["t_end"].pst_s, "%Y-%m-%d %H:%M:%S");
 
-        logger.info("@@ t_start: #{t_start}");
-        logger.info("@@ t_end: #{t_end}");
+        #logger.info("@@ t_start: #{t_start}");
+        #logger.info("@@ t_end: #{t_end}");
 
         s_summary = "#{interview_name}"
         s_uid = "saasinterview#{i_round_id}_#{interview["id"]}_#{time_slot["id"]}_#{manager.id}"
