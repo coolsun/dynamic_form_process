@@ -1651,8 +1651,8 @@ class InterviewsController < ApplicationController
         logger.info("@@ time_slot t_start: #{time_slot['t_start']}");
         logger.info("@@ time_slot t_end: #{time_slot['t_end']}");
 
-        t_start = DateTime.strptime(time_slot["t_start"].to_s, "%Y-%m-%d %H:%M:%S");
-        t_end = DateTime.strptime(time_slot["t_end"].to_s, "%Y-%m-%d %H:%M:%S");
+        t_start = DateTime.strptime(time_slot["t_start"].pst_s, "%Y-%m-%d %H:%M:%S");
+        t_end = DateTime.strptime(time_slot["t_end"].pst_s, "%Y-%m-%d %H:%M:%S");
 
         logger.info("@@ t_start: #{t_start}");
         logger.info("@@ t_end: #{t_end}");
