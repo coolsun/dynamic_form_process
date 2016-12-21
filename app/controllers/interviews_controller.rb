@@ -1658,7 +1658,7 @@ class InterviewsController < ApplicationController
         logger.info("@@ t_end: #{t_end}");
 
         s_summary = "#{interview_name}"
-        s_uid = "#{i_round_id}_#{interview["id"]}_#{time_slot["id"]}_#{manager.id}"
+        s_uid = "saasinterview#{i_round_id}_#{interview["id"]}_#{time_slot["id"]}_#{manager.id}"
 
         s_description = '';
         s_description += interview_name;
