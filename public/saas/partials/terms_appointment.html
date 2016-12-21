@@ -45,8 +45,12 @@
           </thead>
           <tbody>
             <tr ng-repeat="tblTr in RoleTable.tbl.show">
-              <td style="word-break: normal; width: 20%;">{{tblTr.name}}</td>
-              <td style="width: 80%;">{{tblTr.offer_appointment}}</td>
+              <td style="word-break: normal;">{{tblTr.name}}</td>
+              <td style="width: 600px;">
+                <div ng-style="tblTr.style" ng-init="tblTr.bLess=false; tblTr.style={'overflow': 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap', 'width': 'inherit'};">{{tblTr.offer_appointment}}</div>
+                <a href="" ng-hide="tblTr.bLess" ng-click="tblTr.bLess=true; tblTr.style={};" class="ng-hide"><b>More</b></a>
+                <a href="" ng-show="tblTr.bLess" ng-click="tblTr.bLess=false; tblTr.style={'overflow': 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap', 'width': 'inherit'};"><b>Less</b></a>
+              </td>
               <td>
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
