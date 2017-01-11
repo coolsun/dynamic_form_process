@@ -170,14 +170,17 @@ class ProcedureStepsController < ApplicationController
               last_year = Year.where(next_year: this_year_name).first
               sunet_id = User.find(user_id).sunet_id
               if sunet_id.present? && last_year.present?
-                user_last_year_id = User.where(sunet_id: sunet_id, year_id: last_year.id).first.id
-                logger.info("user_last_year_id: #{user_last_year_id}")
-                if user_last_year_id.present?
-                  last_year_offerd_position = Position.includes(:applications).where(applications: {user_id: user_last_year_id, offer_accept: "accepted"}).first
-                  if last_year_offerd_position.present?
-                    last_year_offerd_position_name = last_year_offerd_position.name
-                    this_year_selected_position = Position.includes(:applications).where(procedure_id: procedure_id, name: last_year_offerd_position_name, applications: {user_id: user_id})
-                    check_last_offer = true if this_year_selected_position.present?
+                user_last_year = User.where(sunet_id: sunet_id, year_id: last_year.id).first
+                if user_last_year.present?
+                  user_last_year_id = user_last_year.id
+                  logger.info("user_last_year_id: #{user_last_year_id}")
+                  if user_last_year_id.present?
+                    last_year_offerd_position = Position.includes(:applications).where(applications: {user_id: user_last_year_id, offer_accept: "accepted"}).first
+                    if last_year_offerd_position.present?
+                      last_year_offerd_position_name = last_year_offerd_position.name
+                      this_year_selected_position = Position.includes(:applications).where(procedure_id: procedure_id, name: last_year_offerd_position_name, applications: {user_id: user_id})
+                      check_last_offer = true if this_year_selected_position.present?
+                    end
                   end
                 end
               end
