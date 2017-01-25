@@ -85,8 +85,7 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   ADMIN_MAIL = [
-    "hank@trillioninnovations.com",
-    "peter@trillioninnovations.com",
+    "bill@trillioninnovations.com",
     "kimi@trillioninnovations.com",
     "carol@trillioninnovations.com"
   ]
