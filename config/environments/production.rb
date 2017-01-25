@@ -94,14 +94,11 @@ Rails.application.configure do
 
   STANFORD68 = false
   ADMIN_MAIL = [
-    "peter@trillioninnovations.com",
-    "mickey@trillioninnovations.com",
-    "hank@trillioninnovations.com",
+    "bill@trillioninnovations.com",
     "kimi@trillioninnovations.com",
     "alina@trillioninnovations.com",
     "carol@trillioninnovations.com",
     "sunb0930@gmail.com",
-    "shiflett@stanford.edu",
     "ciscobarron@stanford.edu",
     "joyceli@stanford.edu",
     "meihung@stanford.edu"
