@@ -99,9 +99,7 @@ Rails.application.configure do
     "alina@trillioninnovations.com",
     "carol@trillioninnovations.com",
     "sunb0930@gmail.com",
-    "ciscobarron@stanford.edu",
-    "joyceli@stanford.edu",
-    "meihung@stanford.edu"
+    "ciscobarron@stanford.edu"
   ]
 
 
