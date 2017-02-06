@@ -235,7 +235,7 @@
                     <button class="btn btn-info" data-target="#selectFormTypes" data-toggle="modal">View/Download Forms for Filter Applicants</button>
                     <button class="btn btn-info" ng-click="downloadUploadFiles()">Download All Uploaded Files</button>
 
-                    <form method="post" action="/applicants/download_answer_xls_file.xlsx" ng-if="is_staff" ng-submit="produce_applicant_id_arr()" style="display: inline-block;">
+                    <form method="post" action="/applicants/download_answer_xls_file.xlsx" ng-submit="produce_applicant_id_arr()" style="display: inline-block;">
                       <input type="hidden" name="current_process_id" value="{{$root.current_process.id}}">
                       <input type="hidden" name="form_question_filters" value="{{form_question_filters}}">
                       <input type="hidden" name="status" value="{{applicationFormTable.tbl.status}}">
