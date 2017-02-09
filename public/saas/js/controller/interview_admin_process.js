@@ -182,26 +182,52 @@ interviewAdminProcessApp
   {
     var mail = $scope.rsas_email;
 
-    waitingIcon.open();
-    interviewFactory.sendEmailToApplicants(mail, $rootScope.current_year.id, $rootScope.current_process.id)
-    .success(function (data) {
-      if(data.success){
-        $rootScope.rsasAlert({type: 'success', msg: "Email delivery success."});
-        $("#interviewAdminProcessEmail").modal('toggle');
+    var bSubject = false;
+    var bContent = false;
+    if (mail)
+    {
+      if (mail.subject)
+      {
+        bSubject = true;
       }
-      else{
-        error_message = data.error_message;
-        for (var i = 0; i < error_message.length; i++)
-        {
-          $rootScope.rsasAlert({type: 'danger', msg: error_message[i]});
+      else
+      {
+        $rootScope.rsasAlert({type: 'danger', msg: "subject is empty. please check or reload page and try again thanks."});
+      }
+
+      if (mail.content)
+      {
+        bContent = true;
+      }
+      else
+      {
+        $rootScope.rsasAlert({type: 'danger', msg: "subject is empty. please check or reload page and try again thanks."});
+      }
+    }
+
+    if (bSubject && bContent)
+    {
+      waitingIcon.open();
+      interviewFactory.sendEmailToApplicants(mail, $rootScope.current_year.id, $rootScope.current_process.id)
+      .success(function (data) {
+        if(data.success){
+          $rootScope.rsasAlert({type: 'success', msg: "Email delivery success."});
+          $("#interviewAdminProcessEmail").modal('toggle');
         }
-      }
-      waitingIcon.close();
-    })
-    .error(function (data) {
-      $rootScope.rsasAlert({type: 'danger', msg: "Email delivery failure"});
-      waitingIcon.close();
-    });
+        else{
+          error_message = data.error_message;
+          for (var i = 0; i < error_message.length; i++)
+          {
+            $rootScope.rsasAlert({type: 'danger', msg: error_message[i]});
+          }
+        }
+        waitingIcon.close();
+      })
+      .error(function (data) {
+        $rootScope.rsasAlert({type: 'danger', msg: "Email delivery failure"});
+        waitingIcon.close();
+      });
+    }
   };
 
   $scope.interviewAdminProcess.getInterviewSelectApplicants = function(interviewId, recipients)
