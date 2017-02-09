@@ -192,7 +192,7 @@ interviewAdminProcessApp
       }
       else
       {
-        $rootScope.rsasAlert({type: 'danger', msg: "subject is empty. please check or reload page and try again thanks."});
+        $rootScope.rsasAlert({type: 'danger', msg: "Subject is empty. Please check or reload page and try again. Thank you."});
       }
 
       if (mail.content)
@@ -201,7 +201,7 @@ interviewAdminProcessApp
       }
       else
       {
-        $rootScope.rsasAlert({type: 'danger', msg: "content is empty. please check or reload page and try again thanks."});
+        $rootScope.rsasAlert({type: 'danger', msg: "Content is empty. Please check or reload page and try again. Thank you."});
       }
     }
 
