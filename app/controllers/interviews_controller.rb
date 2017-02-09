@@ -36,7 +36,7 @@ class InterviewsController < ApplicationController
     round = Round.find_by_id(i_round_id);
 
     if (round)
-      t_schedule_due_time = us_schedule_due_time.pst_t
+      t_schedule_due_time = us_schedule_due_time.pst_t('%m/%d/%Y %H:%M %p')
 
       interview = Interview.new_interview(
         i_round_id,
@@ -135,7 +135,7 @@ class InterviewsController < ApplicationController
     us_positions = params[:positionIds];
     us_schedule_due_time = params[:scheduleDueTime];
 
-    t_schedule_due_time = us_schedule_due_time.pst_t
+    t_schedule_due_time = us_schedule_due_time.pst_t('%m/%d/%Y %H:%M %p')
 
     update_data = {
       :vacancy => i_vacancy,
