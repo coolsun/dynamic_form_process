@@ -201,7 +201,7 @@ interviewAdminProcessApp
       }
       else
       {
-        $rootScope.rsasAlert({type: 'danger', msg: "subject is empty. please check or reload page and try again thanks."});
+        $rootScope.rsasAlert({type: 'danger', msg: "content is empty. please check or reload page and try again thanks."});
       }
     }
 
