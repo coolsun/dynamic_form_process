@@ -52,7 +52,7 @@ class Application < ActiveRecord::Base
       } if application.user.applicants.detect{|obj| obj.procedure_id == procedure_id.to_i}.submit_and_not_disqualify
     end
     Application.includes(:user => :applicants, :position => [:location, :role]).references(:user).where(:offered => "wait", :position_id => position_ids, :disable_mgr_rank => true).order("users.last_name asc").each do |application|
-      applicant = application.user.applicants.detect{|o| o.procedure_id == procedure_id}
+      applicant = application.user.applicants.detect{|o| o.procedure_id == procedure_id.to_i}
       comments, can_comment = Applicant.get_applicant_comment(applicant, current_user, procedure_id)
       mgr_rank_list[:disable_rank_applications] << {
         :id => application.id,
