@@ -3,7 +3,7 @@ rsasApp.controller('Locations',
     $scope.current_process_id = $rootScope.current_process.id;
     $scope.locationTable = {};
     $scope.locationTable.tbl = new CTableRsas('locationTable.tbl', JSON_URL + '/locations');
-    $scope.locationTable.tbl.setHeader(['Name', 1], ['Tag', 1], ['Description', 1], ['Location Manager', 0]);
+    $scope.locationTable.tbl.setHeader(['Name', 1], ['Tag', 1], ['Description', 1], ['Location Manager', 0], ['Row House', 0]);
     $scope.locationTable.tbl.setDataAndRequest = function(){
       var data = {
         /////////  Need Location Data  //////////

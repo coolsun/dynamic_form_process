@@ -50,7 +50,8 @@
               <td>{{tblTr.tag}}</td>
               <td>{{tblTr.description}}</td>
               <td><div ng-repeat='location_mgr in tblTr.location_mgrs'>{{combineUserName(location_mgr.user)}}<span ng-hide="$last">,</span></div></td>
-              <th>
+              <td><span ng-if="tblTr.is_row_house" class="glyphicon glyphicon-ok ng-scope"></span></td>
+              <td>
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                     <span class="glyphicon glyphicon-chevron-down"></span>
@@ -73,7 +74,7 @@
                     </li>
                   </ul>
                 </div>
-              </th>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -108,6 +109,12 @@
             <label class="col-lg-2 control-label">*Name:</label>
             <div class="col-lg-10">
               <input type="text" class="form-control" ng-model="new_location.name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Is Row House:</label>
+            <div class="col-lg-10">
+              <input type="checkbox" style="width: 34px;height: 34px;" ng-model="new_location.is_row_house">
             </div>
           </div>
           <div class="panel-body">
@@ -146,6 +153,12 @@
             <label class="col-lg-2 control-label">*Name:</label>
             <div class="col-lg-10">
               <input type="text" class="form-control" ng-model="edit_location.name" ng-required="true">
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="col-lg-2 control-label">Is Row House:</label>
+            <div class="col-lg-10">
+              <input type="checkbox" style="width: 34px;height: 34px;" ng-model="edit_location.is_row_house">
             </div>
           </div>
           <div class="panel-body">
