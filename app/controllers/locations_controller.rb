@@ -81,6 +81,6 @@ class LocationsController < ApplicationController
       @location = Location.find_by_id(params[:id])
     end
     def location_params
-      params.require(:location).permit(:procedure_id, :name, :tag, :description)
+      params.require(:location).permit(:procedure_id, :name, :tag, :description, :is_row_house)
     end
 end
