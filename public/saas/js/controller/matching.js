@@ -2,11 +2,16 @@ rsasApp.controller('Matching', function($scope, $rootScope, matchingFactory, wai
   $scope.matching = {};
   $scope.match_conditions = [];
   $scope.mathematical = [
-    {key:"=",value: "="},
+    {key:"==",value: "="},
     {key:">",value: ">"},
     {key:"<",value: "<"},
     {key:">=",value: "≥"},
     {key:"<=",value: "≤"}
+  ];
+  $scope.sexes = [
+    {key:"Male",value: "Male"},
+    {key:"Female",value: "Female"},
+    {key:"Other",value: "Either gender"}
   ];
 
   $scope.getMatchData = function(){

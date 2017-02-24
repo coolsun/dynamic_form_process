@@ -27,10 +27,131 @@ class Matching < ActiveRecord::Base
   end
 
   def self.run_match(procedure_id, conditions)
-    selection_ranks = OptimizedGs.match(Matching.position_ranks(procedure_id), Matching.applicant_ranks(procedure_id), Matching.constraints(conditions))
-    return false if !selection_ranks
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    logger.info("@@@@@@@@@@@@@ run_match @@@@@@@@@@@@@@@@@@@@@");
+    logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    logger.info(conditions);
 
-    return Matching.save_match(procedure_id, selection_ranks)
+    include_condition = [{:applications => :user}, :location];
+    positions = Position.includes(include_condition).references(include_condition).where(:procedure_id => procedure_id, :auto_matching => true);
+
+    location_ids = positions.map{|position| position.location_id}.uniq;
+    locations = Location.where(id: location_ids).select("id, is_row_house");
+
+    match_locations = [];
+    locations.each do |location|
+      match_locations << {:name=> location.id.to_s, :rowHouse => location.is_row_house}
+    end
+
+    match_positions = [];
+    match_students = {};
+
+    positions.each_with_index do |position, position_index|
+      rules = [];
+      if ()
+        conditions.each do |condition|
+          if (condition['position'] == position.id)
+            case condition['sex']
+            when 'Female'
+              rule_sex = 'f';
+            when 'Male'
+              rule_sex = 'm';
+            else
+              rule_sex = 'o';
+            end
+
+            rules << rule_sex + condition['symbol'] + condition['value'].to_s;
+          end
+        end
+      end
+
+      tmp_position = {};
+      tmp_position[:house] = position.location_id.to_s;
+      tmp_position[:vacancies] = position.vacancy;
+      tmp_position[:name] = position.id.to_s;
+      tmp_position[:rule] = rules.join('&&');
+      tmp_position[:size] = 0;
+
+      i_count_applications = 0;
+      ranking_applications = position.applications
+                                      .where('disable_user_rank is null OR disable_user_rank = 0')
+                                      .where('disable_mgr_rank is null OR disable_mgr_rank = 0')
+                                      .order(:mgr_rank);
+
+      ranking_applications.each_with_index do |application, appliction_index|
+        if(match_students[application.user_id.to_s].blank?)
+          match_students[application.user_id.to_s] = {};
+        end
+
+        student = application.user;
+        sex = 'UNKNOWN';
+        case student.gender
+        when 'M'
+          sex = 'Male';
+        when 'F'
+          sex = 'Female';
+        else
+          sex = 'Other';
+        end
+
+        if (match_students[application.user_id.to_s][:sex].blank?)
+          match_students[application.user_id.to_s][:sex] = sex;
+        end
+
+        match_students[application.user_id.to_s][application.position_id.to_s] = application.user_rank;
+        tmp_position[appliction_index] =[student.id.to_s, sex];
+        i_count_applications += 1;
+      end
+
+
+      if (0 < i_count_applications)
+        tmp_position[:size] = i_count_applications;
+        match_positions << tmp_position;
+      end
+    end
+
+    #selection_ranks = OptimizedGs.match(Matching.position_ranks(procedure_id), Matching.applicant_ranks(procedure_id), Matching.constraints(conditions))
+
+    begin
+      result = MatchGsPos.do_match(match_locations, match_positions, match_students);
+      logger.info("@@ MatchGsPos.do_match result: #{result}");
+
+      if (result[:done])
+        is_success = Matching.save_match(procedure_id, result[:data])
+
+        if (is_success)
+          return {
+            success: true,
+            msg: 'The match is run successfully!'
+          }
+        else
+          return {
+            success: false,
+            msg: 'Failed to match. save_match failed.'
+          }
+        end
+      else
+        if (!result[:b_ValidSelection])
+          return {
+            success: false,
+            msg: 'Failed to match. Some positions have no ValidSelection.'
+          }
+        else
+          return {
+            success: false,
+            msg: 'Failed to match. match_gs_pos.rb has unknown error.'
+          }
+        end
+      end
+    rescue Exception => e
+      logger.error "#{e.message} : #{e.backtrace}"
+      return {
+        success: false,
+        msg: 'Failed to match. match_gs_pos.rb has unknown error.'
+      }
+    end
+
+    #return Matching.save_match(procedure_id, selection_ranks)
   end
 
   def self.position_ranks(procedure_id)
@@ -100,17 +221,14 @@ class Matching < ActiveRecord::Base
     begin
       Application.joins(:position).where(:auto_match => true,:positions => {:procedure_id => procedure_id}).update_all(:auto_match => false)
 
-      selection_ranks.each do |location_id, location_data|
-        location_data["positions"].each do |position|
-          position_id = position["position"]
-          user_ids = position["ranks"]
-          Application.where(:position_id => position_id, :user_id => user_ids).update_all(:auto_match => true)
-        end
+      selection_ranks.each do |data|
+        position_id = data["position_id"]
+        user_ids = data["user_ids"]
+        Application.where(:position_id => position_id, :user_id => user_ids).update_all(:auto_match => true)
       end
       is_success = true
     rescue Exception => e
       Application.joins(:position).where(:auto_match => true,:positions => {:procedure_id => procedure_id}).update_all(:auto_match => false)
-      flash[:notice]="Failed:#{e.message}"
       logger.error "#{e.message} : #{e.backtrace}"
     end
 
