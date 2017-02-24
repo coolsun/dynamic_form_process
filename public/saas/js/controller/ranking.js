@@ -137,6 +137,7 @@ rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankin
     .success(function(data){
       if(data.success){
         $scope.mgr_rank_list = data.mgr_rank_list;
+        $scope.match_conditions = data.match_conditions;
         $scope.resetNewRank();
         $rootScope.rsasAlert({type: 'success', msg: data.msg});
       }
