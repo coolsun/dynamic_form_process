@@ -19,7 +19,9 @@ rsasApp.controller('Matching', function($scope, $rootScope, matchingFactory, wai
     matchingFactory.getMatchData($rootScope.current_year.id, $rootScope.current_process.id)
     .success(function(data){
       if(data.success){
+        console.log(data.match_data);
         $scope.matching = data.match_data;
+        $scope.match_conditions = data.match_data.match_conditions;
         $scope.locations = data.locations;
         $scope.permission_to_active = data.permission_to_active;
       }
