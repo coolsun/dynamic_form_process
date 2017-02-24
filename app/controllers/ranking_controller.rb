@@ -46,6 +46,7 @@ class RankingController < ApplicationController
 
     location_list = []
     location_ids = []
+    position_list = []
 
     procedure_id = params[:current_process_id]
     if is_admin || is_hiring_mgr(procedure_id)
@@ -64,7 +65,21 @@ class RankingController < ApplicationController
     selected_location = selected_location_id ? Location.find_by_id(selected_location_id) : nil
 
     if selected_location
-      match_conditions = selected_location.match_conditions if selected_location.match_conditions
+      position_list = Position.select(:id, :name).where(:location_id => selected_location.id).as_json
+
+      positions = Position.select(:id, :match_conditions).where(:location_id => selected_location.id).where('match_conditions is not null');
+
+      positions.each do |position|
+        position.match_conditions.each do |condition|
+          match_conditions << {
+            :position => position.id,
+            :sex => condition["sex"],
+            :symbol => condition["symbol"],
+            :value => condition["value"]
+          };
+        end
+      end
+
       mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id, current_user)
     end
 
@@ -76,12 +91,12 @@ class RankingController < ApplicationController
       :permission_to_active => permission_to_active,
       :location_list => location_list,
       :rank_position_manager_view => rank_position_manager_view,
-      :match_conditions => match_conditions
+      :match_conditions => match_conditions,
+      :position_list => position_list
     }
   end
 
   def update_mgr_rank
-
     permission_to_show, permission_to_active, permission_message = check_user_permission("ranking")
     render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
 
@@ -108,8 +123,12 @@ class RankingController < ApplicationController
     mgr_rank_list = []
     if selected_location
       logger.info "match_conditions = #{match_conditions.as_json}"
-      selected_location.match_conditions = match_conditions
-      selected_location.save
+
+      positions = Position.where(:location_id => selected_location.id);
+
+      Position.deal_match_conditions(positions, match_conditions);
+
+
       mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id, current_user)
     end
 

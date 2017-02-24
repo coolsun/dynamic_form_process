@@ -7,6 +7,7 @@ class Position < ActiveRecord::Base
   has_many :applications, :dependent => :destroy
   has_many :positions_in_interviews;
   has_many :interviews, :through => :positions_in_interviews;
+  serialize :match_conditions
 
   validates_uniqueness_of :role_id, :scope => :location_id, :message=> "This position already exists."
 
@@ -287,4 +288,24 @@ class Position < ActiveRecord::Base
     return attachable_forms
   end
 
+  def self.deal_match_conditions(positions, conditions)
+    positions.each do |position|
+      position_conditions = [];
+
+      conditions.each do |condition|
+        if (position.id == condition["position"] || 'ALL' == condition["position"])
+          position_conditions << condition;
+        end
+      end
+
+      position.match_conditions = position_conditions;
+      position.save;
+    end
+  end
+
 end
+
+
+
+
+

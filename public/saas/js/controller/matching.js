@@ -10,8 +10,8 @@ rsasApp.controller('Matching', function($scope, $rootScope, matchingFactory, wai
   ];
   $scope.sexes = [
     {key:"Male",value: "Male"},
-    {key:"Female",value: "Female"},
-    {key:"Other",value: "Either gender"}
+    {key:"Female",value: "Female"}
+    //{key:"Other",value: "Either gender"}
   ];
 
   $scope.getMatchData = function(){
