@@ -2,6 +2,7 @@ class Matching < ActiveRecord::Base
   def self.data(procedure_id)
     match_data = {}
     match_data[:positions] = []
+    match_data[:match_conditions] = [];
     not_match_user_ids = []
     match_user_ids = []
     include_condition = [{:applications => :user}]
@@ -21,6 +22,10 @@ class Matching < ActiveRecord::Base
         :vacancy => position.vacancy,
         :users => users
       }
+
+      if (position.auto_matching && position.match_conditions.present?)
+        match_data[:match_conditions] += position.match_conditions;
+      end
     end
     match_data[:not_match_users] = User.where(:id => (not_match_user_ids.uniq - match_user_ids.uniq)).as_json(:methods => :name)
     return match_data
@@ -34,6 +39,9 @@ class Matching < ActiveRecord::Base
 
     include_condition = [{:applications => :user}, :location];
     positions = Position.includes(include_condition).references(include_condition).where(:procedure_id => procedure_id, :auto_matching => true);
+
+    Position.deal_match_conditions(positions, conditions);
+
 
     location_ids = positions.map{|position| position.location_id}.uniq;
     locations = Location.where(id: location_ids).select("id, is_row_house");
