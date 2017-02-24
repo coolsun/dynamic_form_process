@@ -89,13 +89,17 @@ rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankin
   var orderBy = $filter('orderBy');
   $scope.set_rank_by_input = false;
   $scope.match_conditions = [];
-  $scope.match_tags = ["Men", "Women", "Either gender"];
   $scope.mathematical = [
-    {key:"=",value: "="},
+    {key:"==",value: "="},
     {key:">",value: ">"},
     {key:"<",value: "<"},
     {key:">=",value: "≥"},
     {key:"<=",value: "≤"}
+  ];
+  $scope.sexes = [
+    {key:"Male",value: "Male"},
+    {key:"Female",value: "Female"}
+    //{key:"Other",value: "Either gender"}
   ];
 
   $scope.getMgrRankList = function(){
@@ -111,7 +115,10 @@ rsasApp.controller('Ranking', function($scope, $rootScope, $filter, $sce, rankin
         $scope.permission_to_active = data.permission_to_active;
         $scope.rank_position_manager_view = $sce.trustAsHtml(data.rank_position_manager_view);
         $scope.match_conditions = data.match_conditions;
+        $scope.position_list = data.position_list;
         $scope.resetNewRank();
+
+        console.log(data.match_conditions);
       }
       else{
         $rootScope.rsasAlert({type: 'danger', msg: data.msg});
