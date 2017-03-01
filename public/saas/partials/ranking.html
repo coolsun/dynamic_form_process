@@ -10,7 +10,7 @@
 
     <table>
       <tr ng-repeat="match_condition in match_conditions">
-        <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.position" ng-options="position.id as position.name for position in position_list"></select></td>
+        <!-- <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.position" ng-options="position.id as position.name for position in position_list"></select></td> -->
         <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.sex" ng-options="sex.key as sex.value for sex in sexes"></select></td>
         <td style="padding: 3px"><select style="width: 100%" ng-model="match_condition.symbol" ng-options="symbol.key as symbol.value for symbol in mathematical"></select></td>
         <td style="padding: 3px"><input type="number" ng-required="true" min="0" ng-model="match_condition.value" /></td>
