@@ -65,7 +65,6 @@ class RankingController < ApplicationController
     selected_location = selected_location_id ? Location.find_by_id(selected_location_id) : nil
 
     if selected_location
-=begin
       position_list = Position.select(:id, :name).where(:location_id => selected_location.id).as_json
 
       positions = Position.select(:id, :match_conditions).where(:location_id => selected_location.id).where('match_conditions is not null');
@@ -80,9 +79,7 @@ class RankingController < ApplicationController
           };
         end
       end
-=end
 
-      match_conditions = selected_location.match_conditions if selected_location.match_conditions
       mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id, current_user)
     end
 
@@ -132,7 +129,7 @@ class RankingController < ApplicationController
     return_match_conditions = []
     if selected_location
       logger.info "match_conditions = #{match_conditions.as_json}"
-=begin
+
       positions = Position.where(:location_id => selected_location.id);
       Position.deal_match_conditions(positions, match_conditions);
 
@@ -147,10 +144,8 @@ class RankingController < ApplicationController
           };
         end
       end
-=end
 
-      selected_location.match_conditions = match_conditions
-      selected_location.save
+
       mgr_rank_list = Application.get_mgr_rank_list(procedure_id, selected_location_id, current_user)
     end
 
@@ -160,11 +155,9 @@ class RankingController < ApplicationController
       all_location_mgrs = LocationMgr.joins(:user).where(location_id: selected_location_id).pluck(:email)
       bcc = all_location_mgrs
       send_success, msg, data = Application.send_email(current_user, procedure_id, "location_managers_submit_ranked_list", add_bcc: bcc, mgr_rank_list: mgr_rank_list)
-      render :json => {:success => send_success, :msg => msg , :mgr_rank_list => data}
-      #render :json => {:success => send_success, :msg => msg , :mgr_rank_list => data, :match_conditions => match_conditions}
+      render :json => {:success => send_success, :msg => msg , :mgr_rank_list => data, :match_conditions => match_conditions}
     else
-      render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list}
-      #render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list, :match_conditions => return_match_conditions}
+      render :json => {:success => true, :msg => "The rank has been updated successfully.", :mgr_rank_list => mgr_rank_list, :match_conditions => return_match_conditions}
     end
   end
 
