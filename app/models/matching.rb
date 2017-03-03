@@ -56,7 +56,7 @@ class Matching < ActiveRecord::Base
 
     positions.each_with_index do |position, position_index|
       rules = [];
-      if ()
+      if (conditions.present?)
         conditions.each do |condition|
           if (condition['position'] == position.id)
             case condition['sex']
