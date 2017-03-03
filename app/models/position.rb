@@ -303,6 +303,16 @@ class Position < ActiveRecord::Base
     end
   end
 
+  def match_conditions_string
+    symbol_switch = {
+      "==" => "=",
+      ">" => ">",
+      "<" => "<",
+      ">=" => "≥",
+      "<=" => "≤"
+    }
+    return self.match_conditions.map{|o| "#{o['sex']} #{symbol_switch[o['symbol']]} #{o['value']}"}.join(", ") if self.match_conditions.present?
+  end
 end
 
 
