@@ -19,7 +19,8 @@ wb.add_worksheet do |sheet|
 
   @applications.each do |application|
     user = application.user
-    location = application.position.location
+    position = application.position    
+    location = position.location
     sheet.add_row [
       location.name,
       application.mgr_ranked_at.present?,
@@ -27,9 +28,9 @@ wb.add_worksheet do |sheet|
       application.mgr_rank,
       user.suid,
       user.name,
-      application.position.name,
+      position.name,
       application.ranked_mgr.name,
-      location.match_conditions_string
+      position.match_conditions_string
     ], :types => [nil, nil, nil, nil, :string] #for SUID not to number
   end
 end
