@@ -295,10 +295,6 @@ class Position < ActiveRecord::Base
       conditions.each do |condition|
         if (position.id == condition["position"])
           position_conditions << condition;
-        elsif ('ALL' == condition["position"])
-          condition["position"] = position.id;
-          position_conditions << condition.clone;
-          condition["position"] = 'ALL';
         end
       end
 

@@ -85,11 +85,6 @@ class RankingController < ApplicationController
 
     rank_position_manager_view = SystemMessage.where(:procedure_id => procedure_id, :identify_name => "rank_position_manager_view").first.message
 
-    position_list << {
-      :id => 'ALL',
-      :name => 'ALL'
-    }
-
     render :json => {
       :success => true,
       :mgr_rank_list => mgr_rank_list,
