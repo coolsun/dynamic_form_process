@@ -292,9 +292,11 @@ class Position < ActiveRecord::Base
     positions.each do |position|
       position_conditions = [];
 
-      conditions.each do |condition|
-        if (position.id == condition["position"])
-          position_conditions << condition;
+      if (conditions.present?)
+        conditions.each do |condition|
+          if (position.id == condition["position"])
+            position_conditions << condition;
+          end
         end
       end
 
