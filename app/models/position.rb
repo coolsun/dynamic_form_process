@@ -311,7 +311,16 @@ class Position < ActiveRecord::Base
       ">=" => "≥",
       "<=" => "≤"
     }
-    return self.match_conditions.map{|o| "#{o['sex']} #{symbol_switch[o['symbol']]} #{o['value']}"}.join(", ") if self.match_conditions.present?
+
+    conditions = [];
+
+    if (self.match_conditions.present?)
+      self.match_conditions.each do |o|
+        conditions << "#{o['sex']} #{symbol_switch[o['symbol']]} #{o['value']}" if(o['sex'].present? && o['symbol'].present? && o['value'].present?)
+      end
+    end
+
+    return conditions.join(", ");
   end
 end
 
