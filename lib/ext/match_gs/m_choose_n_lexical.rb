@@ -1,10 +1,10 @@
-require 'pp' 
+require 'pp'
 
 # Lexical search for n choose k
 # nexksb
 # n choose k
 # store h at currentArray[k]
-# input 
+# input
 #   n: full set of n elements
 #   k: subset to be chosen
 #   currentArray: nil to start
@@ -28,10 +28,10 @@ def nexksb n, k, currentArray
     if currentArray[0] == (n-k+1)
       return currentArray[0] == (n-k+1), currentArray
     else
-     
+
       h = currentArray[k]
       #puts "n=#{n}, h=#{h}, currentArray[k-h]=#{currentArray[k-h]}, n-h+1=#{n-h+1}"
-      
+
       if currentArray[k-h] < n-h+1
         h = 1
       else
@@ -48,11 +48,11 @@ def nexksb n, k, currentArray
   end
 end
 
-currentArray = nil
-result = false
-puts "begin of output"
-while !result
-result, currentArray = nexksb(10, 2, currentArray)
-pp currentArray
-end
-puts "end of output"
+#currentArray = nil
+#result = false
+#puts "begin of output"
+#while !result
+#result, currentArray = nexksb(10, 2, currentArray)
+#pp currentArray
+#end
+#puts "end of output"
