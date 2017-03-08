@@ -121,7 +121,7 @@ class Matching < ActiveRecord::Base
     #selection_ranks = OptimizedGs.match(Matching.position_ranks(procedure_id), Matching.applicant_ranks(procedure_id), Matching.constraints(conditions))
 
     begin
-      result = MatchGsPos.do_match(match_locations, match_positions, match_students);
+      result = MatchGsPosNoGv.do_match(match_locations, match_positions, match_students);
       logger.info("@@ MatchGsPos.do_match result: #{result}");
 
       if (result[:done])

@@ -25,7 +25,7 @@ module RsasRails
     require 'ext/string'
     #require 'ext/optimized_gs'
 
-    require 'ext/match_gs/match_gs_pos'
+    require 'ext/match_gs/match_gs_pos_no_gv'
 
 
 

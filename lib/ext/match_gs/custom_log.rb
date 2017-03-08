@@ -2,12 +2,12 @@ require 'pp';
 
 # A simple log with levels
 # E.g.: logSetLevel($LOG_DEBUG_LEVEL)
-#       or
+#       or 
 #       logSetLevel($LOG_INFO_LEVEL)
-#
-#       use pp
+#       
+#       use pp 
 #       logDebug "$houses.size=#{$houses.size}", $USE_PP;
-#       use puts
+#       use puts 
 #       logInfo "$houses.size=#{$houses.size}", $USE_PUTS;
 
 $LOG_INFO = 0b0001
@@ -25,11 +25,11 @@ $USE_PUTS=false
 # Default: no logging
 $log_level=$LOG_NONE_LEVEL
 
-def self.logSetLevel(logLevel=$LOG_NONE_LEVEL)
+def logSetLevel(logLevel=$LOG_NONE_LEVEL)
   $log_level = logLevel
 end
 
-def self.logInfo(s, use_pp=$USE_PP)
+def logInfo(s, use_pp=$USE_PP)
   if use_pp
     pp "#{s}" if $LOG_INFO & $log_level
   else
@@ -37,7 +37,7 @@ def self.logInfo(s, use_pp=$USE_PP)
   end
 end
 
-def self.logUser(s, use_pp=$USE_PP)
+def logUser(s, use_pp=$USE_PP)
   if use_pp
     pp "#{s}" if $LOG_USER & $log_level
   else
@@ -45,7 +45,7 @@ def self.logUser(s, use_pp=$USE_PP)
   end
 end
 
-def self.logSystem(s, use_pp=$USE_PP)
+def logSystem(s, use_pp=$USE_PP)
   if use_pp
     pp "#{s}" if $LOG_SYSTEM & $log_level
   else
@@ -53,7 +53,7 @@ def self.logSystem(s, use_pp=$USE_PP)
   end
 end
 
-def self.logDebug(s, use_pp=$USE_PP)
+def logDebug(s, use_pp=$USE_PP)
   if use_pp
     pp s if $LOG_DEBUG & $log_level
   else
