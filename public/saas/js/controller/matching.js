@@ -45,6 +45,7 @@ rsasApp.controller('Matching', function($scope, $rootScope, matchingFactory, wai
         $rootScope.rsasAlert({type: 'success', msg: data.msg});
       }
       else{
+        $scope.matching = data.match_data;
         $rootScope.rsasAlert({type: 'danger', msg: data.msg});
       }
       waitingIcon.close();
