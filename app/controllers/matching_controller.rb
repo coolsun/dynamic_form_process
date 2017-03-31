@@ -17,7 +17,11 @@ class MatchingController < ApplicationController
     permission_to_show, permission_to_active, permission_message = check_user_permission("match")
     render :json => {:success => false, :msg => permission_message} and return if !permission_to_active
 
+
     procedure_id = params[:current_process_id]
+
+    Application.joins(:position).where(:auto_match => true,:positions => {:procedure_id => procedure_id}).update_all(:auto_match => false)
+
     result = Matching.run_match(procedure_id, params[:match_conditions])
 
     logger.info(result);
