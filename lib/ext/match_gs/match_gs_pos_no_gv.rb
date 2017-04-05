@@ -163,7 +163,7 @@ class MatchGsPosNoGv
       nOther += 1 if position[student][1] == "Other";
     }
 
-    ruleResult = position[:rule].sub("m", nMale.to_s).sub("f", nFemale.to_s).sub("o", nOther.to_s)
+    ruleResult = position[:rule].gsub("m", nMale.to_s).gsub("f", nFemale.to_s).gsub("o", nOther.to_s)
 
     return eval(ruleResult);
 
@@ -475,5 +475,6 @@ class MatchGsPosNoGv
       data: result
     });
   end
+
 end
 
