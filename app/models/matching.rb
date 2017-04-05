@@ -84,6 +84,7 @@ class Matching < ActiveRecord::Base
       ranking_applications = position.applications
                                       .where('disable_user_rank is null OR disable_user_rank = 0')
                                       .where('disable_mgr_rank is null OR disable_mgr_rank = 0')
+                                      .where('user_rank != 999999')
                                       .order(:mgr_rank);
 
       ranking_applications.each_with_index do |application, appliction_index|
