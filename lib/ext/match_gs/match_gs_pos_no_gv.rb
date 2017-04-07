@@ -85,16 +85,15 @@ class MatchGsPosNoGv
   def self.outputSeletedStudents(matcher, positionStudentRanking)
     result = [];
 
-    positionStudentRanking.sort_by { |k|
-      if (k[0].nil?)
-        ""
-      else
-        matcher.positions[k[0][:position_index]][:name]
-      end
-    }
+    positionStudentRanking.delete_if { |value| value.size() == 0 }
 
-    positionStudentRanking.each_with_index { |psr, index|
+    positionStudentRankingSorted = positionStudentRanking.sort_by { |k| matcher.positions[k[0][:position_index]][:name] }
+
+    positionStudentRankingSorted.each_with_index { |psr, index|
       match_position = {};
+
+      Rails.logger.info(psr);
+
       match_position["position_id"] = matcher.positions[psr[0][:position_index]][:name];
       match_position["user_ids"] = [];
 
