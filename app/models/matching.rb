@@ -243,4 +243,104 @@ class Matching < ActiveRecord::Base
 
     return is_success
   end
+
+
+private
+  def show_matching_data_struct
+    procedure_id = 10560;
+    conditions = [{"position"=>15687, "sex"=>"Male", "symbol"=>">=", "value"=>2}, {"position"=>15687, "sex"=>"Female", "symbol"=>">=", "value"=>2}, {"position"=>15695, "sex"=>"Male", "symbol"=>">=", "value"=>2}, {"position"=>15695, "sex"=>"Female", "symbol"=>">=", "value"=>3}, {"position"=>15698, "sex"=>"Male", "symbol"=>">=", "value"=>2}, {"position"=>15698, "sex"=>"Female", "symbol"=>">=", "value"=>3}, {"position"=>15707, "sex"=>"Male", "symbol"=>"==", "value"=>2}, {"position"=>15707, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15724, "sex"=>"Male", "symbol"=>"==", "value"=>2}, {"position"=>15724, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15732, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15732, "sex"=>"Male", "symbol"=>"==", "value"=>1}, {"position"=>15744, "sex"=>"Male", "symbol"=>">=", "value"=>3}, {"position"=>15744, "sex"=>"Female", "symbol"=>">=", "value"=>4}, {"position"=>15459, "sex"=>"Female", "symbol"=>">=", "value"=>2}, {"position"=>15459, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15497, "sex"=>"Female", "symbol"=>">=", "value"=>1}, {"position"=>15497, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15500, "sex"=>"Male", "symbol"=>"==", "value"=>3}, {"position"=>15500, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15565, "sex"=>"Female", "symbol"=>">=", "value"=>3}, {"position"=>15661, "sex"=>"Male", "symbol"=>">=", "value"=>2}, {"position"=>15661, "sex"=>"Female", "symbol"=>">=", "value"=>3}, {"position"=>15566, "sex"=>"Male", "symbol"=>">=", "value"=>2}, {"position"=>15566, "sex"=>"Female", "symbol"=>">=", "value"=>2}, {"position"=>15532, "sex"=>"Female", "symbol"=>">=", "value"=>1}, {"position"=>15532, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15529, "sex"=>"Female", "symbol"=>">=", "value"=>1}, {"position"=>15529, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15535, "sex"=>"Female", "symbol"=>"==", "value"=>1}, {"position"=>15533, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15533, "sex"=>"Female", "symbol"=>">=", "value"=>1}, {"position"=>15534, "sex"=>"Male", "symbol"=>"==", "value"=>1}, {"position"=>15554, "sex"=>"Female", "symbol"=>">=", "value"=>2}, {"position"=>15554, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15583, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15583, "sex"=>"Female", "symbol"=>">=", "value"=>1}, {"position"=>15600, "sex"=>"Male", "symbol"=>">=", "value"=>1}, {"position"=>15600, "sex"=>"Female", "symbol"=>">=", "value"=>1}, {"position"=>15601, "sex"=>"Female", "symbol"=>"==", "value"=>1}, {"position"=>15608, "sex"=>"Female", "symbol"=>">=", "value"=>2}, {"position"=>15608, "sex"=>"Male", "symbol"=>">=", "value"=>3}, {"position"=>15609, "sex"=>"Male", "symbol"=>"==", "value"=>1}, {"position"=>15609, "sex"=>"Female", "symbol"=>"==", "value"=>1}, {"position"=>15626, "sex"=>"Male", "symbol"=>">=", "value"=>2}, {"position"=>15626, "sex"=>"Female", "symbol"=>">=", "value"=>2}, {"position"=>15629, "sex"=>"Male", "symbol"=>"==", "value"=>2}, {"position"=>15629, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15631, "sex"=>"Female", "symbol"=>"==", "value"=>3}, {"position"=>15631, "sex"=>"Male", "symbol"=>"==", "value"=>2}, {"position"=>15634, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15634, "sex"=>"Male", "symbol"=>"==", "value"=>2}, {"position"=>15638, "sex"=>"Male", "symbol"=>">=", "value"=>3}, {"position"=>15638, "sex"=>"Female", "symbol"=>">=", "value"=>4}, {"position"=>15568, "sex"=>"Male", "symbol"=>"==", "value"=>2}, {"position"=>15568, "sex"=>"Female", "symbol"=>"==", "value"=>2}, {"position"=>15569, "sex"=>"Male", "symbol"=>"==", "value"=>1}, {"position"=>15569, "sex"=>"Female", "symbol"=>"==", "value"=>1}]
+
+
+    include_condition = [{:applications => :user}, :location];
+    positions = Position.includes(include_condition).references(include_condition).where(:procedure_id => procedure_id, :auto_matching => true);
+
+    Position.deal_match_conditions(positions, conditions);
+
+
+    location_ids = positions.map{|position| position.location_id}.uniq;
+    locations = Location.where(id: location_ids);
+
+    match_locations = [];
+    locations.each do |location|
+      match_locations << {:name=> location.name, :rowHouse => location.is_row_house}
+    end
+
+    match_positions = [];
+    match_students = {};
+
+    positions.each_with_index do |position, position_index|
+      rules = [];
+      if (conditions.present?)
+        conditions.each do |condition|
+          if (condition['position'] == position.id)
+            case condition['sex']
+            when 'Female'
+              rule_sex = 'f';
+            when 'Male'
+              rule_sex = 'm';
+            else
+              rule_sex = 'o';
+            end
+
+            rules << rule_sex + condition['symbol'] + condition['value'].to_s;
+          end
+        end
+      end
+
+      tmp_position = {};
+      tmp_position[:house] = position.location.name;
+      tmp_position[:vacancies] = position.vacancy;
+      tmp_position[:name] = position.name;
+      tmp_position[:rule] = rules.join('&&');
+      tmp_position[:size] = 0;
+
+      i_count_applications = 0;
+      ranking_applications = position.applications
+                                      .where('disable_user_rank is null OR disable_user_rank = 0')
+                                      .where('disable_mgr_rank is null OR disable_mgr_rank = 0')
+                                      .where('user_rank != 999999')
+                                      .order(:mgr_rank);
+
+      ranking_applications.each_with_index do |application, appliction_index|
+        if(match_students[application.user.name].blank?)
+          match_students[application.user.name.to_s] = {};
+        end
+
+        student = application.user;
+        sex = 'UNKNOWN';
+        case student.gender
+        when 'M'
+          sex = 'Male';
+        when 'F'
+          sex = 'Female';
+        else
+          sex = 'Other';
+        end
+
+        if (match_students[student.name][:sex].blank?)
+          match_students[student.name][:sex] = sex;
+        end
+
+        match_students[student.name][application.position.name] = application.user_rank;
+        tmp_position[appliction_index] =[student.name, sex];
+        i_count_applications += 1;
+      end
+
+
+      if (0 < i_count_applications)
+        tmp_position[:size] = i_count_applications;
+        match_positions << tmp_position;
+      end
+    end
+
+    match_locations_log = Logger.new("#{Rails.root}/public/match_locations.log");
+    match_locations_log.info(match_locations);
+    match_positions_log = Logger.new("#{Rails.root}/public/match_positions.log");
+    match_positions_log.info(match_positions);
+    match_students_log = Logger.new("#{Rails.root}/public/match_students.log");
+    match_students_log.info(match_students);
+
+  end
+
+
 end
