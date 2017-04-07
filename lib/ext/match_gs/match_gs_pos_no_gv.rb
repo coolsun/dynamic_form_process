@@ -456,7 +456,7 @@ class MatchGsPosNoGv
     # find the first valid selection
     findFirstValidSelectionForAllPositions(matcher);
 
-
+=begin
     fail_positions = [];
     b_ValidSelection = nil;
     matcher.positions.each do |position|
@@ -472,6 +472,7 @@ class MatchGsPosNoGv
         fail_positions: fail_positions
       });
     end
+=end
 
     logDebug matcher.houses, $USE_PP;
 
@@ -513,6 +514,7 @@ class MatchGsPosNoGv
 
     matcher = GSMatcher.new(locations, positions, students);
 
+    logSetLevel($LOG_DEBUG_LEVEL)
     logDebug matcher.students, $USE_PP;
     logDebug "matcher.students.size=#{matcher.students.size}", $USE_PP;
 
