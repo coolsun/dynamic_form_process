@@ -88,28 +88,31 @@ class Matching < ActiveRecord::Base
                                       .order(:mgr_rank);
 
       ranking_applications.each_with_index do |application, appliction_index|
-        if(match_students[application.user_id.to_s].blank?)
-          match_students[application.user_id.to_s] = {};
-        end
+        applicant = Applicant.where(:user_id => application.user_id, :procedure_id => procedure_id).last;
+        if (!applicant.disqualify)
+          if(match_students[application.user_id.to_s].blank?)
+            match_students[application.user_id.to_s] = {};
+          end
 
-        student = application.user;
-        sex = 'UNKNOWN';
-        case student.gender
-        when 'M'
-          sex = 'Male';
-        when 'F'
-          sex = 'Female';
-        else
-          sex = 'Other';
-        end
+          student = application.user;
+          sex = 'UNKNOWN';
+          case student.gender
+          when 'M'
+            sex = 'Male';
+          when 'F'
+            sex = 'Female';
+          else
+            sex = 'Other';
+          end
 
-        if (match_students[application.user_id.to_s][:sex].blank?)
-          match_students[application.user_id.to_s][:sex] = sex;
-        end
+          if (match_students[application.user_id.to_s][:sex].blank?)
+            match_students[application.user_id.to_s][:sex] = sex;
+          end
 
-        match_students[application.user_id.to_s][application.position_id.to_s] = application.user_rank;
-        tmp_position[appliction_index] =[student.id.to_s, sex];
-        i_count_applications += 1;
+          match_students[application.user_id.to_s][application.position_id.to_s] = application.user_rank;
+          tmp_position[appliction_index] =[student.id.to_s, sex];
+          i_count_applications += 1;
+        end
       end
 
 
