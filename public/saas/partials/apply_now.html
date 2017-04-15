@@ -16,8 +16,8 @@
               <span ng-click="process_step.time_to_show = !process_step.time_to_show;$event.stopPropagation()" class="pt glyphicon glyphicon-time"></span>
               <span ng-class="{'arrow':isCurrentStepClassShow('id', process_step.id)}" style="right: -1px"></span>
             </div>
-            <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">Start: {{process_step.t_start_string | s_time_12hr}}</div>
-            <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">End: {{process_step.t_end_string | s_time_12hr}}</div>
+            <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">Start: {{process_step.t_start_string}}</div>
+            <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">End: {{process_step.t_end_string}}</div>
             <ul class="list-group  rsas-process-sub-step-title-ul-div">
               <li class="pt list-group-item rsas-process-sub-step-title-li-div"
               		ng-repeat="sub_step in process_step.procedure_sub_steps"
@@ -45,8 +45,8 @@
                 </span>
 
                 <span ng-class="{'arrow':isCurrentSubStepClassShow('id', sub_step.id)}" style="right: -10px"></span>
-                <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">Start: {{sub_step.t_start_string | s_time_12hr}}</div>
-                <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">End: {{sub_step.t_end_string | s_time_12hr}}</div>
+                <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">Start: {{sub_step.t_start_string}}</div>
+                <div class="rsas-apply-now-time" ng-show="process_step.time_to_show">End: {{sub_step.t_end_string}}</div>
               </li>
             </ul>
           </li>
